@@ -1,17 +1,14 @@
 package com.whale.web.documents;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Arrays;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.servlet.http.HttpServletResponse;
-
 import com.whale.web.configurations.FileValidation;
+import com.whale.web.documents.compactconverter.model.CompactConverterForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.whale.web.documents.certificategenerator.model.CertificateGeneratorForm;
 import com.whale.web.documents.certificategenerator.service.CreateCertificateService;
 import com.whale.web.documents.certificategenerator.service.ProcessWorksheetService;
-import com.whale.web.documents.compactconverter.model.CompactConverterForm;
 import com.whale.web.documents.compactconverter.service.CompactConverterService;
 import com.whale.web.documents.filecompressor.FileCompressorService;
-import com.whale.web.documents.imageconverter.model.ImageFormatsForm;
 import com.whale.web.documents.imageconverter.model.ImageConversionForm;
 import com.whale.web.documents.imageconverter.service.ImageConverterService;
 import com.whale.web.documents.qrcodegenerator.model.QRCodeGeneratorForm;
@@ -39,9 +34,6 @@ import com.whale.web.documents.textextract.TextExtractService;
 public class DocumentsController {
 
     @Autowired
-    CompactConverterForm compactConverterForm;
-
-    @Autowired
     CompactConverterService compactConverterService;
 
     @Autowired
@@ -51,20 +43,11 @@ public class DocumentsController {
     FileCompressorService fileCompressorService;
     
     @Autowired
-	ImageConversionForm imageConversionForm;
-    
-    @Autowired
     ImageConverterService imageConverterService;
     
     @Autowired
-    QRCodeGeneratorForm qrCodeGeneratorForm;
-    
-    @Autowired
     QRCodeGeneratorService qrCodeGeneratorService;
-    
-    @Autowired
-    CertificateGeneratorForm certificateGeneratorForm;
-    
+
     @Autowired
     ProcessWorksheetService processWorksheetService;
     
@@ -74,18 +57,18 @@ public class DocumentsController {
 	@Autowired
 	FileValidation fileValidation;
 
-	private static Logger logger = LoggerFactory.getLogger(DocumentsController.class);
+	private static final Logger logger = LoggerFactory.getLogger(DocumentsController.class);
 
 
     @PostMapping("/compactconverter")
-    public ResponseEntity<byte[]> compactConverter(@RequestParam("file") List<MultipartFile> files, @RequestParam("action") String action, HttpServletResponse response) {
+    public ResponseEntity<byte[]> compactConverter(CompactConverterForm form) {
         try {
-			fileValidation.validateInputFile(files);
-			fileValidation.validateAction(action);
+			fileValidation.validateInputFile(form.getFiles());
+			fileValidation.validateAction(form.getAction());
 
-			List<byte[]> filesConverted = compactConverterService.converterFile(files, action);
-			String originalFileNameWithoutExtension = StringUtils.stripFilenameExtension(Objects.requireNonNull(files.get(0).getOriginalFilename()));
-			String convertedFileName = originalFileNameWithoutExtension +  action.toLowerCase();
+			List<byte[]> filesConverted = compactConverterService.converterFile(form.getFiles(), form.getAction());
+			String originalFileNameWithoutExtension = StringUtils.stripFilenameExtension(Objects.requireNonNull(form.getFiles().get(0).getOriginalFilename()));
+			String convertedFileName = originalFileNameWithoutExtension +  form.getAction().toLowerCase();
 
             if (filesConverted.size() == 1) {
 				
@@ -102,7 +85,7 @@ public class DocumentsController {
 				try (ZipOutputStream zipOutputStream = new ZipOutputStream(zipStream)) {
 					for (int i = 0; i < filesConverted.size(); i++) {
 						byte[] fileBytes = filesConverted.get(i);
-						ZipEntry zipEntry = new ZipEntry("file" + (i + 1) + action);
+						ZipEntry zipEntry = new ZipEntry("file" + (i + 1) + form.getAction());
 						zipOutputStream.putNextEntry(zipEntry);
 						zipOutputStream.write(fileBytes);
 						zipOutputStream.closeEntry();
@@ -125,9 +108,9 @@ public class DocumentsController {
     }
 
 	@PostMapping("/textextracted")
-    public ResponseEntity<?> extractFromImage(@RequestParam("file") MultipartFile fileModel, Model model){
+    public ResponseEntity extractFromImage(@RequestParam MultipartFile file, Model model){
     	try {
-    		String extractedText = textService.extractTextFromImage(fileModel);
+    		String extractedText = textService.extractTextFromImage(file);
     		model.addAttribute("extractedText", extractedText);
     		return ResponseEntity.ok().build();
 
@@ -138,7 +121,7 @@ public class DocumentsController {
     }
 
     @PostMapping("/filecompressor")
-    public ResponseEntity<byte[]> fileCompressor(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<byte[]> fileCompressor(@RequestParam MultipartFile file) {
         
             try {
                 byte[] bytes = fileCompressorService.compressFile(file);

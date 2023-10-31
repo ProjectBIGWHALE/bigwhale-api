@@ -15,20 +15,20 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
 
 import com.whale.web.documents.certificategenerator.model.enums.CertificateTypeEnum;
+import com.whale.web.documents.compactconverter.model.CompactConverterForm;
 import com.whale.web.documents.compactconverter.service.CompactConverterService;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -119,14 +119,17 @@ class DocumentsTest {
 
     @Test
     void testCompactConverterForOneArchive() throws Exception {
+		MockMultipartFile file = createTestZipFile();
+		String action = ".tar.gz"; // Test: .zip, .tar, .7z, .tar.gz
 
-		MockMultipartFile testFile = createTestZipFile();
-		// Test: .zip, .tar, .7z, .tar.gz
-		String action = ".tar.gz";
+		CompactConverterForm compactConverterForm = new CompactConverterForm();
+		compactConverterForm.setFiles(List.of(file));
+		compactConverterForm.setAction(action);
+
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart("/documents/compactconverter")
-                .file(testFile)
-                .param("action", action))
+					.file(file)
+					.flashAttr("compactConverterForm", compactConverterForm))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", "attachment; filename=zip-test" + action))
 				.andExpect(MockMvcResultMatchers.header().string("Content-Type", "application/octet-stream"))
@@ -139,16 +142,19 @@ class DocumentsTest {
 
 	@Test
 	void testCompactConverterForTwoArchives() throws Exception {
-
 		MockMultipartFile file1 = createTestZipFile();
 		MockMultipartFile file2 = createTestZipFile();
-		// Test: .zip, .tar, .7z, .tar.gz
-		String action = ".tar";
+		String action = ".tar.gz"; // Test: .zip, .tar, .7z, .tar.gz
+
+		CompactConverterForm compactConverterForm = new CompactConverterForm();
+		compactConverterForm.setFiles(List.of(file1, file2));
+		compactConverterForm.setAction(action);
+
 
 		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart("/documents/compactconverter")
 						.file(file1)
 						.file(file2)
-						.param("action", action))
+						.flashAttr("compactConverterForm", compactConverterForm))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", "attachment; filename=zip-test" + action))
 				.andExpect(MockMvcResultMatchers.header().string("Content-Type", "application/octet-stream"))
@@ -175,10 +181,10 @@ class DocumentsTest {
 
 	@Test
 	void testInvalidConversionFormatInCompactConverter() throws Exception {
-		MockMultipartFile file1 = createTestZipFile();
+		MockMultipartFile files = createTestZipFile();
 		String action = ".rar";
 		mockMvc.perform(MockMvcRequestBuilders.multipart("/documents/compactconverter")
-						.file(file1)
+						.file(files)
 						.param("action", action))
 				.andExpect(MockMvcResultMatchers.status().is(500));
 	}
@@ -255,8 +261,9 @@ class DocumentsTest {
         certificateGeneratorForm.setWorksheet(worksheet);
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/documents/certificategenerator")
-        		.file(file)
-                .flashAttr("certificateGeneratorForm", certificateGeneratorForm))
+        				.file(file)
+				        .flashAttr("certificateGeneratorForm", certificateGeneratorForm)
+						.contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
 				.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE))
 				.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", Matchers.containsString("attachment")));
@@ -286,8 +293,9 @@ class DocumentsTest {
 
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/documents/certificategenerator")
-        		.file(file)
-                .flashAttr("worksheetAndForm", certificateGeneratorForm))
+					.file(file)
+					.flashAttr("worksheetAndForm", certificateGeneratorForm)
+					.contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(500));
     }
 
@@ -303,6 +311,7 @@ class DocumentsTest {
 		qrCodeGeneratorForm.setPixelColor("#0B0F0F");
 
 		mockMvc.perform(MockMvcRequestBuilders.post(uri)
+						.contentType(MediaType.APPLICATION_JSON)
 						.param("link", qrCodeGeneratorForm.getLink())
 						.param("dataType", qrCodeGeneratorForm.getDataType())
 						.param("pixelColor", qrCodeGeneratorForm.getPixelColor()))
@@ -321,6 +330,7 @@ class DocumentsTest {
 		qrCodeGeneratorForm.setPixelColor(null);
 
 		mockMvc.perform(MockMvcRequestBuilders.post(uri)
+						.contentType(MediaType.APPLICATION_JSON)
 						.param("link", qrCodeGeneratorForm.getLink())
 						.param("dataType", qrCodeGeneratorForm.getDataType())
 						.param("pixelColor", qrCodeGeneratorForm.getPixelColor()))
@@ -339,6 +349,7 @@ class DocumentsTest {
 		qrCodeGeneratorForm.setPixelColor("red");
 
 		mockMvc.perform(MockMvcRequestBuilders.post(uri)
+						.contentType(MediaType.APPLICATION_JSON)
 						.param("dataType", qrCodeGeneratorForm.getDataType())
 						.param("email", qrCodeGeneratorForm.getEmail())
 						.param("textEmail", qrCodeGeneratorForm.getTextEmail())
@@ -362,6 +373,7 @@ class DocumentsTest {
 		qrCodeGeneratorForm.setPixelColor(null);
 
 		mockMvc.perform(MockMvcRequestBuilders.post(uri)
+						.contentType(MediaType.APPLICATION_JSON)
 						.param("dataType", qrCodeGeneratorForm.getDataType())
 						.param("email", qrCodeGeneratorForm.getEmail())
 						.param("titleEmail", qrCodeGeneratorForm.getTitleEmail())
@@ -381,14 +393,16 @@ class DocumentsTest {
 		qrCodeGeneratorForm.setPixelColor("rgb(255,0,0)");
 
 
+		// Execute a solicitação POST com os dados JSON
 		mockMvc.perform(MockMvcRequestBuilders.post(uri)
+						.contentType(MediaType.APPLICATION_JSON)
 						.param("dataType", qrCodeGeneratorForm.getDataType())
 						.param("phoneNumber", qrCodeGeneratorForm.getPhoneNumber())
 						.param("text", qrCodeGeneratorForm.getText())
 						.param("pixelColor", qrCodeGeneratorForm.getPixelColor()))
-				.andExpect(status().isOk())
-				.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", Matchers.containsString("attachment; filename=QRCode.png")))
-				.andExpect(content().contentType(MediaType.IMAGE_PNG));
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.content().contentType("image/png"))
+				.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", "attachment; filename=QRCode.png"));
 	}
 
 
@@ -404,6 +418,7 @@ class DocumentsTest {
 
 
 		mockMvc.perform(MockMvcRequestBuilders.post(uri)
+						.contentType(MediaType.APPLICATION_JSON)
 						.param("dataType", qrCodeGeneratorForm.getDataType())
 						.param("phoneNumber", qrCodeGeneratorForm.getPhoneNumber())
 						.param("text", qrCodeGeneratorForm.getText())
@@ -422,6 +437,7 @@ class DocumentsTest {
 		qrCodeGeneratorForm.setText("Teste de QRCODE no envio de mensagem ao whatsapp");
 
 		mockMvc.perform(MockMvcRequestBuilders.post(uri)
+						.contentType(MediaType.APPLICATION_JSON)
 						.param("dataType", qrCodeGeneratorForm.getDataType())
 						.param("phoneNumber", qrCodeGeneratorForm.getPhoneNumber())
 						.param("text", qrCodeGeneratorForm.getText()))
@@ -446,6 +462,9 @@ class DocumentsTest {
 		assertEquals("image/" + outputType, response.getContentType());
 		assertEquals("attachment; filename=test-image." + outputType, response.getHeader("Content-Disposition"));
 	}
+
+
+
 
 
 	@Test
@@ -491,7 +510,5 @@ class DocumentsTest {
 						.andExpect(MockMvcResultMatchers.status().isInternalServerError());
 
 	}
-
-
     
 }

@@ -1,5 +1,6 @@
 package com.whale.web.documents;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -14,8 +15,7 @@ import com.whale.web.configurations.FileValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.*;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -76,16 +76,9 @@ public class DocumentsController {
 
 	private static Logger logger = LoggerFactory.getLogger(DocumentsController.class);
 
-    @GetMapping(value="/compactconverter")
-    public String compactConverter(Model model) {
-
-        model.addAttribute("form", compactConverterForm);
-        return "compactconverter";
-
-    }
 
     @PostMapping("/compactconverter")
-    public String compactConverter(@RequestParam("file") List<MultipartFile> files, @RequestParam("action") String action, HttpServletResponse response) {
+    public ResponseEntity<byte[]> compactConverter(@RequestParam("file") List<MultipartFile> files, @RequestParam("action") String action, HttpServletResponse response) {
         try {
 			fileValidation.validateInputFile(files);
 			fileValidation.validateAction(action);
@@ -97,21 +90,16 @@ public class DocumentsController {
             if (filesConverted.size() == 1) {
 				
 				byte[] fileBytes = filesConverted.get(0);
-				response.setHeader("Content-Disposition", "attachment; filename=" + convertedFileName);
-				response.setContentType("application/octet-stream");
-				response.setHeader("Cache-Control", "no-cache");
-	
-				try (OutputStream outputStream = response.getOutputStream()) {
-					outputStream.write(fileBytes);
-					outputStream.flush();
-				}
+
+				return ResponseEntity.ok()
+						.contentType(MediaType.APPLICATION_OCTET_STREAM)
+						.header("Content-Disposition", "attachment; filename=" + convertedFileName)
+						.header("Cache-Control", "no-cache")
+						.body(fileBytes);
 			} 
 			else {
-				response.setHeader("Content-Disposition", "attachment; filename=" + convertedFileName);
-				response.setContentType("application/octet-stream");
-				response.setHeader("Cache-Control", "no-cache");
-
-				try (ZipOutputStream zipOutputStream = new ZipOutputStream(response.getOutputStream())) {
+				ByteArrayOutputStream zipStream = new ByteArrayOutputStream();
+				try (ZipOutputStream zipOutputStream = new ZipOutputStream(zipStream)) {
 					for (int i = 0; i < filesConverted.size(); i++) {
 						byte[] fileBytes = filesConverted.get(i);
 						ZipEntry zipEntry = new ZipEntry("file" + (i + 1) + action);
@@ -120,114 +108,76 @@ public class DocumentsController {
 						zipOutputStream.closeEntry();
 					}
 				}
+
+				byte[] zipBytes = zipStream.toByteArray();
+				zipStream.close();
+
+				return ResponseEntity.ok()
+						.contentType(MediaType.APPLICATION_OCTET_STREAM)
+						.header("Content-Disposition", "attachment; filename=" + convertedFileName)
+						.header("Cache-Control", "no-cache")
+						.body(zipBytes);
 			}
 		} catch (Exception e) {
-			logger.info(String.format("Error in compactConverter: %s", e));
-			return "redirect:/documents/compactconverter";
-        }
-        return null;
-    }
-
-	@GetMapping("/textextract")
-    public String textExtract(){
-    	try {
-    		return "textextract";
-    	} catch(Exception e) {
 			logger.info(e.toString());
-    		return "redirect:/";
-    	}
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
-    @PostMapping("/textextracted")
-    public String extractFromImage(@RequestParam("file") MultipartFile fileModel, Model model){
+	@PostMapping("/textextracted")
+    public ResponseEntity<?> extractFromImage(@RequestParam("file") MultipartFile fileModel, Model model){
     	try {
     		String extractedText = textService.extractTextFromImage(fileModel);
     		model.addAttribute("extractedText", extractedText);
-    		return "textextracted";
+    		return ResponseEntity.ok().build();
+
     	}catch(Exception e) {
 			logger.info(e.toString());
-    		return "redirect:/";
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     	}
     }
 
-    @GetMapping("/filecompressor")
-    public String fileCompressor() {
-        return "filecompressor";
-    }
-
     @PostMapping("/filecompressor")
-    public String fileCompressor(@RequestParam("file") MultipartFile file, HttpServletResponse response) {
+    public ResponseEntity<byte[]> fileCompressor(@RequestParam("file") MultipartFile file, HttpServletResponse response) {
         
             try {
                 byte[] bytes = fileCompressorService.compressFile(file);
-                response.setHeader("Content-Disposition", "attachment; filename="+file.getOriginalFilename()+".zip");
-                response.setContentType("application/octet-stream");
-                response.setHeader("Cache-Control", "no-cache");
 
-	            OutputStream outputStream = response.getOutputStream();
-				outputStream.write(bytes);
-				outputStream.flush();
-				
-            } catch (Exception e) {
+				return ResponseEntity.ok()
+						.contentType(MediaType.APPLICATION_OCTET_STREAM)
+						.header("Content-Disposition", "attachment; filename="+file.getOriginalFilename()+".zip")
+						.header("Cache-Control", "no-cache")
+						.body(bytes);
+
+			} catch (Exception e) {
 				logger.info(e.toString());
-            	return "redirect:/documents/filecompressor";
-            }
-
-        return null;
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+			}
     }
 
-
-    
-	@GetMapping(value = "/imageconverter")
-	public String imageConverter(Model model) {
-		List<ImageFormatsForm> list = Arrays.asList(	new ImageFormatsForm(1L, "jpeg"),
-														new ImageFormatsForm(2L, "jpg"),
-														new ImageFormatsForm(3L, "bmp"),
-														new ImageFormatsForm(4L, "gif"),
-														new ImageFormatsForm(5L, "png"),
-														new ImageFormatsForm(6L, "tiff"));
-
-		model.addAttribute("list", list);
-		model.addAttribute("form", imageConversionForm);
-		return "imageconverter";
-	}
-
-
 	@PostMapping("/imageconverter")
-	public String imageConverter(@ModelAttribute("form") ImageConversionForm imageConversionForm, HttpServletResponse response) {
+	public ResponseEntity<byte[]> imageConverter(@ModelAttribute("form") ImageConversionForm imageConversionForm, HttpServletResponse response) {
 		try {
 			byte[] bytes = imageConverterService.convertImageFormat(imageConversionForm.getOutputFormat(), imageConversionForm.getImage());
 
 			String originalFileNameWithoutExtension = StringUtils.stripFilenameExtension(Objects.requireNonNull(imageConversionForm.getImage().getOriginalFilename()));
 			String convertedFileName = originalFileNameWithoutExtension + "." + imageConversionForm.getOutputFormat().toLowerCase();
 
-			response.setContentType("image/" + imageConversionForm.getOutputFormat().toLowerCase());
-			response.setHeader("Content-Disposition", "attachment; filename=" + convertedFileName);
-			response.setHeader("Cache-Control", "no-cache");
+			return ResponseEntity.ok()
+					.contentType(MediaType.parseMediaType("image/" + imageConversionForm.getOutputFormat().toLowerCase()))
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + convertedFileName)
+					.header("Cache-Control", "no-cache")
+					.body(bytes);
 
-			OutputStream outputStream = response.getOutputStream();
-            outputStream.write(bytes);
-            outputStream.flush();
-
-		} catch (Exception e){
-			logger.info(String.format("Erro: %s: ", e));
-			return "redirect:/documents/imageconverter";
+		} catch (Exception e) {
+			logger.info(e.toString());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 
-		return null;
 	}
-
-	@GetMapping(value="/qrcodegenerator")
-	public String qrCodeGenerator(Model model) {
-		
-		model.addAttribute("form", qrCodeGeneratorForm);
-		return "qrcodegenerator";
-		
-	}
-	
 
 	@PostMapping("/qrcodegenerator")
-	public String qrCodeGenerator(@ModelAttribute("form") QRCodeGeneratorForm qrCodeGeneratorForm, HttpServletResponse response) throws IOException{
+	public ResponseEntity<byte[]> qrCodeGenerator(@ModelAttribute("form") QRCodeGeneratorForm qrCodeGeneratorForm, HttpServletResponse response) throws IOException{
 		
 		try {
 			byte[] bytes;
@@ -239,53 +189,38 @@ public class DocumentsController {
 				case "email" -> bytes = qrCodeGeneratorService
 						.generateEmailLinkQRCode(qrCodeGeneratorForm.getEmail(), qrCodeGeneratorForm.getTextEmail(), qrCodeGeneratorForm.getTitleEmail(), qrCodeGeneratorForm.getPixelColor());
 				default -> {
-					return "redirect:/documents/qrcodegenerator";
+					return null;
 				}
 			}
 
-	        response.setContentType("image/png");
-	        response.setHeader("Content-Disposition", "attachment; filename=QRCode.png");
-	        response.setHeader("Cache-Control", "no-cache");
+			return ResponseEntity.ok()
+					.contentType(MediaType.IMAGE_PNG)
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=QRCode.png")
+					.header("Cache-Control", "no-cache")
+					.body(bytes);
 
-	        OutputStream outputStream = response.getOutputStream();
-            outputStream.write(bytes);
-            outputStream.flush();
-
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.info(e.toString());
-			return "redirect:/documents/qrcodegenerator";
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
-		return null;
 	}
 
-	
-	@GetMapping("/certificategenerator")
-	public String certificateGenerator(Model model) {
-		
-		model.addAttribute("certificateGeneratorForm", certificateGeneratorForm);
-		return "certificategenerator";
-		
-	}
 
 	@PostMapping(value = "/certificategenerator")
-	public String certificateGenerator(CertificateGeneratorForm certificateGeneratorForm, HttpServletResponse response) throws Exception {
+	public ResponseEntity<byte[]> certificateGenerator(CertificateGeneratorForm certificateGeneratorForm, HttpServletResponse response) throws Exception {
 		try {
 		    List<String> names = processWorksheetService.savingNamesInAList(certificateGeneratorForm.getWorksheet().getWorksheet());
 		    byte[] bytes = createCertificateService.createCertificates(certificateGeneratorForm.getCertificate(), names);
 
-		    response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-		    response.setHeader("Content-Disposition", "attachment; filename=\"certificates.zip\"");
-	
-		    OutputStream outputStream = response.getOutputStream();
-            outputStream.write(bytes);
-            outputStream.flush();
+			return ResponseEntity.ok()
+					.contentType(MediaType.APPLICATION_OCTET_STREAM)
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"certificates.zip\"")
+					.body(bytes);
 
-	    } catch (Exception e) {
+		} catch (Exception e) {
 			logger.info(e.toString());
-			return "redirect:/documents/certificategenerator";
-	    }
-
-	    return null;
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
 	}
 
 }

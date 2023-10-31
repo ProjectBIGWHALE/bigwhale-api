@@ -138,7 +138,7 @@ public class DocumentsController {
     }
 
     @PostMapping("/filecompressor")
-    public ResponseEntity<byte[]> fileCompressor(@RequestParam("file") MultipartFile file, HttpServletResponse response) {
+    public ResponseEntity<byte[]> fileCompressor(@RequestParam("file") MultipartFile file) {
         
             try {
                 byte[] bytes = fileCompressorService.compressFile(file);
@@ -156,7 +156,7 @@ public class DocumentsController {
     }
 
 	@PostMapping("/imageconverter")
-	public ResponseEntity<byte[]> imageConverter(@ModelAttribute("form") ImageConversionForm imageConversionForm, HttpServletResponse response) {
+	public ResponseEntity<byte[]> imageConverter(ImageConversionForm imageConversionForm) {
 		try {
 			byte[] bytes = imageConverterService.convertImageFormat(imageConversionForm.getOutputFormat(), imageConversionForm.getImage());
 
@@ -177,7 +177,7 @@ public class DocumentsController {
 	}
 
 	@PostMapping("/qrcodegenerator")
-	public ResponseEntity<byte[]> qrCodeGenerator(@ModelAttribute("form") QRCodeGeneratorForm qrCodeGeneratorForm, HttpServletResponse response) throws IOException{
+	public ResponseEntity<byte[]> qrCodeGenerator(QRCodeGeneratorForm qrCodeGeneratorForm){
 		
 		try {
 			byte[] bytes;
@@ -207,7 +207,7 @@ public class DocumentsController {
 
 
 	@PostMapping(value = "/certificategenerator")
-	public ResponseEntity<byte[]> certificateGenerator(CertificateGeneratorForm certificateGeneratorForm, HttpServletResponse response) throws Exception {
+	public ResponseEntity<byte[]> certificateGenerator(CertificateGeneratorForm certificateGeneratorForm){
 		try {
 		    List<String> names = processWorksheetService.savingNamesInAList(certificateGeneratorForm.getWorksheet().getWorksheet());
 		    byte[] bytes = createCertificateService.createCertificates(certificateGeneratorForm.getCertificate(), names);

@@ -10,7 +10,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.whale.web.configurations.validation.FileValidation;
+import com.whale.web.configurations.FileValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ import com.whale.web.documents.qrcodegenerator.model.QRCodeGeneratorForm;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeGeneratorService;
 import com.whale.web.documents.textextract.TextExtractService;
 
-@Controller
+@RestController
 @RequestMapping("/documents")
 public class DocumentsController {
 

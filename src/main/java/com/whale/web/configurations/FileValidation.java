@@ -1,4 +1,4 @@
-package com.whale.web.configurations.validation;
+package com.whale.web.configurations;
 
 import com.whale.web.documents.imageconverter.exception.InvalidFileFormatException;
 import org.springframework.stereotype.Component;

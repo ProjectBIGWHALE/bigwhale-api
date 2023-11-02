@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.opencsv.exceptions.CsvException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,7 +15,7 @@ import com.opencsv.CSVReader;
 @Service
 public class ProcessWorksheetService {
 	
-	public List<String> savingNamesInAList(MultipartFile worksheet) throws Exception {
+	public List<String> savingNamesInAList(MultipartFile worksheet) throws IOException {
 
 		if (worksheet.isEmpty()) {
 			throw new IOException();
@@ -30,9 +31,11 @@ public class ProcessWorksheetService {
 					names.add(line[0]);
 				}
 			}
-		}
+		} catch (CsvException e) {
+            throw new IllegalArgumentException("Unable to read sent file");
+        }
 
-		return names;
+        return names;
 
 	}
 	

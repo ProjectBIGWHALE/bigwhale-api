@@ -1,6 +1,7 @@
 package com.whale.web.documents.certificategenerator.service;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Random;
@@ -8,7 +9,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.whale.web.documents.certificategenerator.model.enums.CertificateTypeEnum;
-import com.whale.web.documents.certificategenerator.utils.ValidateFiledsNullOfCertificatesUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class CreateCertificateService {
 	
 	public byte[] createCertificates(Certificate certificate, List<String> names) throws Exception {
 		certificate.setCertificateTypeEnum(CertificateTypeEnum.COURCE);
-		ValidateFiledsNullOfCertificatesUtil.validate(certificate);
+		validate(certificate);
 		String template = selectPatchCertificateModel(certificate.getCertificateModelId());
 		Random random = new Random();
 	    List<String> listCertificate = createCerificateService.cretateListCertificate(certificate, names, template);
@@ -53,7 +54,21 @@ public class CreateCertificateService {
 		return switch (idModel.intValue()) {
 			case 1 -> certificatePath+"certificate1.svg";
 			case 2 -> certificatePath+"certificate2.svg";
-			default -> throw new RuntimeException("Invalid Patch for model of certificate");
+			default -> throw new IllegalArgumentException("Invalid Patch for model of certificate");
 		};
+	}
+
+	private void validate(Certificate certificate) throws IllegalAccessException {
+		Class<Certificate> certificateClass = Certificate.class;
+
+		Field[] fields = certificateClass.getDeclaredFields();
+
+		for (Field field : fields) {
+			field.setAccessible(true);
+			Object objet = field.get(certificate);
+			if (objet == null) {
+				throw new NullPointerException("Field: "+field.getName()+" is null");
+			}
+		}
 	}
 }

@@ -15,12 +15,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.imageio.ImageIO;
 
+import com.whale.web.documents.certificategenerator.model.CertificateGeneratorForm;
+import com.whale.web.documents.certificategenerator.model.Worksheet;
 import com.whale.web.documents.certificategenerator.model.enums.CertificateTypeEnum;
 import com.whale.web.documents.compactconverter.model.CompactConverterForm;
 import com.whale.web.documents.compactconverter.service.CompactConverterService;
@@ -29,6 +30,8 @@ import com.whale.web.documents.imageconverter.model.ImageConversionForm;
 import com.whale.web.documents.qrcodegenerator.model.QRCodeEmail;
 import com.whale.web.documents.qrcodegenerator.model.QRCodeLink;
 import com.whale.web.documents.qrcodegenerator.model.QRCodeWhatsapp;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -46,10 +49,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.whale.web.documents.certificategenerator.model.Certificate;
-import com.whale.web.documents.certificategenerator.model.CertificateGeneratorForm;
-import com.whale.web.documents.certificategenerator.model.Worksheet;
 import com.whale.web.documents.filecompressor.FileCompressorService;
-import com.whale.web.documents.qrcodegenerator.model.QRCodeGeneratorForm;
 import com.whale.web.documents.textextract.TextExtractService;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -83,19 +83,26 @@ class DocumentsTest {
             zipOut.closeEntry();
 
             ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-            return new MockMultipartFile("file", "zip-test.zip", "application/zip", bais);
+            return new MockMultipartFile("files", "zip-test.zip", "application/zip", bais);
         }
     }
 
-	public byte[] getZipFileBytes() throws IOException {
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		try (ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
-			ZipEntry zipEntry = new ZipEntry("example.txt");
-			zipOutputStream.putNextEntry(zipEntry);
-			zipOutputStream.write("Conteúdo do arquivo de exemplo.".getBytes());
-			zipOutputStream.closeEntry();
+	MockMultipartFile createTestTarFile() throws IOException {
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			 TarArchiveOutputStream tarOut = new TarArchiveOutputStream(baos)) {
+
+			TarArchiveEntry entry = new TarArchiveEntry("test.txt");
+			tarOut.putArchiveEntry(entry);
+
+			byte[] fileContent = "This is a test file content.".getBytes();
+			tarOut.write(fileContent, 0, fileContent.length);
+
+			tarOut.closeArchiveEntry();
+			tarOut.finish();
+
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+			return new MockMultipartFile("files", "tar-test.tar", "application/tar", bais);
 		}
-		return outputStream.toByteArray();
 	}
 
 
@@ -110,13 +117,31 @@ class DocumentsTest {
     	ImageIO.write(bufferedImage, inputFormat, baos);
     	baos.toByteArray();
 
-		MockMultipartFile image = new MockMultipartFile(
+        return new MockMultipartFile(
 				"image",
 				"test-image." + inputFormat,
 				"image/" + inputFormat,
 				baos.toByteArray()
 		);
-		return image;
+	}
+
+	MockMultipartFile createTestImageWhithName(String inputFormat, String name) throws IOException{
+		BufferedImage bufferedImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+		Graphics2D graphics = bufferedImage.createGraphics();
+		graphics.setColor(Color.WHITE);
+		graphics.fillRect(0, 0, 100, 100);
+		graphics.dispose();
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ImageIO.write(bufferedImage, inputFormat, baos);
+		baos.toByteArray();
+
+        return new MockMultipartFile(
+				name,
+				"test-image." + inputFormat,
+				"image/" + inputFormat,
+				baos.toByteArray()
+		);
 	}
 
 
@@ -163,13 +188,9 @@ class DocumentsTest {
 		assertEquals("attachment; filename=zip-test" + action, response.getHeader("Content-Disposition"));
 	}
 
-
 //	@Test
 //	void testInvalidZipFileInCompactConverter() throws Exception {
-//		String invalidZipContent = "This is not a valid ZIP file.";
-//		byte[] invalidZipBytes = invalidZipContent.getBytes();
-//		MockMultipartFile invalidZipFile = new MockMultipartFile("file", "invalid.zip", "application/zip", invalidZipBytes);
-//
+//		MockMultipartFile invalidZipFile = new MockMultipartFile("files", "invalid.zip", "application/zip", "Invalid ZIP Data".getBytes());
 //		mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/compactconverter")
 //						.file(invalidZipFile)
 //						.param("action", ".zip"))
@@ -178,39 +199,13 @@ class DocumentsTest {
 //
 //
 //	@Test
-//	void testInvalidConversionFormatInCompactConverter() throws Exception {
-//		MockMultipartFile files = createTestZipFile();
-//		String action = ".rar";
+//	void testInvalidCompressionFormatInCompactConverter() throws Exception {
+//		MockMultipartFile file = createTestZipFile();
 //		mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/compactconverter")
-//						.file(files)
-//						.param("action", action))
+//						.file(file)
+//						.param("action", ".invalidFormat"))
 //				.andExpect(MockMvcResultMatchers.status().is(500));
 //	}
-
-
-
-	/*@Test
-    void textExtractedShouldReturnTheHTMLForm() throws Exception {
-        MockMultipartFile multipartFile = new MockMultipartFile(
-                "file",
-                "test-image.png",
-                "image/png",
-                "Test image content".getBytes()
-        );
-
-        String extractedText = "Extracted text from image.";
-
-        when(textExtractService.extractTextFromImage(any())).thenReturn(extractedText);
-
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/documents/textextracted")
-                        .file(multipartFile))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("textextracted"))
-                .andExpect(MockMvcResultMatchers.model().attribute("extractedText", extractedText));
-
-        verify(textExtractService, times(1)).extractTextFromImage(any());
-    }*/
-
 
 
     @Test
@@ -228,11 +223,10 @@ class DocumentsTest {
                         .file(multipartFile))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/octet-stream"))
-                .andExpect(MockMvcResultMatchers.header().string("Content-Disposition", "attachment; filename=test-file.txt.zip"));
+                .andExpect(MockMvcResultMatchers.header().string("Content-Disposition", "attachment; filename=test-file.zip"));
 
         verify(compressorService, times(1)).compressFile(any());
     }
-    
 
     
 	@Test
@@ -287,7 +281,7 @@ class DocumentsTest {
 		certificate.setSpeakerRole("CTO");
 
         certificateGeneratorForm.setCertificate(certificate);
-        certificateGeneratorForm.setWorksheet(worksheet);
+
 
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/certificategenerator")
@@ -312,7 +306,7 @@ class DocumentsTest {
 						.param("link", qrCodeLink.getLink())
 						.param("pixelColor", qrCodeLink.getPixelColor()))
 				.andExpect(status().isOk())
-				.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", Matchers.containsString("attachment; filename=QRCode.png")))
+				.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", Matchers.containsString("attachment; filename=QRCodeLink.png")))
 				.andExpect(content().contentType(MediaType.IMAGE_PNG));
 	}
 
@@ -348,7 +342,7 @@ class DocumentsTest {
 						.param("titleEmail", qrCodeGeneratorForm.getTitleEmail())
 						.param("pixelColor", qrCodeGeneratorForm.getPixelColor()))
 				.andExpect(status().isOk())
-				.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", Matchers.containsString("attachment; filename=QRCode.png")))
+				.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", Matchers.containsString("attachment; filename=QRCodeEmail.png")))
 				.andExpect(content().contentType(MediaType.IMAGE_PNG));
 	}
 
@@ -390,7 +384,7 @@ class DocumentsTest {
 						.param("pixelColor", qrCodeGeneratorForm.getPixelColor()))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.content().contentType("image/png"))
-				.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", "attachment; filename=QRCode.png"));
+				.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", "attachment; filename=QRCodeWhatsapp.png"));
 	}
 
 

@@ -14,32 +14,34 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FileCompressorService {
 
-    public byte[] compressFile(MultipartFile multipartFile){
-    	
-    	if(multipartFile == null || multipartFile.isEmpty()) {
-    		throw new RuntimeException();
-    	}
-    	
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try (ZipOutputStream zipOut = new ZipOutputStream(byteArrayOutputStream)) {
+    public byte[] compressFile(MultipartFile multipartFile) {
+        if (multipartFile == null || multipartFile.isEmpty()) {
+            throw new IllegalArgumentException("The input file is null or empty.");
+        }
+
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+             ZipOutputStream zipOut = new ZipOutputStream(byteArrayOutputStream)) {
+
             zipOut.setLevel(Deflater.BEST_COMPRESSION);
+
             ZipEntry zipEntry = new ZipEntry(Objects.requireNonNull(multipartFile.getOriginalFilename()));
             zipOut.putNextEntry(zipEntry);
 
             byte[] buffer = new byte[1024];
             int length;
             InputStream fileInputStream = multipartFile.getInputStream();
+
             while ((length = fileInputStream.read(buffer)) > 0) {
                 zipOut.write(buffer, 0, length);
             }
 
-            fileInputStream.close();
             zipOut.closeEntry();
+            zipOut.finish();
+            return byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error compressing the file.", e);
         }
-
-        return byteArrayOutputStream.toByteArray();
     }
+
 	
 }

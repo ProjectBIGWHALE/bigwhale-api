@@ -22,15 +22,37 @@ public class CompactConverterService {
 
     public List<byte[]> converterFile(List<MultipartFile> files, String action) throws IOException {
 
-        return switch (action) {
-            case ".zip" -> convertToZip(files);
-            case ".tar.gz" -> convertToTarGz(files);
-            case ".7z" -> convertTo7z(files);
-            case ".tar" -> convertToTar(files);
-            default -> Collections.emptyList();
-        };
-
+        if (files == null || files.isEmpty() || !areAllFilesZip(files)) {
+            throw new IllegalArgumentException("The input is not a valid zip file");
+        } else {
+            return switch (action) {
+                case ".zip" -> convertToZip(files);
+                case ".tar.gz" -> convertToTarGz(files);
+                case ".7z" -> convertTo7z(files);
+                case ".tar" -> convertToTar(files);
+                default -> throw new IllegalArgumentException("Invalid compression format");
+            };
+        }
     }
+
+    public static boolean areAllFilesZip(List<MultipartFile> files) {
+        for (MultipartFile file : files) {
+            if (!isZipFileByFilename(file)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isZipFileByFilename(MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename != null) {
+
+            return originalFilename.toLowerCase().endsWith(".zip");
+        }
+        return false;
+    }
+
 
     public List<byte[]> convertToZip(List<MultipartFile> files) throws IOException {
         List<byte[]> zipFiles = new ArrayList<>();
@@ -115,7 +137,7 @@ public class CompactConverterService {
 
                 byte[] sevenZBytes = Files.readAllBytes(tempFile.toPath());
                 filesConverted.add(sevenZBytes);
-                tempFile.delete();
+
 
         }
 

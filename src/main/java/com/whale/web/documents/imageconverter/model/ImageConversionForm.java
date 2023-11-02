@@ -5,17 +5,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Component
 public class ImageConversionForm {
-	
-    private MultipartFile image;
-    private String outputFormat;
 
-	public MultipartFile getImage() {
-	    return image;
-	}
-	
-	public void setImage(MultipartFile image) {
-	    this.image = image;
-	}
+    private String outputFormat;
 	
 	public String getOutputFormat() {
 	    return outputFormat;

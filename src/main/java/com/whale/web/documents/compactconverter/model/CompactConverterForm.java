@@ -8,16 +8,10 @@ import org.springframework.web.multipart.MultipartFile;
 @Component
 public class CompactConverterForm {
     
-    private List<MultipartFile> files;
+
     private String action;
 
-    public List<MultipartFile> getFiles() {
-        return files;
-    }
 
-    public void setFiles(List<MultipartFile> file) {
-        this.files = file;
-    }
 
     public String getAction() {
         return action;

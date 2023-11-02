@@ -30,19 +30,7 @@ public class FileValidation {
 
     private boolean isValidZipFile(MultipartFile file) {
 
-        if (!Objects.equals(file.getContentType(), "application/zip")) return false;
-        String filename = file.getOriginalFilename();
-        if (filename == null || !filename.toLowerCase().endsWith(".zip")) return false;
-        try (InputStream inputStream = file.getInputStream()) {
-            byte[] header = new byte[4];
-            int bytesRead = inputStream.read(header, 0, 4);
-            if (bytesRead != 4 || !Arrays.equals(header, new byte[]{0x50, 0x4B, 0x03, 0x04})) {
-                return false;
-            }
-        } catch (IOException e) {
-            return false;
-        }
-        return true;
+        return Objects.equals(file.getContentType(), "application/zip");
     }
 }
 

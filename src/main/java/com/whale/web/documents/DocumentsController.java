@@ -130,7 +130,7 @@ public class DocumentsController {
 						.body(bytes);
 
 			} catch (Exception e) {
-				logger.error(e.toString());
+				logger.error(e.getMessage());
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 			}
     }
@@ -165,19 +165,15 @@ public class DocumentsController {
 
 
 
-	@PostMapping(value = "/qrcodegenerator/link", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping("/qrcodegenerator/link")
 	@Operation(summary = "QRCOde Generator for link", description = "Generates QRCode for Link in the chosen color", method = "POST")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "image/png")}),
 			@ApiResponse(responseCode = "500", description = "Error generating qrcode")
 	})
 	public ResponseEntity<byte[]> qrCodeGeneratorLink(QRCodeLink qrCodeLink){
-
 		try {
-			byte[] bytes;
-
-			bytes = qrCodeGeneratorService
-					.generateQRCode(qrCodeLink.getLink(), qrCodeLink.getPixelColor());
+			byte[] bytes = qrCodeGeneratorService.generateQRCode(qrCodeLink.getLink(), qrCodeLink.getPixelColor());
 
 			return ResponseEntity.ok()
 					.contentType(MediaType.IMAGE_PNG)
@@ -186,14 +182,14 @@ public class DocumentsController {
 					.body(bytes);
 
 		} catch (Exception e) {
-			logger.error(e.toString());
+			logger.error(e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
 
 
 
-	@PostMapping(value = "/qrcodegenerator/email", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping("/qrcodegenerator/email")
 	@Operation(summary = "QRCOde Generator for email", description = "Generates QRCode for Email in the chosen color", method = "POST")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "image/png")}),
@@ -202,9 +198,7 @@ public class DocumentsController {
 	public ResponseEntity<byte[]> qrCodeGeneratorEmail(QRCodeEmail qrCodeEmail){
 
 		try {
-			byte[] bytes;
-
-			bytes = qrCodeGeneratorService
+			byte[] bytes = qrCodeGeneratorService
 					.generateEmailLinkQRCode(qrCodeEmail.getEmail(), qrCodeEmail.getTitleEmail(), qrCodeEmail.getTextEmail(), qrCodeEmail.getPixelColor());
 
 			return ResponseEntity.ok()
@@ -214,14 +208,14 @@ public class DocumentsController {
 					.body(bytes);
 
 		} catch (Exception e) {
-			logger.error(e.toString());
+			logger.error(e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
 
 
 
-	@PostMapping(value = "/qrcodegenerator/whatsapp", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping("/qrcodegenerator/whatsapp")
 	@Operation(summary = "QRCOde Generator for whatsapp", description = "Generates QRCode for WhatsApp in the chosen color",  method = "POST")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "image/png")}),
@@ -230,9 +224,7 @@ public class DocumentsController {
 	public ResponseEntity<byte[]> qrCodeGeneratorWhatsapp(QRCodeWhatsapp qrCodeWhatsapp){
 
 		try {
-			byte[] bytes;
-
-			bytes = qrCodeGeneratorService
+			byte[] bytes = qrCodeGeneratorService
 					.generateWhatsAppLinkQRCode(qrCodeWhatsapp.getPhoneNumber(), qrCodeWhatsapp.getText(), qrCodeWhatsapp.getPixelColor());
 
 			return ResponseEntity.ok()
@@ -242,14 +234,14 @@ public class DocumentsController {
 					.body(bytes);
 
 		} catch (Exception e) {
-			logger.error(e.toString());
+			logger.error(e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
 
 
 
-	@PostMapping(value = "/certificategenerator", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping("/certificategenerator")
 	@Operation(summary = "Certificate Generator", description = "Generates certificates with a chosen layout", method = "POST")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "application/octet-stream")}),
@@ -266,7 +258,7 @@ public class DocumentsController {
 					.body(bytes);
 
 		} catch (Exception e) {
-			logger.error(e.toString());
+			logger.error(e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}

@@ -3,12 +3,12 @@ package com.whale.web.documents.qrcodegenerator.model;
 import org.springframework.stereotype.Component;
 
 @Component
-public class QRCodeEmail extends QRCodeGeneratorForm {
+public class QRCodeEmail {
+
     private String email;
-
     private String titleEmail;
-
     private String textEmail;
+    private String pixelColor;
 
     public String getEmail() {
         return email;
@@ -32,5 +32,13 @@ public class QRCodeEmail extends QRCodeGeneratorForm {
 
     public void setTextEmail(String textEmail) {
         this.textEmail = textEmail;
+    }
+
+    public String getPixelColor() {
+        return pixelColor;
+    }
+
+    public void setPixelColor(String pixelColor) {
+        this.pixelColor = pixelColor;
     }
 }

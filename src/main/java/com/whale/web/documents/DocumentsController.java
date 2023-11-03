@@ -13,6 +13,8 @@ import com.whale.web.documents.compactconverter.model.CompactConverterForm;
 import com.whale.web.documents.qrcodegenerator.model.QRCodeEmail;
 import com.whale.web.documents.qrcodegenerator.model.QRCodeLink;
 import com.whale.web.documents.qrcodegenerator.model.QRCodeWhatsapp;
+import com.whale.web.documents.qrcodegenerator.service.QRCodeEmailService;
+import com.whale.web.documents.qrcodegenerator.service.QRCodeWhatsappService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -32,7 +34,7 @@ import com.whale.web.documents.compactconverter.service.CompactConverterService;
 import com.whale.web.documents.filecompressor.FileCompressorService;
 import com.whale.web.documents.imageconverter.model.ImageConversionForm;
 import com.whale.web.documents.imageconverter.service.ImageConverterService;
-import com.whale.web.documents.qrcodegenerator.service.QRCodeGeneratorService;
+import com.whale.web.documents.qrcodegenerator.service.QRCodeLinkService;
 
 @RestController
 @RequestMapping(value = "api/v1/documents")
@@ -49,7 +51,13 @@ public class DocumentsController {
     ImageConverterService imageConverterService;
     
     @Autowired
-    QRCodeGeneratorService qrCodeGeneratorService;
+    QRCodeLinkService qrCodeLinkService;
+
+	@Autowired
+	QRCodeWhatsappService qrCodeWhatsappService;
+
+	@Autowired
+	QRCodeEmailService qrCodeEmailService;
 
     @Autowired
     ProcessWorksheetService processWorksheetService;
@@ -173,7 +181,7 @@ public class DocumentsController {
 	})
 	public ResponseEntity<byte[]> qrCodeGeneratorLink(QRCodeLink qrCodeLink){
 		try {
-			byte[] bytes = qrCodeGeneratorService.generateQRCode(qrCodeLink.getLink(), qrCodeLink.getPixelColor());
+			byte[] bytes = qrCodeLinkService.generateQRCode(qrCodeLink.getLink(), qrCodeLink.getPixelColor());
 
 			return ResponseEntity.ok()
 					.contentType(MediaType.IMAGE_PNG)
@@ -198,7 +206,7 @@ public class DocumentsController {
 	public ResponseEntity<byte[]> qrCodeGeneratorEmail(QRCodeEmail qrCodeEmail){
 
 		try {
-			byte[] bytes = qrCodeGeneratorService
+			byte[] bytes = qrCodeEmailService
 					.generateEmailLinkQRCode(qrCodeEmail.getEmail(), qrCodeEmail.getTitleEmail(), qrCodeEmail.getTextEmail(), qrCodeEmail.getPixelColor());
 
 			return ResponseEntity.ok()
@@ -224,7 +232,7 @@ public class DocumentsController {
 	public ResponseEntity<byte[]> qrCodeGeneratorWhatsapp(QRCodeWhatsapp qrCodeWhatsapp){
 
 		try {
-			byte[] bytes = qrCodeGeneratorService
+			byte[] bytes = qrCodeWhatsappService
 					.generateWhatsAppLinkQRCode(qrCodeWhatsapp.getPhoneNumber(), qrCodeWhatsapp.getText(), qrCodeWhatsapp.getPixelColor());
 
 			return ResponseEntity.ok()

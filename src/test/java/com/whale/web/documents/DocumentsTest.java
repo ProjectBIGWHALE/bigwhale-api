@@ -106,7 +106,7 @@ class DocumentsTest {
 	}
 
 
-	MockMultipartFile createTestImage(String inputFormat) throws IOException{
+	MockMultipartFile createTestImage(String inputFormat, String name) throws IOException{
 		BufferedImage bufferedImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
     	Graphics2D graphics = bufferedImage.createGraphics();
     	graphics.setColor(Color.WHITE);
@@ -118,7 +118,7 @@ class DocumentsTest {
     	baos.toByteArray();
 
         return new MockMultipartFile(
-				"image",
+				name,
 				"test-image." + inputFormat,
 				"image/" + inputFormat,
 				baos.toByteArray()
@@ -215,17 +215,20 @@ class DocumentsTest {
                 "test-file.txt",
                 "text/plain",
                 "Test file content".getBytes()
-        );
+        );		
 
-        when(compressorService.compressFile(any())).thenReturn(multipartFile.getBytes());
+		var multipartFile2 = createTestImage("jpeg", "file");
+
+        when(compressorService.compressFiles(any())).thenReturn(multipartFile.getBytes());
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/filecompressor")
-                        .file(multipartFile))
+                        .file(multipartFile)
+						.file(multipartFile2))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/octet-stream"))
-                .andExpect(MockMvcResultMatchers.header().string("Content-Disposition", "attachment; filename=test-file.zip"));
+                .andExpect(MockMvcResultMatchers.header().string("Content-Disposition", "attachment; filename=compressedFile.zip"));
 
-        verify(compressorService, times(1)).compressFile(any());
+        verify(compressorService, times(1)).compressFiles(any());
     }
 
     
@@ -410,7 +413,7 @@ class DocumentsTest {
 	@Test
 	void testToConvertAndDownloadImageSuccessfully() throws Exception {
 
-		MockMultipartFile file = createTestImage("jpeg");
+		MockMultipartFile file = createTestImage("jpeg", "image");
 
 		ImageConversionForm imageConversionForm = new ImageConversionForm();
 		imageConversionForm.setOutputFormat("bmp");
@@ -433,7 +436,7 @@ class DocumentsTest {
 	@Test
 	void testUnableToConvertImageToOutputFormatException() throws Exception {
 
-		MockMultipartFile image = createTestImage("png");
+		MockMultipartFile image = createTestImage("png", "image");
 
 		String invalidOutputFormat = "teste";
 		mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")

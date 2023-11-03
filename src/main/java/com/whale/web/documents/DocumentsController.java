@@ -8,7 +8,6 @@ import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import com.lowagie.text.Header;
 import com.whale.web.documents.certificategenerator.model.CertificateGeneratorForm;
 import com.whale.web.documents.compactconverter.model.CompactConverterForm;
 import com.whale.web.documents.qrcodegenerator.model.QRCodeEmail;
@@ -61,6 +60,8 @@ public class DocumentsController {
 	private static final Logger logger = LoggerFactory.getLogger(DocumentsController.class);
 	private static final String ATTACHMENT_FILENAME = "attachment; filename=";
 
+
+
 	@PostMapping(value = "/compactconverter", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "Compact Converter", description = "Convert ZIP to other compression formats", method = "POST")
 	@ApiResponses(value = {
@@ -89,8 +90,8 @@ public class DocumentsController {
 					.header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + convertedFileName)
 					.header(CacheControl.noCache().toString())
 					.body(responseBytes);
-		} catch (IllegalArgumentException | IOException e) {
-			logger.error(e.toString());
+		} catch (Exception e) {
+			logger.error(e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
     }
@@ -117,16 +118,14 @@ public class DocumentsController {
 			@ApiResponse(responseCode = "200", description = "Success", content = {	@Content(mediaType = "application/zip") }),
 			@ApiResponse(responseCode = "500", description = "Error compressing file")
 	})
-    public ResponseEntity<byte[]> fileCompressor(@RequestPart MultipartFile file) {
-
-		String originalFileName = StringUtils.stripFilenameExtension(Objects.requireNonNull(file.getOriginalFilename()));
-
+    public ResponseEntity<byte[]> fileCompressor(@RequestPart List<MultipartFile> file) {
+		
             try {
-                byte[] bytes = fileCompressorService.compressFile(file);
+                byte[] bytes = fileCompressorService.compressFiles(file);
 
 				return ResponseEntity.ok()
 						.contentType(MediaType.APPLICATION_OCTET_STREAM)
-						.header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME+originalFileName+".zip")
+						.header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME+"compressedFile.zip")
 						.header(CacheControl.noCache().toString())
 						.body(bytes);
 
@@ -135,6 +134,8 @@ public class DocumentsController {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 			}
     }
+
+
 
 	@PostMapping(value = "/imageconverter", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "Image Converter", description = "Convert an image to another format", method = "POST")
@@ -156,11 +157,12 @@ public class DocumentsController {
 					.body(bytes);
 
 		} catch (Exception e) {
-			logger.error(e.toString());
+			logger.error(e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 
 	}
+
 
 
 	@PostMapping(value = "/qrcodegenerator/link", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -190,6 +192,7 @@ public class DocumentsController {
 	}
 
 
+
 	@PostMapping(value = "/qrcodegenerator/email", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "QRCOde Generator for email", description = "Generates QRCode for Email in the chosen color", method = "POST")
 	@ApiResponses(value = {
@@ -217,6 +220,7 @@ public class DocumentsController {
 	}
 
 
+
 	@PostMapping(value = "/qrcodegenerator/whatsapp", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "QRCOde Generator for whatsapp", description = "Generates QRCode for WhatsApp in the chosen color",  method = "POST")
 	@ApiResponses(value = {
@@ -242,6 +246,7 @@ public class DocumentsController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
+
 
 
 	@PostMapping(value = "/certificategenerator", consumes = MediaType.APPLICATION_JSON_VALUE)

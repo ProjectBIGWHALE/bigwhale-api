@@ -10,9 +10,12 @@ import java.util.zip.ZipOutputStream;
 
 import com.whale.web.documents.certificategenerator.model.CertificateGeneratorForm;
 import com.whale.web.documents.compactconverter.model.CompactConverterForm;
-import com.whale.web.documents.qrcodegenerator.model.QRCodeEmail;
-import com.whale.web.documents.qrcodegenerator.model.QRCodeLink;
-import com.whale.web.documents.qrcodegenerator.model.QRCodeWhatsapp;
+import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailRecordDto;
+import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkRecordDto;
+import com.whale.web.documents.qrcodegenerator.dto.QRCodeWhatsappRecordDto;
+import com.whale.web.documents.qrcodegenerator.model.QRCodeEmailModel;
+import com.whale.web.documents.qrcodegenerator.model.QRCodeLinkModel;
+import com.whale.web.documents.qrcodegenerator.model.QRCodeWhatsappModel;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeEmailService;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeWhatsappService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +25,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.util.StringUtils;
@@ -35,6 +39,8 @@ import com.whale.web.documents.filecompressor.FileCompressorService;
 import com.whale.web.documents.imageconverter.model.ImageConversionForm;
 import com.whale.web.documents.imageconverter.service.ImageConverterService;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeLinkService;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = "api/v1/documents")
@@ -173,17 +179,23 @@ public class DocumentsController {
 
 
 
-	@PostMapping("/qrcodegenerator/link")
+	@PostMapping(value = "/qrcodegenerator/link", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "QRCOde Generator for link", description = "Generates QRCode for Link in the chosen color", method = "POST")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "image/png")}),
+			@ApiResponse(responseCode = "200", description = "Qrcode generated successfully", content = { @Content(mediaType = "image/png")}),
+			@ApiResponse(responseCode = "400", description = "Invalid request data"),
 			@ApiResponse(responseCode = "500", description = "Error generating qrcode")
 	})
-	public ResponseEntity<byte[]> qrCodeGeneratorLink(QRCodeLink qrCodeLink){
+	public ResponseEntity<byte[]> qrCodeGeneratorLink(@RequestBody @Valid QRCodeLinkRecordDto qrCodeLinkRecordDto){
 		try {
-			byte[] bytes = qrCodeLinkService.generateQRCode(qrCodeLink.getLink(), qrCodeLink.getPixelColor());
+			var qrCodeLinkModel = new QRCodeLinkModel();
+			BeanUtils.copyProperties(qrCodeLinkRecordDto, qrCodeLinkModel);
+			byte[] bytes = qrCodeLinkService.generateQRCode(
+					qrCodeLinkModel.getLink(),
+					qrCodeLinkModel.getPixelColor());
 
-			return ResponseEntity.ok()
+			logger.info("QRCOde link generated successfully");
+			return ResponseEntity.status(HttpStatus.OK)
 					.contentType(MediaType.IMAGE_PNG)
 					.header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "QRCodeLink.png")
 					.header(CacheControl.noCache().toString())
@@ -197,17 +209,23 @@ public class DocumentsController {
 
 
 
-	@PostMapping("/qrcodegenerator/email")
+	@PostMapping(value = "/qrcodegenerator/email", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "QRCOde Generator for email", description = "Generates QRCode for Email in the chosen color", method = "POST")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "image/png")}),
+			@ApiResponse(responseCode = "200", description = "Qrcode generated successfully", content = { @Content(mediaType = "image/png")}),
+			@ApiResponse(responseCode = "400", description = "Invalid request data"),
 			@ApiResponse(responseCode = "500", description = "Error generating qrcode")
 	})
-	public ResponseEntity<byte[]> qrCodeGeneratorEmail(QRCodeEmail qrCodeEmail){
+	public ResponseEntity<byte[]> qrCodeGeneratorEmail(@RequestBody @Valid QRCodeEmailRecordDto qrCodeEmailRecordDto){
 
 		try {
-			byte[] bytes = qrCodeEmailService
-					.generateEmailLinkQRCode(qrCodeEmail.getEmail(), qrCodeEmail.getTitleEmail(), qrCodeEmail.getTextEmail(), qrCodeEmail.getPixelColor());
+			var qrCodeEmailModel = new QRCodeEmailModel();
+			BeanUtils.copyProperties(qrCodeEmailRecordDto, qrCodeEmailModel);
+			byte[] bytes = qrCodeEmailService.generateEmailLinkQRCode(
+					qrCodeEmailModel.getEmail(),
+					qrCodeEmailModel.getTitleEmail(),
+					qrCodeEmailModel.getTextEmail(),
+					qrCodeEmailModel.getPixelColor());
 
 			return ResponseEntity.ok()
 					.contentType(MediaType.IMAGE_PNG)
@@ -223,17 +241,22 @@ public class DocumentsController {
 
 
 
-	@PostMapping("/qrcodegenerator/whatsapp")
+	@PostMapping(value = "/qrcodegenerator/whatsapp", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "QRCOde Generator for whatsapp", description = "Generates QRCode for WhatsApp in the chosen color",  method = "POST")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "image/png")}),
+			@ApiResponse(responseCode = "200", description = "Qrcode generated successfully", content = { @Content(mediaType = "image/png")}),
+			@ApiResponse(responseCode = "400", description = "Invalid request data"),
 			@ApiResponse(responseCode = "500", description = "Error generating qrcode")
 	})
-	public ResponseEntity<byte[]> qrCodeGeneratorWhatsapp(QRCodeWhatsapp qrCodeWhatsapp){
+	public ResponseEntity<byte[]> qrCodeGeneratorWhatsapp(@RequestBody @Valid QRCodeWhatsappRecordDto qrCodeWhatsappRecordDto){
 
 		try {
-			byte[] bytes = qrCodeWhatsappService
-					.generateWhatsAppLinkQRCode(qrCodeWhatsapp.getPhoneNumber(), qrCodeWhatsapp.getText(), qrCodeWhatsapp.getPixelColor());
+			var qrCodeWhatsappModel = new QRCodeWhatsappModel();
+			BeanUtils.copyProperties(qrCodeWhatsappRecordDto, qrCodeWhatsappModel);
+			byte[] bytes = qrCodeWhatsappService.generateWhatsAppLinkQRCode(
+					qrCodeWhatsappModel.getPhoneNumber(),
+					qrCodeWhatsappModel.getText(),
+					qrCodeWhatsappModel.getPixelColor());
 
 			return ResponseEntity.ok()
 					.contentType(MediaType.IMAGE_PNG)

@@ -22,10 +22,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whale.web.documents.certificategenerator.model.CertificateGeneratorForm;
 import com.whale.web.documents.certificategenerator.model.Worksheet;
 import com.whale.web.documents.certificategenerator.model.enums.CertificateTypeEnum;
-import com.whale.web.documents.compactconverter.model.CompactConverterModel;
 import com.whale.web.documents.compactconverter.service.CompactConverterService;
 
-import com.whale.web.documents.imageconverter.model.ImageConversionForm;
+import com.whale.web.documents.imageconverter.model.ImageConversionModel;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailRecordDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkRecordDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeWhatsappRecordDto;
@@ -384,6 +383,7 @@ class DocumentsTest {
 		Assertions.assertNotNull(responseBytes);
 	}
 
+
 	@Test
 	void testInvalidURLQRCodeGeneratorWhatsapp() throws Exception {
 
@@ -404,23 +404,18 @@ class DocumentsTest {
 	void testToConvertAndDownloadImageSuccessfully() throws Exception {
 
 		MockMultipartFile file = createTestImage("jpeg", "image");
-
-		ImageConversionForm imageConversionForm = new ImageConversionForm();
-		imageConversionForm.setOutputFormat("bmp");
+		String outputFormat = "bmp";
 
 		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
 						.file(file)
-						.flashAttr("imageConversionForm", imageConversionForm))
+						.param("outputFormat", outputFormat))
 				.andExpect(status().isOk())
 				.andReturn();
 
 		MockHttpServletResponse response = mvcResult.getResponse();
 		assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, response.getContentType());
-		assertEquals("attachment; filename=test-image." + imageConversionForm.getOutputFormat(), response.getHeader("Content-Disposition"));
+		assertEquals("attachment; filename=test-image." + outputFormat, response.getHeader("Content-Disposition"));
 	}
-
-
-
 
 
 	@Test
@@ -428,10 +423,10 @@ class DocumentsTest {
 
 		MockMultipartFile image = createTestImage("png", "image");
 
-		String invalidOutputFormat = "teste";
+		String outputFormat = "teste";
 		mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
 							.file(image)
-							.param("outputFormat", invalidOutputFormat))
+							.param("outputFormat", outputFormat))
 						.andExpect(MockMvcResultMatchers.status().isInternalServerError())
 						.andReturn();
 	}

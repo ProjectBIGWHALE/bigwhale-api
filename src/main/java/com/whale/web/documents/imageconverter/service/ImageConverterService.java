@@ -5,28 +5,26 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.List;
 import javax.imageio.ImageIO;
 
 import com.whale.web.documents.imageconverter.exception.*;
-import com.whale.web.documents.imageconverter.model.ImageConversionForm;
-import org.apache.commons.io.FilenameUtils;
+import com.whale.web.documents.imageconverter.model.ImageConversionModel;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ImageConverterService {
 
-    public byte[] convertImageFormat(ImageConversionForm imageConversionForm, MultipartFile imageFile) throws IOException {
+    public byte[] convertImageFormat(ImageConversionModel imageConversionModel, MultipartFile imageFile) throws IOException {
 
         isValidImageFormat(imageFile);
-        isValidOutputFormat(imageConversionForm.getOutputFormat());
+        isValidOutputFormat(imageConversionModel.getOutputFormat());
 
         try (InputStream fileInputStream = imageFile.getInputStream()) {
             BufferedImage image = ImageIO.read(fileInputStream);
 
             ByteArrayOutputStream convertedImage = new ByteArrayOutputStream();
-            boolean successfullyConverted = ImageIO.write(image, imageConversionForm.getOutputFormat(), convertedImage);
+            boolean successfullyConverted = ImageIO.write(image, imageConversionModel.getOutputFormat(), convertedImage);
             convertedImage.flush();
 
             if (!successfullyConverted) {

@@ -36,7 +36,7 @@ import com.whale.web.documents.certificategenerator.service.CreateCertificateSer
 import com.whale.web.documents.certificategenerator.service.ProcessWorksheetService;
 import com.whale.web.documents.compactconverter.service.CompactConverterService;
 import com.whale.web.documents.filecompressor.FileCompressorService;
-import com.whale.web.documents.imageconverter.model.ImageConversionForm;
+import com.whale.web.documents.imageconverter.model.ImageConversionModel;
 import com.whale.web.documents.imageconverter.service.ImageConverterService;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeLinkService;
 
@@ -99,7 +99,7 @@ public class DocumentsController {
 				contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
 			}
 
-			logger.info("File compressed successfully");
+			logger.info("Compressed file conversion successful");
 			return ResponseEntity.ok()
 					.contentType(MediaType.parseMediaType(contentType))
 					.header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + convertedFileName)
@@ -138,6 +138,7 @@ public class DocumentsController {
             try {
                 byte[] bytes = fileCompressorService.compressFiles(file);
 
+				logger.info("File compressed successfully");
 				return ResponseEntity.ok()
 						.contentType(MediaType.APPLICATION_OCTET_STREAM)
 						.header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME+"compressedFile.zip")
@@ -158,13 +159,14 @@ public class DocumentsController {
 			@ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "application/octet-stream")}),
 			@ApiResponse(responseCode = "500", description = "Error converting image")
 	})
-	public ResponseEntity<byte[]> imageConverter(ImageConversionForm imageConversionForm, @RequestPart MultipartFile image ) {
+	public ResponseEntity<byte[]> imageConverter(ImageConversionModel imageConversionModel, @RequestPart MultipartFile image ) {
 		try {
-			byte[] bytes = imageConverterService.convertImageFormat(imageConversionForm, image);
+			byte[] bytes = imageConverterService.convertImageFormat(imageConversionModel, image);
 
 			String originalFileNameWithoutExtension = StringUtils.stripFilenameExtension(Objects.requireNonNull(image.getOriginalFilename()));
-			String convertedFileName = originalFileNameWithoutExtension + "." + imageConversionForm.getOutputFormat().toLowerCase();
+			String convertedFileName = originalFileNameWithoutExtension + "." + imageConversionModel.getOutputFormat().toLowerCase();
 
+			logger.info("Image converted successfully");
 			return ResponseEntity.ok()
 					.contentType(MediaType.APPLICATION_OCTET_STREAM)
 					.header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + convertedFileName)
@@ -222,6 +224,7 @@ public class DocumentsController {
 			BeanUtils.copyProperties(qrCodeEmailRecordDto, qrCodeEmailModel);
 			byte[] bytes = qrCodeEmailService.generateEmailLinkQRCode(qrCodeEmailModel);
 
+			logger.info("QRCOde email generated successfully");
 			return ResponseEntity.ok()
 					.contentType(MediaType.IMAGE_PNG)
 					.header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "QRCodeEmail.png")
@@ -250,6 +253,7 @@ public class DocumentsController {
 			BeanUtils.copyProperties(qrCodeWhatsappRecordDto, qrCodeWhatsappModel);
 			byte[] bytes = qrCodeWhatsappService.generateWhatsAppLinkQRCode(qrCodeWhatsappModel);
 
+			logger.info("QRCOde Whatsapp generated successfully");
 			return ResponseEntity.ok()
 					.contentType(MediaType.IMAGE_PNG)
 					.header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "QRCodeWhatsapp.png")
@@ -275,6 +279,7 @@ public class DocumentsController {
 		    List<String> names = processWorksheetService.savingNamesInAList(certificateGeneratorForm.getWorksheet().getWorksheet());
 		    byte[] bytes = createCertificateService.createCertificates(certificateGeneratorForm.getCertificate(), names);
 
+			logger.info("Certificate generated successfully");
 			return ResponseEntity.ok()
 					.contentType(MediaType.APPLICATION_OCTET_STREAM)
 					.header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "certificates.zip")

@@ -3,7 +3,7 @@ package com.whale.web.documents.qrcodegenerator.model;
 import org.springframework.stereotype.Component;
 
 @Component
-public class QRCodeEmail {
+public class QRCodeEmailModel {
 
     private String email;
     private String titleEmail;

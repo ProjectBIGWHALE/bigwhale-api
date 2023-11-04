@@ -1,13 +1,13 @@
 package com.whale.web.documents.imageconverter.model;
 
-public class ImageFormatsForm {
+public class ImageFormatModel {
 	
     private Long id;
     private String name;
 
-    public ImageFormatsForm(){}
+    public ImageFormatModel(){}
 
-    public ImageFormatsForm(long id, String name) {
+    public ImageFormatModel(long id, String name) {
         this.id = id;
         this.name = name;
     }

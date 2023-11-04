@@ -9,6 +9,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import com.whale.web.documents.imageconverter.exception.*;
+import com.whale.web.documents.imageconverter.model.ImageConversionForm;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,16 +17,16 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class ImageConverterService {
 
-    public byte[] convertImageFormat(String outputFormat, MultipartFile imageFile) throws IOException {
+    public byte[] convertImageFormat(ImageConversionForm imageConversionForm, MultipartFile imageFile) throws IOException {
 
         isValidImageFormat(imageFile);
-        isValidOutputFormat(outputFormat);
+        isValidOutputFormat(imageConversionForm.getOutputFormat());
 
         try (InputStream fileInputStream = imageFile.getInputStream()) {
             BufferedImage image = ImageIO.read(fileInputStream);
 
             ByteArrayOutputStream convertedImage = new ByteArrayOutputStream();
-            boolean successfullyConverted = ImageIO.write(image, outputFormat, convertedImage);
+            boolean successfullyConverted = ImageIO.write(image, imageConversionForm.getOutputFormat(), convertedImage);
             convertedImage.flush();
 
             if (!successfullyConverted) {

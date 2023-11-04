@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.awt.Color;
@@ -14,7 +13,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -24,15 +22,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whale.web.documents.certificategenerator.model.CertificateGeneratorForm;
 import com.whale.web.documents.certificategenerator.model.Worksheet;
 import com.whale.web.documents.certificategenerator.model.enums.CertificateTypeEnum;
-import com.whale.web.documents.compactconverter.model.CompactConverterForm;
+import com.whale.web.documents.compactconverter.model.CompactConverterModel;
 import com.whale.web.documents.compactconverter.service.CompactConverterService;
 
 import com.whale.web.documents.imageconverter.model.ImageConversionForm;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailRecordDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkRecordDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeWhatsappRecordDto;
-import com.whale.web.documents.qrcodegenerator.model.QRCodeEmailModel;
-import com.whale.web.documents.qrcodegenerator.model.QRCodeWhatsappModel;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.hamcrest.Matchers;
@@ -177,14 +173,10 @@ class DocumentsTest {
 		MockMultipartFile file2 = createTestZipFile();
 		String action = ".tar.gz"; // Test: .zip, .tar, .7z, .tar.gz
 
-		CompactConverterForm compactConverterForm = new CompactConverterForm();
-		compactConverterForm.setAction(action);
-
-
 		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/compactconverter")
 						.file(file1)
 						.file(file2)
-						.flashAttr("compactConverterForm", compactConverterForm))
+						.param("action", action))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", "attachment; filename=zip-test" + action))
 				.andExpect(MockMvcResultMatchers.header().string("Content-Type", "application/octet-stream"))
@@ -423,7 +415,7 @@ class DocumentsTest {
 				.andReturn();
 
 		MockHttpServletResponse response = mvcResult.getResponse();
-		assertEquals("image/" + imageConversionForm.getOutputFormat(), response.getContentType());
+		assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, response.getContentType());
 		assertEquals("attachment; filename=test-image." + imageConversionForm.getOutputFormat(), response.getHeader("Content-Disposition"));
 	}
 

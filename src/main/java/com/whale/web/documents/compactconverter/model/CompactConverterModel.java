@@ -3,7 +3,7 @@ package com.whale.web.documents.compactconverter.model;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CompactConverterForm {
+public class CompactConverterModel {
 
     private String action;
 

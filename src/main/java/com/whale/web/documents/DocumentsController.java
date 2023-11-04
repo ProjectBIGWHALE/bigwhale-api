@@ -190,9 +190,7 @@ public class DocumentsController {
 		try {
 			var qrCodeLinkModel = new QRCodeLinkModel();
 			BeanUtils.copyProperties(qrCodeLinkRecordDto, qrCodeLinkModel);
-			byte[] bytes = qrCodeLinkService.generateQRCode(
-					qrCodeLinkModel.getLink(),
-					qrCodeLinkModel.getPixelColor());
+			byte[] bytes = qrCodeLinkService.generateQRCode(qrCodeLinkModel);
 
 			logger.info("QRCOde link generated successfully");
 			return ResponseEntity.status(HttpStatus.OK)
@@ -221,11 +219,7 @@ public class DocumentsController {
 		try {
 			var qrCodeEmailModel = new QRCodeEmailModel();
 			BeanUtils.copyProperties(qrCodeEmailRecordDto, qrCodeEmailModel);
-			byte[] bytes = qrCodeEmailService.generateEmailLinkQRCode(
-					qrCodeEmailModel.getEmail(),
-					qrCodeEmailModel.getTitleEmail(),
-					qrCodeEmailModel.getTextEmail(),
-					qrCodeEmailModel.getPixelColor());
+			byte[] bytes = qrCodeEmailService.generateEmailLinkQRCode(qrCodeEmailModel);
 
 			return ResponseEntity.ok()
 					.contentType(MediaType.IMAGE_PNG)
@@ -253,10 +247,7 @@ public class DocumentsController {
 		try {
 			var qrCodeWhatsappModel = new QRCodeWhatsappModel();
 			BeanUtils.copyProperties(qrCodeWhatsappRecordDto, qrCodeWhatsappModel);
-			byte[] bytes = qrCodeWhatsappService.generateWhatsAppLinkQRCode(
-					qrCodeWhatsappModel.getPhoneNumber(),
-					qrCodeWhatsappModel.getText(),
-					qrCodeWhatsappModel.getPixelColor());
+			byte[] bytes = qrCodeWhatsappService.generateWhatsAppLinkQRCode(qrCodeWhatsappModel);
 
 			return ResponseEntity.ok()
 					.contentType(MediaType.IMAGE_PNG)

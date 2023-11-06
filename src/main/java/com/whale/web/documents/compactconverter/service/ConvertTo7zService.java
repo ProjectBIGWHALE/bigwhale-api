@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ConverterTo7zService {
+public class ConvertTo7zService {
     public List<byte[]> convertTo7z(List<MultipartFile> files) throws IOException {
         List<byte[]> filesConverted = new ArrayList<>();
 

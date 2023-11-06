@@ -10,6 +10,10 @@ public class QRCodeWhatsappModel {
 
     private String pixelColor;
 
+    public String getText() {
+        return text;
+    }
+
     public String getPixelColor() {
         return pixelColor;
     }
@@ -24,10 +28,6 @@ public class QRCodeWhatsappModel {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    public String getText() {
-        return text;
     }
 
     public void setText(String text) {

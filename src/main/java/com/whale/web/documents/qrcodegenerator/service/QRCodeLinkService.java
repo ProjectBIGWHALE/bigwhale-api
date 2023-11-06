@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 
 import com.whale.web.documents.qrcodegenerator.exception.QRCodeException;
 import com.whale.web.documents.qrcodegenerator.model.QRCodeLinkModel;
+
 import org.springframework.stereotype.Service;
 
 import com.google.zxing.BarcodeFormat;
@@ -22,17 +23,17 @@ import com.google.zxing.qrcode.QRCodeWriter;
 @Service
 public class QRCodeLinkService {
 	
-	 public byte[] generateQRCode(QRCodeLinkModel qrCodeLinkModel) {
+	 public byte[] generateQRCode(QRCodeLinkModel qrCodeLinkRecordModel) {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
 
         try {
-            BitMatrix bitMatrix = qrCodeWriter.encode(qrCodeLinkModel.getLink(), BarcodeFormat.QR_CODE, 350, 350, hints);
+            BitMatrix bitMatrix = qrCodeWriter.encode(qrCodeLinkRecordModel.getLink(), BarcodeFormat.QR_CODE, 350, 350, hints);
             BufferedImage qrCodeImage = new BufferedImage(350, 350, BufferedImage.TYPE_INT_RGB);
             qrCodeImage.createGraphics();
 
-            int pixelColorValue = convertColor(qrCodeLinkModel.getPixelColor());
+            int pixelColorValue = convertColor(qrCodeLinkRecordModel.getPixelColor());
 
             for (int x = 0; x < 350; x++) {
                 for (int y = 0; y < 350; y++) {

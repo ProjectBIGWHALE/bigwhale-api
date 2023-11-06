@@ -24,10 +24,9 @@ import com.whale.web.documents.certificategenerator.model.Worksheet;
 import com.whale.web.documents.certificategenerator.model.enums.CertificateTypeEnum;
 import com.whale.web.documents.compactconverter.service.CompactConverterService;
 
-import com.whale.web.documents.imageconverter.model.ImageConversionModel;
-import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailRecordDto;
-import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkRecordDto;
-import com.whale.web.documents.qrcodegenerator.dto.QRCodeWhatsappRecordDto;
+import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailDto;
+import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkDto;
+import com.whale.web.documents.qrcodegenerator.dto.QRCodeWhatsappDto;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.hamcrest.Matchers;
@@ -296,7 +295,7 @@ class DocumentsTest {
 	@Test
 	void testQRCodeGeneratorLink() throws Exception {
 
-		var requestDto = new QRCodeLinkRecordDto(
+		var requestDto = new QRCodeLinkDto(
 				"https://www.example.com",
 				"red");
 
@@ -316,7 +315,7 @@ class DocumentsTest {
 	@Test
 	void testInvalidURLQRCodeGeneratorLink() throws Exception {
 
-		var requestDto = new QRCodeLinkRecordDto(
+		var requestDto = new QRCodeLinkDto(
 				"URI inválida",
 				"red");
 
@@ -329,7 +328,7 @@ class DocumentsTest {
 
 	@Test
 	void testQRCodeGeneratorEmail() throws Exception {
-		var requestDto = new QRCodeEmailRecordDto(
+		var requestDto = new QRCodeEmailDto(
 				"teste@gmail.com",
 				"Teste",
 				"Este é um email de Teste",
@@ -350,7 +349,7 @@ class DocumentsTest {
 	@Test
 	void testInvalidURLQRCodeGeneratorEmail() throws Exception {
 
-		var requestDto = new QRCodeEmailRecordDto(
+		var requestDto = new QRCodeEmailDto(
 				"",
 				null,
 				"Este é um email de Teste",
@@ -366,7 +365,7 @@ class DocumentsTest {
 
 	@Test
 	void testQRCodeGeneratorWhatsapp() throws Exception {
-		var requestDto = new QRCodeWhatsappRecordDto(
+		var requestDto = new QRCodeWhatsappDto(
 				"27997512018",
 				"Mensagem de teste",
 				"green");
@@ -381,13 +380,14 @@ class DocumentsTest {
 
 		byte[] responseBytes = result.getResponse().getContentAsByteArray();
 		Assertions.assertNotNull(responseBytes);
+
 	}
 
 
 	@Test
 	void testInvalidURLQRCodeGeneratorWhatsapp() throws Exception {
 
-		var requestDto = new QRCodeWhatsappRecordDto(
+		var requestDto = new QRCodeWhatsappDto(
 				"27997512018fdfd",
 				null,
 				"green");

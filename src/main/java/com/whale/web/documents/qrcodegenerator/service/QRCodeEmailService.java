@@ -1,7 +1,9 @@
 package com.whale.web.documents.qrcodegenerator.service;
 
 import com.whale.web.documents.qrcodegenerator.model.QRCodeEmailModel;
+
 import com.whale.web.documents.qrcodegenerator.model.QRCodeLinkModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,17 +14,17 @@ public class QRCodeEmailService {
     QRCodeLinkService qrCodeLinkService;
 
 
-    public byte[] generateEmailLinkQRCode(QRCodeEmailModel qrCodeEmailModel) {
+    public byte[] generateEmailLinkQRCode(QRCodeEmailModel qrCodeEmailRecordModel) {
         String emailLink =
-                "mailto:" + qrCodeEmailModel.getEmail()
+                "mailto:" + qrCodeEmailRecordModel.getEmail()
                 + "?subject="
-                + qrCodeEmailModel.getTextEmail()
+                + qrCodeEmailRecordModel.getTextEmail()
                 + "&body="
-                + qrCodeEmailModel.getTitleEmail();
+                + qrCodeEmailRecordModel.getTitleEmail();
 
         var qrCodeLinkModel = new QRCodeLinkModel();
         qrCodeLinkModel.setLink(emailLink);
-        qrCodeLinkModel.setPixelColor(qrCodeEmailModel.getPixelColor());
+        qrCodeLinkModel.setPixelColor(qrCodeEmailRecordModel.getPixelColor());
 
         return qrCodeLinkService.generateQRCode(qrCodeLinkModel);
     }

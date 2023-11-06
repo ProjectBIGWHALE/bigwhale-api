@@ -9,13 +9,15 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.whale.web.documents.certificategenerator.model.CertificateGeneratorForm;
-import com.whale.web.documents.compactconverter.model.CompactConverterModel;
-import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailRecordDto;
-import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkRecordDto;
-import com.whale.web.documents.qrcodegenerator.dto.QRCodeWhatsappRecordDto;
+import com.whale.web.documents.compactconverter.model.CompactConverterRecordModel;
+import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailDto;
+import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkDto;
+import com.whale.web.documents.qrcodegenerator.dto.QRCodeWhatsappDto;
 import com.whale.web.documents.qrcodegenerator.model.QRCodeEmailModel;
 import com.whale.web.documents.qrcodegenerator.model.QRCodeLinkModel;
+
 import com.whale.web.documents.qrcodegenerator.model.QRCodeWhatsappModel;
+
 import com.whale.web.documents.qrcodegenerator.service.QRCodeEmailService;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeWhatsappService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,9 +38,10 @@ import com.whale.web.documents.certificategenerator.service.CreateCertificateSer
 import com.whale.web.documents.certificategenerator.service.ProcessWorksheetService;
 import com.whale.web.documents.compactconverter.service.CompactConverterService;
 import com.whale.web.documents.filecompressor.FileCompressorService;
-import com.whale.web.documents.imageconverter.model.ImageConversionModel;
+import com.whale.web.documents.imageconverter.model.ImageConversionRecordModel;
 import com.whale.web.documents.imageconverter.service.ImageConverterService;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeLinkService;
+
 
 import javax.validation.Valid;
 
@@ -82,12 +85,12 @@ public class DocumentsController {
 			@ApiResponse(responseCode = "200", description = "Success", content = {@Content(mediaType = "application/octet-stream")}),
 			@ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR")
 	})
-	public ResponseEntity<byte[]> compactConverter(CompactConverterModel form, @RequestPart List<MultipartFile> files) {
+	public ResponseEntity<byte[]> compactConverter(CompactConverterRecordModel form, @RequestPart List<MultipartFile> files) {
 		try {
 
 			List<byte[]> filesConverted = compactConverterService.converterFile(files, form);
 			String convertedFileName =  StringUtils.stripFilenameExtension(Objects.requireNonNull(files.get(0).getOriginalFilename()))
-										+ form.getAction().toLowerCase();
+										+ form.action().toLowerCase();
 
 			byte[] responseBytes;
 			String contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
@@ -159,12 +162,12 @@ public class DocumentsController {
 			@ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "application/octet-stream")}),
 			@ApiResponse(responseCode = "500", description = "Error converting image")
 	})
-	public ResponseEntity<byte[]> imageConverter(ImageConversionModel imageConversionModel, @RequestPart MultipartFile image ) {
+	public ResponseEntity<byte[]> imageConverter(ImageConversionRecordModel imageConversionRecordModel, @RequestPart MultipartFile image ) {
 		try {
-			byte[] bytes = imageConverterService.convertImageFormat(imageConversionModel, image);
+			byte[] bytes = imageConverterService.convertImageFormat(imageConversionRecordModel, image);
 
 			String originalFileNameWithoutExtension = StringUtils.stripFilenameExtension(Objects.requireNonNull(image.getOriginalFilename()));
-			String convertedFileName = originalFileNameWithoutExtension + "." + imageConversionModel.getOutputFormat().toLowerCase();
+			String convertedFileName = originalFileNameWithoutExtension + "." + imageConversionRecordModel.outputFormat().toLowerCase();
 
 			logger.info("Image converted successfully");
 			return ResponseEntity.ok()
@@ -189,10 +192,10 @@ public class DocumentsController {
 			@ApiResponse(responseCode = "400", description = "Invalid request data"),
 			@ApiResponse(responseCode = "500", description = "Error generating qrcode")
 	})
-	public ResponseEntity<byte[]> qrCodeGeneratorLink(@RequestBody @Valid QRCodeLinkRecordDto qrCodeLinkRecordDto){
+	public ResponseEntity<byte[]> qrCodeGeneratorLink(@RequestBody @Valid QRCodeLinkDto qrCodeLinkDto){
 		try {
 			var qrCodeLinkModel = new QRCodeLinkModel();
-			BeanUtils.copyProperties(qrCodeLinkRecordDto, qrCodeLinkModel);
+			BeanUtils.copyProperties(qrCodeLinkDto, qrCodeLinkModel);
 			byte[] bytes = qrCodeLinkService.generateQRCode(qrCodeLinkModel);
 
 			logger.info("QRCOde link generated successfully");
@@ -217,11 +220,11 @@ public class DocumentsController {
 			@ApiResponse(responseCode = "400", description = "Invalid request data"),
 			@ApiResponse(responseCode = "500", description = "Error generating qrcode")
 	})
-	public ResponseEntity<byte[]> qrCodeGeneratorEmail(@RequestBody @Valid QRCodeEmailRecordDto qrCodeEmailRecordDto){
+	public ResponseEntity<byte[]> qrCodeGeneratorEmail(@RequestBody @Valid QRCodeEmailDto qrCodeEmailDto){
 
 		try {
 			var qrCodeEmailModel = new QRCodeEmailModel();
-			BeanUtils.copyProperties(qrCodeEmailRecordDto, qrCodeEmailModel);
+			BeanUtils.copyProperties(qrCodeEmailDto, qrCodeEmailModel);
 			byte[] bytes = qrCodeEmailService.generateEmailLinkQRCode(qrCodeEmailModel);
 
 			logger.info("QRCOde email generated successfully");
@@ -246,11 +249,11 @@ public class DocumentsController {
 			@ApiResponse(responseCode = "400", description = "Invalid request data"),
 			@ApiResponse(responseCode = "500", description = "Error generating qrcode")
 	})
-	public ResponseEntity<byte[]> qrCodeGeneratorWhatsapp(@RequestBody @Valid QRCodeWhatsappRecordDto qrCodeWhatsappRecordDto){
+	public ResponseEntity<byte[]> qrCodeGeneratorWhatsapp(@RequestBody @Valid QRCodeWhatsappDto qrCodeWhatsappDto){
 
 		try {
 			var qrCodeWhatsappModel = new QRCodeWhatsappModel();
-			BeanUtils.copyProperties(qrCodeWhatsappRecordDto, qrCodeWhatsappModel);
+			BeanUtils.copyProperties(qrCodeWhatsappDto, qrCodeWhatsappModel);
 			byte[] bytes = qrCodeWhatsappService.generateWhatsAppLinkQRCode(qrCodeWhatsappModel);
 
 			logger.info("QRCOde Whatsapp generated successfully");

@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import java.util.zip.Deflater;
@@ -25,7 +26,7 @@ public class FileCompressorService {
             zipOut.setLevel(Deflater.BEST_COMPRESSION);
 
             for (MultipartFile multipartFile : multipartFiles) {
-                ZipEntry zipEntry = new ZipEntry(multipartFile.getOriginalFilename());
+                ZipEntry zipEntry = new ZipEntry(Objects.requireNonNull(multipartFile.getOriginalFilename()));
                 zipOut.putNextEntry(zipEntry);
 
                 byte[] buffer = new byte[1024];

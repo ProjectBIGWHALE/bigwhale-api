@@ -1,7 +1,9 @@
 package com.whale.web.documents.qrcodegenerator.service;
 
 import com.whale.web.documents.qrcodegenerator.model.QRCodeLinkModel;
+
 import com.whale.web.documents.qrcodegenerator.model.QRCodeWhatsappModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

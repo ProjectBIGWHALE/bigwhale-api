@@ -8,23 +8,23 @@ import java.util.Arrays;
 import javax.imageio.ImageIO;
 
 import com.whale.web.documents.imageconverter.exception.*;
-import com.whale.web.documents.imageconverter.model.ImageConversionModel;
+import com.whale.web.documents.imageconverter.model.ImageConversionRecordModel;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ImageConverterService {
 
-    public byte[] convertImageFormat(ImageConversionModel imageConversionModel, MultipartFile imageFile) throws IOException {
+    public byte[] convertImageFormat(ImageConversionRecordModel imageConversionRecordModel, MultipartFile imageFile) throws IOException {
 
         isValidImageFormat(imageFile);
-        isValidOutputFormat(imageConversionModel.getOutputFormat());
+        isValidOutputFormat(imageConversionRecordModel.outputFormat());
 
         try (InputStream fileInputStream = imageFile.getInputStream()) {
             BufferedImage image = ImageIO.read(fileInputStream);
 
             ByteArrayOutputStream convertedImage = new ByteArrayOutputStream();
-            boolean successfullyConverted = ImageIO.write(image, imageConversionModel.getOutputFormat(), convertedImage);
+            boolean successfullyConverted = ImageIO.write(image, imageConversionRecordModel.outputFormat(), convertedImage);
             convertedImage.flush();
 
             if (!successfullyConverted) {

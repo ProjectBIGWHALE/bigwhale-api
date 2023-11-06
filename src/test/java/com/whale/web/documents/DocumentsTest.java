@@ -22,8 +22,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whale.web.documents.certificategenerator.model.CertificateGeneratorForm;
 import com.whale.web.documents.certificategenerator.model.Worksheet;
 import com.whale.web.documents.certificategenerator.model.enums.CertificateTypeEnum;
+import com.whale.web.documents.compactconverter.model.CompactConverterModel;
 import com.whale.web.documents.compactconverter.service.CompactConverterService;
 
+import com.whale.web.documents.imageconverter.model.ImageConversionModel;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeWhatsappDto;
@@ -150,39 +152,43 @@ class DocumentsTest {
     @Test
     void testCompactConverterForOneArchive() throws Exception {
 		MockMultipartFile file = createTestZipFile();
-		String action = ".tar.gz"; // Test: .zip, .tar, .7z, .tar.gz
+		CompactConverterModel compactConverterModel = new CompactConverterModel(
+				"tar"
+		);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/compactconverter")
 					.file(file)
-					.param("action", action))
+					.param("action", compactConverterModel.action()))
 				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", "attachment; filename=zip-test" + action))
+				.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", "attachment; filename=zip-test" + compactConverterModel.action()))
 				.andExpect(MockMvcResultMatchers.header().string("Content-Type", "application/octet-stream"))
 				.andReturn();
 
 		MockHttpServletResponse response = mvcResult.getResponse();
 		assertEquals("application/octet-stream", response.getContentType());
-		assertEquals("attachment; filename=zip-test" + action, response.getHeader("Content-Disposition"));
+		assertEquals("attachment; filename=zip-test" + compactConverterModel.action(), response.getHeader("Content-Disposition"));
     }
 
 	@Test
 	void testCompactConverterForTwoArchives() throws Exception {
 		MockMultipartFile file1 = createTestZipFile();
 		MockMultipartFile file2 = createTestZipFile();
-		String action = ".tar.gz"; // Test: .zip, .tar, .7z, .tar.gz
+		CompactConverterModel compactConverterModel = new CompactConverterModel(
+				"7z"
+		);
 
 		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/compactconverter")
 						.file(file1)
 						.file(file2)
-						.param("action", action))
+						.param("action", compactConverterModel.action()))
 				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", "attachment; filename=zip-test" + action))
+				.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", "attachment; filename=zip-test" + compactConverterModel.action()))
 				.andExpect(MockMvcResultMatchers.header().string("Content-Type", "application/octet-stream"))
 				.andReturn();
 
 		MockHttpServletResponse response = mvcResult.getResponse();
 		assertEquals("application/octet-stream", response.getContentType());
-		assertEquals("attachment; filename=zip-test" + action, response.getHeader("Content-Disposition"));
+		assertEquals("attachment; filename=zip-test" + compactConverterModel.action(), response.getHeader("Content-Disposition"));
 	}
 
 //	@Test
@@ -281,8 +287,6 @@ class DocumentsTest {
 		certificate.setSpeakerRole("CTO");
 
         certificateGeneratorForm.setCertificate(certificate);
-
-
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/certificategenerator")
 					.file(file)
@@ -404,17 +408,19 @@ class DocumentsTest {
 	void testToConvertAndDownloadImageSuccessfully() throws Exception {
 
 		MockMultipartFile file = createTestImage("jpeg", "image");
-		String outputFormat = "bmp";
+		ImageConversionModel imageConversionModel = new ImageConversionModel(
+				"bmp"
+		);
 
 		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
 						.file(file)
-						.param("outputFormat", outputFormat))
+						.param("outputFormat", imageConversionModel.outputFormat()))
 				.andExpect(status().isOk())
 				.andReturn();
 
 		MockHttpServletResponse response = mvcResult.getResponse();
 		assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, response.getContentType());
-		assertEquals("attachment; filename=test-image." + outputFormat, response.getHeader("Content-Disposition"));
+		assertEquals("attachment; filename=test-image." + imageConversionModel.outputFormat(), response.getHeader("Content-Disposition"));
 	}
 
 
@@ -422,11 +428,12 @@ class DocumentsTest {
 	void testUnableToConvertImageToOutputFormatException() throws Exception {
 
 		MockMultipartFile image = createTestImage("png", "image");
-
-		String outputFormat = "teste";
+		ImageConversionModel imageConversionModel = new ImageConversionModel(
+				"invalid format"
+		);
 		mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
 							.file(image)
-							.param("outputFormat", outputFormat))
+							.param("outputFormat", imageConversionModel.outputFormat()))
 						.andExpect(MockMvcResultMatchers.status().isInternalServerError())
 						.andReturn();
 	}

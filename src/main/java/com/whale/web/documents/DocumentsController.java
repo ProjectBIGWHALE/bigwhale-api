@@ -9,7 +9,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.whale.web.documents.certificategenerator.model.CertificateGeneratorForm;
-import com.whale.web.documents.compactconverter.model.CompactConverterRecordModel;
+import com.whale.web.documents.compactconverter.model.CompactConverterModel;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeWhatsappDto;
@@ -38,7 +38,7 @@ import com.whale.web.documents.certificategenerator.service.CreateCertificateSer
 import com.whale.web.documents.certificategenerator.service.ProcessWorksheetService;
 import com.whale.web.documents.compactconverter.service.CompactConverterService;
 import com.whale.web.documents.filecompressor.FileCompressorService;
-import com.whale.web.documents.imageconverter.model.ImageConversionRecordModel;
+import com.whale.web.documents.imageconverter.model.ImageConversionModel;
 import com.whale.web.documents.imageconverter.service.ImageConverterService;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeLinkService;
 
@@ -85,7 +85,7 @@ public class DocumentsController {
 			@ApiResponse(responseCode = "200", description = "Success", content = {@Content(mediaType = "application/octet-stream")}),
 			@ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR")
 	})
-	public ResponseEntity<byte[]> compactConverter(CompactConverterRecordModel form, @RequestPart List<MultipartFile> files) {
+	public ResponseEntity<byte[]> compactConverter(CompactConverterModel form, @RequestPart List<MultipartFile> files) {
 		try {
 
 			List<byte[]> filesConverted = compactConverterService.converterFile(files, form);
@@ -162,12 +162,12 @@ public class DocumentsController {
 			@ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "application/octet-stream")}),
 			@ApiResponse(responseCode = "500", description = "Error converting image")
 	})
-	public ResponseEntity<byte[]> imageConverter(ImageConversionRecordModel imageConversionRecordModel, @RequestPart MultipartFile image ) {
+	public ResponseEntity<byte[]> imageConverter(ImageConversionModel imageConversionModel, @RequestPart MultipartFile image ) {
 		try {
-			byte[] bytes = imageConverterService.convertImageFormat(imageConversionRecordModel, image);
+			byte[] bytes = imageConverterService.convertImageFormat(imageConversionModel, image);
 
 			String originalFileNameWithoutExtension = StringUtils.stripFilenameExtension(Objects.requireNonNull(image.getOriginalFilename()));
-			String convertedFileName = originalFileNameWithoutExtension + "." + imageConversionRecordModel.outputFormat().toLowerCase();
+			String convertedFileName = originalFileNameWithoutExtension + "." + imageConversionModel.outputFormat().toLowerCase();
 
 			logger.info("Image converted successfully");
 			return ResponseEntity.ok()

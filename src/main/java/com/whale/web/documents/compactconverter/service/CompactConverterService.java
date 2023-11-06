@@ -3,7 +3,7 @@ package com.whale.web.documents.compactconverter.service;
 import java.io.*;
 import java.util.*;
 
-import com.whale.web.documents.compactconverter.model.CompactConverterRecordModel;
+import com.whale.web.documents.compactconverter.model.CompactConverterModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,7 +25,7 @@ public class CompactConverterService {
     ConvertToTarGzService convertToTarGz;
 
 
-    public List<byte[]> converterFile(List<MultipartFile> files, CompactConverterRecordModel form) throws IOException {
+    public List<byte[]> converterFile(List<MultipartFile> files, CompactConverterModel form) throws IOException {
 
         if (files == null || files.isEmpty() || !areAllFilesZip(files)) {
             throw new IllegalArgumentException("The input is not a valid zip file");

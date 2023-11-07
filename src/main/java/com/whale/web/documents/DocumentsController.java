@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import com.whale.web.documents.certificategenerator.dto.CertificateDto;
+import com.whale.web.documents.certificategenerator.dto.CertificateGeneratorFormDto;
 import com.whale.web.documents.certificategenerator.model.CertificateGeneratorForm;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkDto;
@@ -272,16 +274,20 @@ public class DocumentsController {
 
 
 
-	@PostMapping("/certificategenerator")
+	@PostMapping(value = "/certificategenerator", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "Certificate Generator", description = "Generates certificates with a chosen layout", method = "POST")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "application/octet-stream")}),
-			@ApiResponse(responseCode = "500", description = "Error generating certificate")
+			@ApiResponse(responseCode = "200", description = "Certificate generated successfully",
+					content = { @Content(mediaType = "application/octet-stream")}),
+			@ApiResponse(responseCode = "400", description = "Invalid request data", content = { @Content(schema = @Schema())}),
+			@ApiResponse(responseCode = "500", description = "Error generating qrcode", content = { @Content(schema = @Schema())})
 	})
-	public ResponseEntity<byte[]> certificateGenerator(CertificateGeneratorForm certificateGeneratorForm){
+	public ResponseEntity certificateGenerator(
+			CertificateDto certificateDto,
+			@Parameter(description = "Submit a csv file here") @RequestPart MultipartFile csvFileDto){
 		try {
-		    List<String> names = processWorksheetService.savingNamesInAList(certificateGeneratorForm.getWorksheet().getWorksheet());
-		    byte[] bytes = createCertificateService.createCertificates(certificateGeneratorForm.getCertificate(), names);
+		    List<String> names = processWorksheetService.savingNamesInAList(csvFileDto);
+		    byte[] bytes = createCertificateService.createCertificates(certificateDto, names);
 
 			logger.info("Certificate generated successfully");
 			return ResponseEntity.ok()
@@ -291,7 +297,7 @@ public class DocumentsController {
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
 	}
 

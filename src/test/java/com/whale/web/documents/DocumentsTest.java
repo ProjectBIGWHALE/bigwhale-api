@@ -19,6 +19,7 @@ import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.whale.web.documents.certificategenerator.dto.CertificateDto;
 import com.whale.web.documents.certificategenerator.model.CertificateGeneratorForm;
 import com.whale.web.documents.certificategenerator.model.Worksheet;
 import com.whale.web.documents.certificategenerator.model.enums.CertificateTypeEnum;
@@ -231,62 +232,62 @@ class DocumentsTest {
     
 	@Test
     void shouldReturnTheCertificatesStatusCode200() throws Exception {
-        CertificateGeneratorForm certificateGeneratorForm = new CertificateGeneratorForm();
-        Worksheet worksheet = new Worksheet();
 
         String csvContent = "col1,col2,col3\nvalue1,value2,value3";
+        MockMultipartFile csvFileDto = new MockMultipartFile(
+				"csvFileDto",
+				"worksheet.csv",
+				MediaType.TEXT_PLAIN_VALUE,
+				csvContent.getBytes());
 
-        MockMultipartFile file = new MockMultipartFile("file", "worksheet.csv", MediaType.TEXT_PLAIN_VALUE, csvContent.getBytes());
-
-        worksheet.setWorksheet(file);
-        Certificate certificate = new Certificate();
-        certificate.setCertificateModelId(1L);
-		certificate.setEventName("ABC dos DEVS");
-		certificate.setCertificateTypeEnum(CertificateTypeEnum.COURCE);
-		certificate.setEventLocale("São Paulo");
-		certificate.setEventDate("2023-09-12");
-		certificate.setEventWorkLoad("20");
-		certificate.setSpeakerName("Ronnyscley");
-		certificate.setSpeakerRole("CTO");
-
-        certificateGeneratorForm.setCertificate(certificate);
-        certificateGeneratorForm.setWorksheet(worksheet);
+		var certificateDto = new CertificateDto(
+				CertificateTypeEnum.COURCE,
+				"ABC dos DEVS",
+				"Ronnyscley",
+				"CTO",
+				"20",
+				"2023-09-12",
+				"São Paulo",
+				1L
+		);
+		var worksheet = new Worksheet();
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/certificategenerator")
-        				.file(file)
-				        .flashAttr("certificateGeneratorForm", certificateGeneratorForm)
-						.contentType(MediaType.APPLICATION_JSON))
+        				.file(csvFileDto)
+				        .flashAttr("certificateDto", certificateDto)
+						.contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk())
 				.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE))
 				.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", Matchers.containsString("attachment")));
     }
 
     @Test
-    void shouldReturnARedirectionStatusCode302() throws Exception {
-        CertificateGeneratorForm certificateGeneratorForm = new CertificateGeneratorForm();
-        Worksheet worksheet = new Worksheet();
+    void shouldReturnARedirectionStatusCode500() throws Exception {
 
         String csvContent = "col1,col2,col3\nvalue1,value2,value3";
+        MockMultipartFile csvFileDto = new MockMultipartFile(
+				"csvFileDto",
+				"worksheet.csv",
+				MediaType.TEXT_PLAIN_VALUE,
+				csvContent.getBytes());
 
-        MockMultipartFile file = new MockMultipartFile("file", "worksheet.csv", MediaType.TEXT_PLAIN_VALUE, csvContent.getBytes());
-
-        worksheet.setWorksheet(null);
-        Certificate certificate = new Certificate();
-		certificate.setCertificateModelId(1L);
-		certificate.setCertificateTypeEnum(CertificateTypeEnum.COURCE);
-		certificate.setEventLocale("São Paulo");
-		certificate.setEventDate("20/10/2023");
-		certificate.setEventWorkLoad("20");
-		certificate.setSpeakerName("Ronnyscley");
-		certificate.setSpeakerRole("CTO");
-
-        certificateGeneratorForm.setCertificate(certificate);
+		var certificateDto = new CertificateDto(
+				CertificateTypeEnum.COURCE,
+				"ABC dos DEVS",
+				"Ronnyscley",
+				null,
+				"20",
+				"2023-09-12",
+				"São Paulo",
+				1L
+		);
+		var worksheet = new Worksheet();
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/certificategenerator")
-					.file(file)
-					.flashAttr("worksheetAndForm", certificateGeneratorForm)
-					.contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(500));
+        				.file(csvFileDto)
+				        .flashAttr("certificateDto", certificateDto)
+						.contentType(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(status().isInternalServerError());
     }
 
 

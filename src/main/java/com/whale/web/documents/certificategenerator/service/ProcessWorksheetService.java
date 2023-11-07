@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.opencsv.exceptions.CsvException;
+import com.whale.web.documents.certificategenerator.dto.WorksheetDto;
+import com.whale.web.documents.certificategenerator.model.Worksheet;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,16 +18,18 @@ import com.opencsv.CSVReader;
 @Service
 public class ProcessWorksheetService {
 	
-	public List<String> savingNamesInAList(MultipartFile worksheet) throws IOException {
+	public List<String> savingNamesInAList(MultipartFile csvFileDto) throws IOException {
 
-		if (worksheet.isEmpty()) {
-			throw new IOException();
-		}
+		if (csvFileDto.isEmpty()) {throw new IOException();}
+
+		var worksheetDto = new WorksheetDto(csvFileDto);
+		var worksheet = new Worksheet();
+		BeanUtils.copyProperties(worksheetDto, worksheet);
 
 		List<String> names = new ArrayList<>();
 
 		try (CSVReader reader = new CSVReader(
-				new InputStreamReader(worksheet.getInputStream(), StandardCharsets.UTF_8))) {
+				new InputStreamReader(worksheet.getCsvFile().getInputStream(), StandardCharsets.UTF_8))) {
 			List<String[]> lines = reader.readAll();
 			for (String[] line : lines) {
 				if (line.length > 0) {

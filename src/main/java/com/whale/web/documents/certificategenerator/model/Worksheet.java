@@ -6,14 +6,13 @@ import org.springframework.web.multipart.MultipartFile;
 @Component
 public class Worksheet {
 	
-	private MultipartFile worksheet;
+	private MultipartFile csvFile;
 
-	public MultipartFile getWorksheet() {
-		return worksheet;
+	public MultipartFile getCsvFile() {
+		return csvFile;
 	}
 
-	public void setWorksheet(MultipartFile worksheet) {
-		this.worksheet = worksheet;
+	public void setCsvFile(MultipartFile csvFile) {
+		this.csvFile = csvFile;
 	}
-	
 }

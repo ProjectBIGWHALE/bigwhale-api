@@ -9,7 +9,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.whale.web.documents.certificategenerator.model.CertificateGeneratorForm;
-import com.whale.web.documents.compactconverter.model.CompactConverterModel;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeWhatsappDto;
@@ -21,7 +20,9 @@ import com.whale.web.documents.qrcodegenerator.model.QRCodeWhatsappModel;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeEmailService;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeWhatsappService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,9 +37,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.whale.web.documents.certificategenerator.service.CreateCertificateService;
 import com.whale.web.documents.certificategenerator.service.ProcessWorksheetService;
-import com.whale.web.documents.compactconverter.service.CompactConverterService;
+import com.whale.web.documents.zipcompressor.CompactConverterService;
 import com.whale.web.documents.filecompressor.FileCompressorService;
-import com.whale.web.documents.imageconverter.model.ImageConversionModel;
 import com.whale.web.documents.imageconverter.service.ImageConverterService;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeLinkService;
 
@@ -82,35 +82,31 @@ public class DocumentsController {
 	@PostMapping(value = "/compactconverter", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "Compact Converter", description = "Convert ZIP to other compression formats", method = "POST")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Success", content = {@Content(mediaType = "application/octet-stream")}),
-			@ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR")
+			@ApiResponse(responseCode = "200", description = "Compression performed successfully", content = {	@Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE) }),
+			@ApiResponse(responseCode = "400", description = "Invalid request data", content = { @Content(schema = @Schema())}),
+			@ApiResponse(responseCode = "500", description = "Error compressing file", content = { @Content(schema = @Schema())})
 	})
-	public ResponseEntity<byte[]> compactConverter(CompactConverterModel form, @RequestPart List<MultipartFile> files) {
+	public ResponseEntity compactConverter(
+			@Parameter(description = "Choosse a zip file") @RequestPart("files") List<MultipartFile> files,
+			@Parameter(description = "Format for file compression") @RequestParam("outputFormat") String outputFormat) {
 		try {
-
-			List<byte[]> filesConverted = compactConverterService.converterFile(files, form);
+			List<byte[]> filesConverted = compactConverterService.converterFile(files, outputFormat);
 			String convertedFileName =  StringUtils.stripFilenameExtension(Objects.requireNonNull(files.get(0).getOriginalFilename()))
-										+ form.action().toLowerCase();
+										+ outputFormat.toLowerCase();
 
 			byte[] responseBytes;
-			String contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
-
-			if (filesConverted.size() == 1) {
-				responseBytes = filesConverted.get(0);
-			} else {
-				responseBytes = createZipArchive(filesConverted);
-				contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
-			}
+			if (filesConverted.size() == 1)  responseBytes = filesConverted.get(0);
+			else responseBytes = createZipArchive(filesConverted);
 
 			logger.info("Compressed file conversion successful");
 			return ResponseEntity.ok()
-					.contentType(MediaType.parseMediaType(contentType))
+					.contentType(MediaType.APPLICATION_OCTET_STREAM)
 					.header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + convertedFileName)
 					.header(CacheControl.noCache().toString())
 					.body(responseBytes);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
     }
 
@@ -133,10 +129,11 @@ public class DocumentsController {
 	@PostMapping(value = "/filecompressor", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "File Compressor", description = "Compresses one or more files.", method = "POST")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Success", content = {	@Content(mediaType = "application/zip") }),
-			@ApiResponse(responseCode = "500", description = "Error compressing file")
+			@ApiResponse(responseCode = "200", description = "Compression performed successfully", content = {	@Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE) }),
+			@ApiResponse(responseCode = "400", description = "Invalid request data", content = { @Content(schema = @Schema())}),
+			@ApiResponse(responseCode = "500", description = "Error compressing file", content = { @Content(schema = @Schema())})
 	})
-    public ResponseEntity<byte[]> fileCompressor(@RequestPart List<MultipartFile> file) {
+    public ResponseEntity fileCompressor(@RequestPart List<MultipartFile> file) {
 		
             try {
                 byte[] bytes = fileCompressorService.compressFiles(file);
@@ -150,7 +147,7 @@ public class DocumentsController {
 
 			} catch (Exception e) {
 				logger.error(e.getMessage());
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 			}
     }
 
@@ -160,14 +157,18 @@ public class DocumentsController {
 	@Operation(summary = "Image Converter", description = "Convert an image to another format", method = "POST")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Success", content = { @Content(mediaType = "application/octet-stream")}),
-			@ApiResponse(responseCode = "500", description = "Error converting image")
+			@ApiResponse(responseCode = "400", description = "Invalid request data", content = { @Content(schema = @Schema())}),
+			@ApiResponse(responseCode = "500", description = "Error converting image", content = { @Content(schema = @Schema())})
 	})
-	public ResponseEntity<byte[]> imageConverter(ImageConversionModel imageConversionModel, @RequestPart MultipartFile image ) {
+	public ResponseEntity imageConverter(
+			@Parameter(description = "Enter the compression format") @RequestParam("outputFormat") String outputFormat,
+			@Parameter(description = "Submit an image here") @RequestPart MultipartFile image
+			 ) {
 		try {
-			byte[] bytes = imageConverterService.convertImageFormat(imageConversionModel, image);
+			byte[] bytes = imageConverterService.convertImageFormat(outputFormat, image);
 
 			String originalFileNameWithoutExtension = StringUtils.stripFilenameExtension(Objects.requireNonNull(image.getOriginalFilename()));
-			String convertedFileName = originalFileNameWithoutExtension + "." + imageConversionModel.outputFormat().toLowerCase();
+			String convertedFileName = originalFileNameWithoutExtension + "." + outputFormat.toLowerCase();
 
 			logger.info("Image converted successfully");
 			return ResponseEntity.ok()
@@ -178,7 +179,7 @@ public class DocumentsController {
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
 
 	}
@@ -189,10 +190,10 @@ public class DocumentsController {
 	@Operation(summary = "QRCOde Generator for link", description = "Generates QRCode for Link in the chosen color", method = "POST")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Qrcode generated successfully", content = { @Content(mediaType = "image/png")}),
-			@ApiResponse(responseCode = "400", description = "Invalid request data"),
-			@ApiResponse(responseCode = "500", description = "Error generating qrcode")
+			@ApiResponse(responseCode = "400", description = "Invalid request data", content = { @Content(schema = @Schema())}),
+			@ApiResponse(responseCode = "500", description = "Error generating qrcode", content = { @Content(schema = @Schema())})
 	})
-	public ResponseEntity<byte[]> qrCodeGeneratorLink(@RequestBody @Valid QRCodeLinkDto qrCodeLinkDto){
+	public ResponseEntity qrCodeGeneratorLink(@RequestBody @Valid QRCodeLinkDto qrCodeLinkDto){
 		try {
 			var qrCodeLinkModel = new QRCodeLinkModel();
 			BeanUtils.copyProperties(qrCodeLinkDto, qrCodeLinkModel);
@@ -207,7 +208,7 @@ public class DocumentsController {
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
 	}
 
@@ -217,10 +218,10 @@ public class DocumentsController {
 	@Operation(summary = "QRCOde Generator for email", description = "Generates QRCode for Email in the chosen color", method = "POST")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Qrcode generated successfully", content = { @Content(mediaType = "image/png")}),
-			@ApiResponse(responseCode = "400", description = "Invalid request data"),
-			@ApiResponse(responseCode = "500", description = "Error generating qrcode")
+			@ApiResponse(responseCode = "400", description = "Invalid request data", content = { @Content(schema = @Schema())}),
+			@ApiResponse(responseCode = "500", description = "Error generating qrcode", content = { @Content(schema = @Schema())})
 	})
-	public ResponseEntity<byte[]> qrCodeGeneratorEmail(@RequestBody @Valid QRCodeEmailDto qrCodeEmailDto){
+	public ResponseEntity qrCodeGeneratorEmail(@RequestBody @Valid QRCodeEmailDto qrCodeEmailDto){
 
 		try {
 			var qrCodeEmailModel = new QRCodeEmailModel();
@@ -236,7 +237,7 @@ public class DocumentsController {
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
 	}
 
@@ -246,10 +247,10 @@ public class DocumentsController {
 	@Operation(summary = "QRCOde Generator for whatsapp", description = "Generates QRCode for WhatsApp in the chosen color",  method = "POST")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Qrcode generated successfully", content = { @Content(mediaType = "image/png")}),
-			@ApiResponse(responseCode = "400", description = "Invalid request data"),
-			@ApiResponse(responseCode = "500", description = "Error generating qrcode")
+			@ApiResponse(responseCode = "400", description = "Invalid request data", content = { @Content(schema = @Schema())}),
+			@ApiResponse(responseCode = "500", description = "Error generating qrcode", content = { @Content(schema = @Schema())})
 	})
-	public ResponseEntity<byte[]> qrCodeGeneratorWhatsapp(@RequestBody @Valid QRCodeWhatsappDto qrCodeWhatsappDto){
+	public ResponseEntity qrCodeGeneratorWhatsapp(@RequestBody @Valid QRCodeWhatsappDto qrCodeWhatsappDto){
 
 		try {
 			var qrCodeWhatsappModel = new QRCodeWhatsappModel();
@@ -265,7 +266,7 @@ public class DocumentsController {
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
 	}
 

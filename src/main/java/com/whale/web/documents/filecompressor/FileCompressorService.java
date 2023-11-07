@@ -15,7 +15,7 @@ import java.util.zip.Deflater;
 @Service
 public class FileCompressorService {
 
-    public byte[] compressFiles(List<MultipartFile> multipartFiles) {
+    public byte[] compressFiles(List<MultipartFile> multipartFiles) throws IOException {
         if (multipartFiles == null || multipartFiles.isEmpty()) {
             throw new IllegalArgumentException("The input file list is null or empty.");
         }
@@ -38,12 +38,11 @@ public class FileCompressorService {
                 }
 
                 zipOut.closeEntry();
+                fileInputStream.close();
             }
 
             zipOut.finish();
             return byteArrayOutputStream.toByteArray();
-        } catch (IOException e) {
-            throw new RuntimeException("Error compressing the files.", e);
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.whale.web.documents.compactconverter.service;
+package com.whale.web.documents.zipcompressor;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;

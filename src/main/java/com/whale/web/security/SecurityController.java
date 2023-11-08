@@ -6,7 +6,6 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -22,11 +21,15 @@ import com.whale.web.security.cryptograph.service.EncryptService;
 @RequestMapping("/security")
 public class SecurityController {
 
-	@Autowired
-	CryptographyForm form;
+	private final CryptographyForm form;
 
-	@Autowired
-	EncryptService encryptService;
+	private final EncryptService encryptService;
+
+	public SecurityController(CryptographyForm form, EncryptService encryptService) {
+		this.form = form;
+		this.encryptService = encryptService;
+	}
+
 
 	@GetMapping(value="/cryptograph")
 	public String cryptograph(Model model) {

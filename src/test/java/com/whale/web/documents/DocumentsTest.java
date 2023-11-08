@@ -20,8 +20,6 @@ import javax.imageio.ImageIO;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whale.web.documents.certificategenerator.dto.CertificateDto;
-import com.whale.web.documents.certificategenerator.model.CertificateGeneratorForm;
-import com.whale.web.documents.certificategenerator.model.Worksheet;
 import com.whale.web.documents.certificategenerator.model.enums.CertificateTypeEnum;
 import com.whale.web.documents.zipcompressor.CompactConverterService;
 
@@ -47,7 +45,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.whale.web.documents.certificategenerator.model.Certificate;
 import com.whale.web.documents.filecompressor.FileCompressorService;
 import com.whale.web.documents.textextract.TextExtractService;
 
@@ -55,7 +52,7 @@ import com.whale.web.documents.textextract.TextExtractService;
 @AutoConfigureMockMvc
 @SpringBootTest
 class DocumentsTest {
-	
+
 	@Autowired
 	private MockMvc mockMvc;
 
@@ -249,8 +246,7 @@ class DocumentsTest {
 				"2023-09-12",
 				"São Paulo",
 				1L
-		);
-		var worksheet = new Worksheet();
+		);	
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/certificategenerator")
         				.file(csvFileDto)
@@ -260,6 +256,7 @@ class DocumentsTest {
 				.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE))
 				.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", Matchers.containsString("attachment")));
     }
+
 
     @Test
     void shouldReturnARedirectionStatusCode500() throws Exception {
@@ -281,7 +278,7 @@ class DocumentsTest {
 				"São Paulo",
 				1L
 		);
-		var worksheet = new Worksheet();
+	
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/certificategenerator")
         				.file(csvFileDto)
@@ -318,7 +315,7 @@ class DocumentsTest {
 				"URI inválida",
 				"red");
 
-		MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/documents/qrcodegenerator/link")
+		mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/documents/qrcodegenerator/link")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(requestDto)))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -354,7 +351,7 @@ class DocumentsTest {
 				"Este é um email de Teste",
 				"blue");
 
-		MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/documents/qrcodegenerator/email")
+		mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/documents/qrcodegenerator/email")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(requestDto)))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -391,7 +388,7 @@ class DocumentsTest {
 				null,
 				"green");
 
-		MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/documents/qrcodegenerator/whatsapp")
+		mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/documents/qrcodegenerator/whatsapp")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(requestDto)))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest())

@@ -28,10 +28,13 @@ import com.whale.web.design.colorspalette.model.PaletteForm;
 @AutoConfigureMockMvc
 @SpringBootTest
 class DesignTest {
-	
-	@Autowired
-	private MockMvc mockMvc;
-	
+
+	private final MockMvc mockMvc;
+
+	public DesignTest(MockMvc mockMvc) {
+		this.mockMvc = mockMvc;
+	}
+
 	@Test
 	void shouldReturnTheHTMLFormForChangeColorsApp() throws Exception {
 		

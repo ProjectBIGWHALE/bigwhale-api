@@ -9,8 +9,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.whale.web.documents.certificategenerator.dto.CertificateDto;
-import com.whale.web.documents.certificategenerator.dto.CertificateGeneratorFormDto;
-import com.whale.web.documents.certificategenerator.model.CertificateGeneratorForm;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeWhatsappDto;
@@ -31,7 +29,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -51,34 +48,41 @@ import javax.validation.Valid;
 @RequestMapping(value = "api/v1/documents")
 @Tag(name = "API for documents resource palette")
 public class DocumentsController {
-
-    @Autowired
-    CompactConverterService compactConverterService;
-
-    @Autowired
-    FileCompressorService fileCompressorService;
     
-    @Autowired
-    ImageConverterService imageConverterService;
-    
-    @Autowired
-    QRCodeLinkService qrCodeLinkService;
+    private final CompactConverterService compactConverterService;
 
-	@Autowired
-	QRCodeWhatsappService qrCodeWhatsappService;
+	private final FileCompressorService fileCompressorService;
 
-	@Autowired
-	QRCodeEmailService qrCodeEmailService;
+    private final ImageConverterService imageConverterService;  
 
-    @Autowired
-    ProcessWorksheetService processWorksheetService;
-    
-    @Autowired
-    CreateCertificateService createCertificateService;
+    private final QRCodeLinkService qrCodeLinkService;	
+
+	private final QRCodeWhatsappService qrCodeWhatsappService;	
+
+	private final QRCodeEmailService qrCodeEmailService;    
+
+    private final ProcessWorksheetService processWorksheetService;    
+	
+    private final CreateCertificateService createCertificateService;
+
+	
+	public DocumentsController(CompactConverterService compactConverterService,
+			FileCompressorService fileCompressorService, ImageConverterService imageConverterService,
+			QRCodeLinkService qrCodeLinkService, QRCodeWhatsappService qrCodeWhatsappService,
+			QRCodeEmailService qrCodeEmailService, ProcessWorksheetService processWorksheetService,
+			CreateCertificateService createCertificateService) {
+		this.compactConverterService = compactConverterService;
+		this.fileCompressorService = fileCompressorService;
+		this.imageConverterService = imageConverterService;
+		this.qrCodeLinkService = qrCodeLinkService;
+		this.qrCodeWhatsappService = qrCodeWhatsappService;
+		this.qrCodeEmailService = qrCodeEmailService;
+		this.processWorksheetService = processWorksheetService;
+		this.createCertificateService = createCertificateService;
+	}	
 
 	private static final Logger logger = LoggerFactory.getLogger(DocumentsController.class);
 	private static final String ATTACHMENT_FILENAME = "attachment; filename=";
-
 
 
 	@PostMapping(value = "/compactconverter", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -111,6 +115,7 @@ public class DocumentsController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
     }
+	
 
 	private byte[] createZipArchive(List<byte[]> files) throws IOException {
 		ByteArrayOutputStream zipStream = new ByteArrayOutputStream();

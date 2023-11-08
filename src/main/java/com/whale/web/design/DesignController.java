@@ -28,20 +28,25 @@ import com.whale.web.design.colorspalette.service.CreateColorsPaletteService;
 @RequestMapping("/design")
 public class DesignController {
 	
-	@Autowired
-	AlterColorForm alterColorForm;
 	
-	@Autowired
-	AlterColorService alterColorService;
+	private final AlterColorForm alterColorForm;
 	
-	@Autowired
-	UploadImage uploadImage;
+	private final AlterColorService alterColorService;	
 	
-	@Autowired
-	PaletteForm paletteForm;
+	private final UploadImage uploadImage;	
 	
-	@Autowired
-	CreateColorsPaletteService createColorsPaletteService;
+	private final PaletteForm paletteForm;	
+	
+	private final CreateColorsPaletteService createColorsPaletteService;
+
+	public DesignController(AlterColorForm alterColorForm, AlterColorService alterColorService, UploadImage uploadImage,
+			PaletteForm paletteForm, CreateColorsPaletteService createColorsPaletteService) {
+		this.alterColorForm = alterColorForm;
+		this.alterColorService = alterColorService;
+		this.uploadImage = uploadImage;
+		this.paletteForm = paletteForm;
+		this.createColorsPaletteService = createColorsPaletteService;
+	}
 	
 	
 	@GetMapping(value="/altercolor")

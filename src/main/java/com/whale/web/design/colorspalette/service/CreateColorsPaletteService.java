@@ -80,7 +80,7 @@ public class CreateColorsPaletteService {
         int rDiff = (color1 >> 16 & 0xFF) - (color2 >> 16 & 0xFF);
         int gDiff = (color1 >> 8 & 0xFF) - (color2 >> 8 & 0xFF);
         int bDiff = (color1 & 0xFF) - (color2 & 0xFF);
-        return Math.sqrt(rDiff * rDiff + gDiff * gDiff + bDiff * bDiff);
+        return Math.sqrt((rDiff * rDiff) + (gDiff * gDiff) + (bDiff * bDiff));
     }
 	
 }

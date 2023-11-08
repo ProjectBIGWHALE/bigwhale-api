@@ -9,10 +9,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.whale.web.documents.certificategenerator.dto.CertificateDto;
-import com.whale.web.documents.certificategenerator.model.enums.CertificateTypeEnum;
-
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -21,20 +18,24 @@ import com.whale.web.documents.certificategenerator.model.Certificate;
 @Service
 public class CreateCertificateService {
 
-	@Autowired
-	EditSVGFiles createCerificateService;
+	
+	private final EditSVGFiles createCerificateService;
+
+	public CreateCertificateService(EditSVGFiles createCerificateService) {
+		this.createCerificateService = createCerificateService;
+	}
 
 	@Value("${certificate.path}")
 	private String certificatePath;
 	
+	private Random random = new Random();
+
 	public byte[] createCertificates(CertificateDto certificateDto, List<String> names) throws Exception {
 		var certificate = new Certificate();
 		BeanUtils.copyProperties(certificateDto, certificate);
 		validate(certificate);
-		String template = selectPatchCertificateModel(certificate.getCertificateModelId());
-		Random random = new Random();
+		String template = selectPatchCertificateModel(certificate.getCertificateModelId());		
 	    List<String> listCertificate = createCerificateService.cretateListCertificate(certificate, names, template);
-
 	    ByteArrayOutputStream bos = new ByteArrayOutputStream();
 	    ZipOutputStream zos = new ZipOutputStream(bos);
 

@@ -4,15 +4,19 @@ import com.whale.web.documents.qrcodegenerator.model.QRCodeLinkModel;
 
 import com.whale.web.documents.qrcodegenerator.model.QRCodeWhatsappModel;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 @Service
 public class QRCodeWhatsappService {
 
-    @Autowired
-    QRCodeLinkService qrCodeLinkService;
+    
+    private final QRCodeLinkService qrCodeLinkService;
+
+    public QRCodeWhatsappService(QRCodeLinkService qrCodeLinkService) {
+        this.qrCodeLinkService = qrCodeLinkService;
+    }
+
     public byte[] generateWhatsAppLinkQRCode(QRCodeWhatsappModel qrCodeWhatsappModel) {
         String whatsappLink = "https://wa.me/" + qrCodeWhatsappModel.getPhoneNumber() + "/?text=" + qrCodeWhatsappModel.getText().replace(" ", "+");
         var qRCodeLinkModel = new QRCodeLinkModel();

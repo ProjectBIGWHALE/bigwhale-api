@@ -21,8 +21,12 @@ import com.whale.web.configurations.UploadImage;
 @Service
 public class AlterColorService {
 
-	@Autowired
-	UploadImage uploadImage;
+	
+	private final UploadImage uploadImage;
+
+	public AlterColorService(UploadImage uploadImage) {
+		this.uploadImage = uploadImage;
+	}
 
 	public byte[] alterColor(MultipartFile imageForm, String colorOfImage, String replacementColor, double marginValue) throws Exception {
 

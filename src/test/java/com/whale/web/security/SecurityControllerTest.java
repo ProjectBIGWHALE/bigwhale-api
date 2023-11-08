@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -15,7 +14,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.whale.web.security.cryptograph.model.CryptographyForm;
 import com.whale.web.security.cryptograph.service.EncryptService;
@@ -24,17 +22,21 @@ import com.whale.web.security.cryptograph.service.EncryptService;
 @AutoConfigureMockMvc
 @SpringBootTest
 class SecurityControllerTest {
+
+	private final MockMvc mockMvc;
 	
-	@Autowired
-	private MockMvc mockMvc;
-	
-	@Autowired
-	private CryptographyForm criptographyFormSecurity = new CryptographyForm();
-	
-	@Autowired
-	EncryptService encryptService;
-	
-	@Test
+	private final CryptographyForm criptographyFormSecurity;
+
+	private final EncryptService encryptService;
+
+    SecurityControllerTest(MockMvc mockMvc, CryptographyForm criptographyFormSecurity, EncryptService encryptService) {
+        this.mockMvc = mockMvc;
+        this.criptographyFormSecurity = criptographyFormSecurity;
+        this.encryptService = encryptService;
+    }
+
+
+    @Test
 	void shouldReturnTheHTMLForm() throws Exception {
 		
 		URI uri = new URI("/security/cryptograph");
@@ -43,9 +45,9 @@ class SecurityControllerTest {
 		
 	}
 	
-    SecurityControllerTest() {
-        this.mockMvc = MockMvcBuilders.standaloneSetup(new SecurityController()).build();
-    }
+//    SecurityControllerTest() {
+//        this.mockMvc = MockMvcBuilders.standaloneSetup(new SecurityController()).build();
+//    }
 
     @Test
     void shouldReturnEncryptedFile() throws Exception {

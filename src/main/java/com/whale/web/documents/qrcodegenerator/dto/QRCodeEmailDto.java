@@ -1,8 +1,6 @@
 package com.whale.web.documents.qrcodegenerator.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.bytedeco.javacpp.annotation.SharedPtr;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 

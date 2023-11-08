@@ -4,14 +4,16 @@ import com.whale.web.documents.qrcodegenerator.model.QRCodeEmailModel;
 
 import com.whale.web.documents.qrcodegenerator.model.QRCodeLinkModel;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class QRCodeEmailService {
-
-    @Autowired
-    QRCodeLinkService qrCodeLinkService;
+  
+    private final QRCodeLinkService qrCodeLinkService;
+    
+    public QRCodeEmailService(QRCodeLinkService qrCodeLinkService) {
+        this.qrCodeLinkService = qrCodeLinkService;
+    }
 
 
     public byte[] generateEmailLinkQRCode(QRCodeEmailModel qrCodeEmailRecordModel) {

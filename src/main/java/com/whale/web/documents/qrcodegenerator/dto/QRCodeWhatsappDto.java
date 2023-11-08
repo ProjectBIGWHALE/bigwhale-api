@@ -1,9 +1,21 @@
 package com.whale.web.documents.qrcodegenerator.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.validation.constraints.NotBlank;
 
-public record QRCodeWhatsappDto(@NotBlank(message = "No phone number was provided.") String phoneNumber,
-                                @NotBlank(message = "No text was provided.") String text,
-                                @NotBlank(message = "No color was provided for the QRCode") String pixelColor) {
+public record QRCodeWhatsappDto(
+
+        @Schema(description = "Phone Number", example = "027999999999")
+        @NotBlank(message = "No phone number was provided.")
+        String phoneNumber,
+
+        @Schema(description = "Message", example = "Mensagem de teste enviada pelo whatsapp")
+        @NotBlank(message = "No text was provided.")
+        String text,
+
+        @Schema(description = "Pixel Color", example = "red")
+        @NotBlank(message = "No color was provided for the QRCode")
+        String pixelColor) {
 
 }

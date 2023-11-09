@@ -1,4 +1,4 @@
-package com.whale.web.utils;
+package com.whale.web.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;

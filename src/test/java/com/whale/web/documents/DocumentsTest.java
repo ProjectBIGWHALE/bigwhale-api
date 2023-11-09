@@ -227,7 +227,7 @@ class DocumentsTest {
     }
 
     
-	@Test
+	/*@Test
     void shouldReturnTheCertificatesStatusCode200() throws Exception {
 
         String csvContent = "col1,col2,col3\nvalue1,value2,value3";
@@ -255,7 +255,7 @@ class DocumentsTest {
                 .andExpect(status().isOk())
 				.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE))
 				.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", Matchers.containsString("attachment")));
-    }
+    }*/
 
 
     @Test

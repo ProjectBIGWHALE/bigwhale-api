@@ -1,31 +1,22 @@
 package com.whale.web.design.colorspalette.model;
 
-import java.awt.Color;
-import java.util.List;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.*;
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Component
 public class PaletteForm {
-	
-	private MultipartFile image;
-	private List<Color> listOfColors;
 
-	public MultipartFile getImage() {
-		return image;
-	}
-
-	public void setImage(MultipartFile image) {
-		this.image = image;
-	}
-	public List<Color> getListOfColors() {
-		return listOfColors;
-	}
-
-	public void setListOfColors(List<Color> listOfColors) {
-		this.listOfColors = listOfColors;
-	}
-	
-	
+    private MultipartFile image;
+    private List<Color> listOfColors;
 }

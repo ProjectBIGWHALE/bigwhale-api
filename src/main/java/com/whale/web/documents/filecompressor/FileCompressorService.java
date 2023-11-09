@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
+import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import java.util.zip.Deflater;
 
 @Service
 public class FileCompressorService {

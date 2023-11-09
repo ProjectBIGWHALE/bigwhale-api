@@ -1,16 +1,15 @@
 package com.whale.web.design.colorspalette.service;
 
-import java.awt.Color;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.imageio.ImageIO;
-
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 /*
  * Class to create a list of colors in hexadecimal based on an image.
@@ -23,10 +22,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class CreateColorsPaletteService {
-	
-	public List<Color> createColorPalette(MultipartFile multipartFile) throws Exception {
-    	
-    	
+
+    public List<Color> createColorPalette(MultipartFile multipartFile) throws Exception {
+
+
         int numColors = 6; // Number of predominant colors to be extracted
         int maxColorDistance = 70; // Maximum allowed distance between colors
 
@@ -82,5 +81,4 @@ public class CreateColorsPaletteService {
         int bDiff = (color1 & 0xFF) - (color2 & 0xFF);
         return Math.sqrt((rDiff * rDiff) + (gDiff * gDiff) + (bDiff * bDiff));
     }
-	
 }

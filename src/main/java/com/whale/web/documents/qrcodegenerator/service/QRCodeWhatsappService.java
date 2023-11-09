@@ -1,16 +1,12 @@
 package com.whale.web.documents.qrcodegenerator.service;
 
 import com.whale.web.documents.qrcodegenerator.model.QRCodeLinkModel;
-
 import com.whale.web.documents.qrcodegenerator.model.QRCodeWhatsappModel;
-
 import org.springframework.stereotype.Service;
-
 
 @Service
 public class QRCodeWhatsappService {
 
-    
     private final QRCodeLinkService qrCodeLinkService;
 
     public QRCodeWhatsappService(QRCodeLinkService qrCodeLinkService) {

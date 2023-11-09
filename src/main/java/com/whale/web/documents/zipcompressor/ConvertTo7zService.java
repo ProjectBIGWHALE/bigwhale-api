@@ -44,10 +44,7 @@ public class ConvertTo7zService {
 
             byte[] sevenZBytes = Files.readAllBytes(tempFile.toPath());
             filesConverted.add(sevenZBytes);
-
-
         }
-
         return filesConverted;
     }
 }

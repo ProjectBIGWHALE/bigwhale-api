@@ -7,23 +7,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/")
 public class HomeController {
-	
-	@GetMapping(value="/")
-	public String home() {
-	
-		return "home";
-	}
-	
-	@GetMapping(value="/help")
-	public String help() {
-	
-		return "help";
-	}
-	
-	@GetMapping(value="/supportus")
-	public String supportUs() {
-	
-		return "supportus";
-	}
-	
+
+    @GetMapping(value = "/")
+    public String home() {
+        return "home";
+    }
+
+    @GetMapping(value = "/help")
+    public String help() {
+        return "help";
+    }
+
+    @GetMapping(value = "/supportus")
+    public String supportUs() {
+        return "supportus";
+    }
 }

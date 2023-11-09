@@ -1,27 +1,17 @@
 package com.whale.web.documents.qrcodegenerator.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Component
 public class QRCodeLinkModel {
     private String link;
     private String pixelColor;
-
-    public String getPixelColor() {
-        return pixelColor;
-    }
-
-    public void setPixelColor(String pixelColor) {
-        this.pixelColor = pixelColor;
-    }
-
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-
 }

@@ -6,11 +6,10 @@ import java.io.ByteArrayOutputStream;
 
 import javax.imageio.ImageIO;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.whale.web.configurations.UploadImage;
+import com.whale.web.utils.UploadImage;
 
 /*
  * Class to read the pixels of an image and replace the pixels that are in

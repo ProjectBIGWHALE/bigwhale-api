@@ -1,4 +1,4 @@
-package com.whale.web.configurations;
+package com.whale.web.utils;
 
 import java.io.File;
 import java.io.IOException;

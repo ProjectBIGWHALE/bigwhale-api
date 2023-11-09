@@ -3,7 +3,7 @@ package com.whale.web.documents.certificategenerator.service;
 import java.io.*;
 import java.util.*;
 
-import com.whale.web.configurations.utils.FormatDataUtil;
+import com.whale.web.utils.FormatDataUtil;
 import com.whale.web.documents.certificategenerator.model.Certificate;
 import com.whale.web.documents.certificategenerator.model.enums.CertificateBasicInfosEnum;
 import com.whale.web.documents.certificategenerator.model.enums.PersonBasicInfosEnum;

@@ -1,4 +1,4 @@
-package com.whale.web.configurations.utils;
+package com.whale.web.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

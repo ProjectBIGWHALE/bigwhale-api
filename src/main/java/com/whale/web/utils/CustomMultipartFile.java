@@ -58,6 +58,4 @@ public class CustomMultipartFile implements MultipartFile {
     public void transferTo(File file) throws IOException, IllegalStateException {
         
     }
-    
-	
 }

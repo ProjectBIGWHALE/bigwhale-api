@@ -1,5 +1,15 @@
 package com.whale.web.documents.qrcodegenerator.service;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.whale.web.documents.qrcodegenerator.exception.QRCodeException;
+import com.whale.web.documents.qrcodegenerator.model.QRCodeLinkModel;
+import org.springframework.stereotype.Service;
+
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -7,23 +17,10 @@ import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
-
-import com.whale.web.documents.qrcodegenerator.exception.QRCodeException;
-import com.whale.web.documents.qrcodegenerator.model.QRCodeLinkModel;
-
-import org.springframework.stereotype.Service;
-
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
-
 @Service
 public class QRCodeLinkService {
-	
-	 public byte[] generateQRCode(QRCodeLinkModel qrCodeLinkRecordModel) {
+
+    public byte[] generateQRCode(QRCodeLinkModel qrCodeLinkRecordModel) {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
@@ -76,7 +73,6 @@ public class QRCodeLinkService {
         //Checks if it is a color name representation
         Color colorByName = getColorByName(colorString);
         return colorByName.getRGB();
-
     }
 
 
@@ -93,8 +89,7 @@ public class QRCodeLinkService {
             case "magenta" -> Color.MAGENTA;
             case "dark_gray" -> Color.DARK_GRAY;
             case "light_gray" -> Color.LIGHT_GRAY;
-            default ->  Color.BLACK;
+            default -> Color.BLACK;
         };
     }
-
 }

@@ -1,41 +1,21 @@
 package com.whale.web.design.altercolor.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Component
 public class AlterColorForm {
-	
-	private MultipartFile image;
-	private String colorOfImage;
-	private String colorForAlteration;
-	private Double margin;
-	
-	
-	public MultipartFile getImage() {
-		return image;
-	}
-	public void setImage(MultipartFile image) {
-		this.image = image;
-	}
-	public String getColorOfImage() {
-		return colorOfImage;
-	}
-	public void setColorOfImage(String colorOfImage) {
-		this.colorOfImage = colorOfImage;
-	}
-	public String getColorForAlteration() {
-		return colorForAlteration;
-	}
-	public void setColorForAlteration(String colorForAlteration) {
-		this.colorForAlteration = colorForAlteration;
-	}
 
-	public Double getMargin() {
-		return margin;
-	}
-
-	public void setMargin(Double margin) {
-		this.margin = margin;
-	}
+    private MultipartFile image;
+    private String colorOfImage;
+    private String colorForAlteration;
+    private Double margin;
 }

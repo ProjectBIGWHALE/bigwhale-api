@@ -1,15 +1,17 @@
 package com.whale.web.documents.imageconverter.service;
 
+import com.whale.web.documents.imageconverter.exception.InvalidFileFormatException;
+import com.whale.web.documents.imageconverter.exception.InvalidUploadedFileException;
+import com.whale.web.documents.imageconverter.exception.UnsuccessfulFileConversionException;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import javax.imageio.ImageIO;
-
-import com.whale.web.documents.imageconverter.exception.*;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ImageConverterService {
@@ -35,7 +37,7 @@ public class ImageConverterService {
     }
 
 
-    private void isValidImageFormat(MultipartFile imageFile){
+    private void isValidImageFormat(MultipartFile imageFile) {
         if (imageFile == null || imageFile.isEmpty()) {
             throw new InvalidUploadedFileException("Uploaded image file is null, empty or image format is not supported");
         }
@@ -56,10 +58,9 @@ public class ImageConverterService {
         return null;
     }
 
-    private void isValidOutputFormat(String outputFOrmat){
+    private void isValidOutputFormat(String outputFOrmat) {
         if (!Arrays.asList("bmp", "jpg", "jpeg", "gif", "png", "tiff").contains(outputFOrmat)) {
             throw new InvalidFileFormatException("Unsupported file output format. Please choose a BMP, JPG, JPEG , GIF, PNG, TIFF.");
         }
     }
-	
 }

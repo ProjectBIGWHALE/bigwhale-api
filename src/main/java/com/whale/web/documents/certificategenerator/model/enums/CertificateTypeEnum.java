@@ -1,5 +1,10 @@
 package com.whale.web.documents.certificategenerator.model.enums;
 
+import lombok.Getter;
+import lombok.ToString;
+
+@Getter
+@ToString
 public enum CertificateTypeEnum {
     PARTICIPATION("Participante"), SPEAKER("Palestrante"), COURCE("Curso");
 
@@ -7,9 +12,5 @@ public enum CertificateTypeEnum {
 
     CertificateTypeEnum(String type) {
         this.type = type;
-    }
-
-    public String getType() {
-        return type;
     }
 }

@@ -1,6 +1,6 @@
 package com.whale.web.documents.certificategenerator.service;
 
-import com.whale.web.documents.certificategenerator.dto.CertificateDto;
+import com.whale.web.documents.certificategenerator.dto.CertificateRecordDto;
 import com.whale.web.documents.certificategenerator.model.Certificate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,9 +29,9 @@ public class CreateCertificateService {
 
     private Random random = new Random();
 
-    public byte[] createCertificates(CertificateDto certificateDto, List<String> names) throws Exception {
+    public byte[] createCertificates(CertificateRecordDto certificateRecordDto, List<String> names) throws Exception {
         var certificate = new Certificate();
-        BeanUtils.copyProperties(certificateDto, certificate);
+        BeanUtils.copyProperties(certificateRecordDto, certificate);
         validate(certificate);
         String template = selectPatchCertificateModel(certificate.getCertificateModelId());
         List<String> listCertificate = createCerificateService.cretateListCertificate(certificate, names, template);

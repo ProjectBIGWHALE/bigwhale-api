@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
-public record QRCodeEmailDto(
+public record QRCodeEmailRecordDto(
 
         @Schema(description = "Email", example = "rh_tecnologia@gmail.com")
         @NotBlank(message = "No email was provided")

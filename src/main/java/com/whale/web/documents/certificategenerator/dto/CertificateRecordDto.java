@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-public record CertificateDto(
+public record CertificateRecordDto(
         @Schema(description = "Certificate Type Enum", example = "COURCE")
         @NotNull(message = "No CertificateTypeEnum was provided")
         CertificateTypeEnum certificateTypeEnum,

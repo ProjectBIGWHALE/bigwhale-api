@@ -2,7 +2,7 @@ package com.whale.web.documents.certificategenerator.service;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
-import com.whale.web.documents.certificategenerator.dto.WorksheetDto;
+import com.whale.web.documents.certificategenerator.dto.WorksheetRecordDto;
 import com.whale.web.documents.certificategenerator.model.Worksheet;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class ProcessWorksheetService {
             throw new IOException();
         }
 
-        var worksheetDto = new WorksheetDto(csvFileDto);
+        var worksheetDto = new WorksheetRecordDto(csvFileDto);
         var worksheet = new Worksheet();
         BeanUtils.copyProperties(worksheetDto, worksheet);
 

@@ -1,13 +1,13 @@
 package com.whale.web.documents;
 
-import com.whale.web.documents.certificategenerator.dto.CertificateDto;
+import com.whale.web.documents.certificategenerator.dto.CertificateRecordDto;
 import com.whale.web.documents.certificategenerator.service.CreateCertificateService;
 import com.whale.web.documents.certificategenerator.service.ProcessWorksheetService;
 import com.whale.web.documents.filecompressor.FileCompressorService;
 import com.whale.web.documents.imageconverter.service.ImageConverterService;
-import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailDto;
-import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkDto;
-import com.whale.web.documents.qrcodegenerator.dto.QRCodeWhatsappDto;
+import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailRecordDto;
+import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkRecordDto;
+import com.whale.web.documents.qrcodegenerator.dto.QRCodeWhatsappRecordDto;
 import com.whale.web.documents.qrcodegenerator.model.QRCodeEmailModel;
 import com.whale.web.documents.qrcodegenerator.model.QRCodeLinkModel;
 import com.whale.web.documents.qrcodegenerator.model.QRCodeWhatsappModel;
@@ -191,10 +191,10 @@ public class DocumentsController {
             @ApiResponse(responseCode = "400", description = "Invalid request data", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", description = "Error generating qrcode", content = {@Content(schema = @Schema())})
     })
-    public ResponseEntity qrCodeGeneratorLink(@RequestBody @Valid QRCodeLinkDto qrCodeLinkDto) {
+    public ResponseEntity qrCodeGeneratorLink(@RequestBody @Valid QRCodeLinkRecordDto qrCodeLinkRecordDto) {
         try {
             var qrCodeLinkModel = new QRCodeLinkModel();
-            BeanUtils.copyProperties(qrCodeLinkDto, qrCodeLinkModel);
+            BeanUtils.copyProperties(qrCodeLinkRecordDto, qrCodeLinkModel);
             byte[] bytes = qrCodeLinkService.generateQRCode(qrCodeLinkModel);
 
             logger.info("QRCOde link generated successfully");
@@ -218,11 +218,11 @@ public class DocumentsController {
             @ApiResponse(responseCode = "400", description = "Invalid request data", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", description = "Error generating qrcode", content = {@Content(schema = @Schema())})
     })
-    public ResponseEntity qrCodeGeneratorEmail(@RequestBody @Valid QRCodeEmailDto qrCodeEmailDto) {
+    public ResponseEntity qrCodeGeneratorEmail(@RequestBody @Valid QRCodeEmailRecordDto qrCodeEmailRecordDto) {
 
         try {
             var qrCodeEmailModel = new QRCodeEmailModel();
-            BeanUtils.copyProperties(qrCodeEmailDto, qrCodeEmailModel);
+            BeanUtils.copyProperties(qrCodeEmailRecordDto, qrCodeEmailModel);
             byte[] bytes = qrCodeEmailService.generateEmailLinkQRCode(qrCodeEmailModel);
 
             logger.info("QRCOde email generated successfully");
@@ -246,11 +246,11 @@ public class DocumentsController {
             @ApiResponse(responseCode = "400", description = "Invalid request data", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", description = "Error generating qrcode", content = {@Content(schema = @Schema())})
     })
-    public ResponseEntity qrCodeGeneratorWhatsapp(@RequestBody @Valid QRCodeWhatsappDto qrCodeWhatsappDto) {
+    public ResponseEntity qrCodeGeneratorWhatsapp(@RequestBody @Valid QRCodeWhatsappRecordDto qrCodeWhatsappRecordDto) {
 
         try {
             var qrCodeWhatsappModel = new QRCodeWhatsappModel();
-            BeanUtils.copyProperties(qrCodeWhatsappDto, qrCodeWhatsappModel);
+            BeanUtils.copyProperties(qrCodeWhatsappRecordDto, qrCodeWhatsappModel);
             byte[] bytes = qrCodeWhatsappService.generateWhatsAppLinkQRCode(qrCodeWhatsappModel);
 
             logger.info("QRCOde Whatsapp generated successfully");
@@ -276,11 +276,11 @@ public class DocumentsController {
             @ApiResponse(responseCode = "500", description = "Error generating qrcode", content = {@Content(schema = @Schema())})
     })
     public ResponseEntity certificateGenerator(
-            CertificateDto certificateDto,
+            CertificateRecordDto certificateRecordDto,
             @Parameter(description = "Submit a csv file here") @RequestPart MultipartFile csvFileDto) {
         try {
             List<String> names = processWorksheetService.savingNamesInAList(csvFileDto);
-            byte[] bytes = createCertificateService.createCertificates(certificateDto, names);
+            byte[] bytes = createCertificateService.createCertificates(certificateRecordDto, names);
 
             logger.info("Certificate generated successfully");
             return ResponseEntity.ok()

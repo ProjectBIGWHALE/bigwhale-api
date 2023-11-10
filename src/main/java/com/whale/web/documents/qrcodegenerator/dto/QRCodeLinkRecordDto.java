@@ -5,7 +5,7 @@ import org.hibernate.validator.constraints.URL;
 
 import javax.validation.constraints.NotBlank;
 
-public record QRCodeLinkDto(
+public record QRCodeLinkRecordDto(
 
         @Schema(description = "URL", example = "https://swagger.io/")
         @NotBlank(message = "No URI was provided")

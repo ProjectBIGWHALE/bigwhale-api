@@ -4,7 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 
-public record WorksheetDto(
+public record WorksheetRecordDto(
         @NotBlank(message = "No worksheet was provided")
         MultipartFile csvFile
 ) {

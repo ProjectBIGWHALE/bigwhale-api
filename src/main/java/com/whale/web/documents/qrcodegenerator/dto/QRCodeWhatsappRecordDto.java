@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
 
-public record QRCodeWhatsappDto(
+public record QRCodeWhatsappRecordDto(
 
         @Schema(description = "Phone Number", example = "027999999999")
         @NotBlank(message = "No phone number was provided.")

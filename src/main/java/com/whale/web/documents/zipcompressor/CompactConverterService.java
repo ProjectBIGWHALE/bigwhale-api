@@ -29,7 +29,7 @@ public class CompactConverterService {
         if (files == null || files.isEmpty() || !areAllFilesZip(files)) {
             throw new IllegalArgumentException("The input is not a valid zip file");
         } else {
-            return switch (outputFormat) {
+            return switch (outputFormat.toLowerCase()) {
                 case "zip" -> convertToZip.convertToZip(files);
                 case "tar.gz" -> convertToTarGz.convertToTarGz(files);
                 case "7z" -> converterTo7z.convertTo7z(files);

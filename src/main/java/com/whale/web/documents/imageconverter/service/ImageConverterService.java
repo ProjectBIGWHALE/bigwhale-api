@@ -25,7 +25,7 @@ public class ImageConverterService {
             BufferedImage image = ImageIO.read(fileInputStream);
 
             ByteArrayOutputStream convertedImage = new ByteArrayOutputStream();
-            boolean successfullyConverted = ImageIO.write(image, outputFormat, convertedImage);
+            boolean successfullyConverted = ImageIO.write(image, outputFormat.toLowerCase(), convertedImage);
             convertedImage.flush();
 
             if (!successfullyConverted) {
@@ -43,7 +43,7 @@ public class ImageConverterService {
         }
 
         if (!Arrays.asList("bmp", "jpg", "jpeg", "gif").contains(getFileExtension(imageFile))) {
-            throw new InvalidFileFormatException("Unsupported file format. Please choose a BMP, JPG, JPEG or GIF file.");
+            throw new InvalidFileFormatException("Unsupported file format. Please choose a  bmp, jpg, jpeg, or gif file.");
         }
     }
 
@@ -59,8 +59,8 @@ public class ImageConverterService {
     }
 
     private void isValidOutputFormat(String outputFOrmat) {
-        if (!Arrays.asList("bmp", "jpg", "jpeg", "gif", "png", "tiff").contains(outputFOrmat)) {
-            throw new InvalidFileFormatException("Unsupported file output format. Please choose a BMP, JPG, JPEG , GIF, PNG, TIFF.");
+        if (!Arrays.asList("bmp", "jpg", "jpeg", "gif", "png", "tiff").contains(outputFOrmat.toLowerCase())) {
+            throw new InvalidFileFormatException("Unsupported file output format. Please choose a bmp, jpg, jpeg, gif, png, tiff.");
         }
     }
 }

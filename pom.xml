@@ -89,7 +89,7 @@
     </dependencies>
 
     <build>
-        <finalName>whale</finalName>
+        <finalName>whale-api</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

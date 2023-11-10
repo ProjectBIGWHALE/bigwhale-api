@@ -134,7 +134,7 @@ class DocumentsTest {
     @Test
     void testCompactConverterForOneArchive() throws Exception {
         MockMultipartFile file = createTestZipFile();
-        String outputFormat = ".tar";
+        String outputFormat = "tar";
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/compactconverter")
                         .file(file)
@@ -192,7 +192,7 @@ class DocumentsTest {
         verify(compressorService, times(1)).compressFiles(any());
     }
 
-/*    @Test
+    @Test
     void shouldReturnTheCertificatesStatusCode200() throws Exception {
 
         String csvContent = "col1,col2,col3\nvalue1,value2,value3";
@@ -220,7 +220,7 @@ class DocumentsTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE))
                 .andExpect(MockMvcResultMatchers.header().string("Content-Disposition", Matchers.containsString("attachment")));
-    }*/
+    }
 
     @Test
     void shouldReturnARedirectionStatusCode500() throws Exception {

@@ -36,7 +36,7 @@ public class DesignController {
     public DesignController(AlterColorForm alterColorForm, 
         AlterColorService alterColorService, UploadImage uploadImage, 
         CreateColorsPaletteService createColorsPaletteService) {
-            
+
         this.alterColorService = alterColorService;
         this.uploadImage = uploadImage;
         this.createColorsPaletteService = createColorsPaletteService;
@@ -65,7 +65,7 @@ public class DesignController {
 
     @PostMapping(value = "/colorspalette", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Pallete From a Image", description = "Extract colors pallet from a image", method = "POST")
-    public ResponseEntity<?> colorsPalette(MultipartFile image) throws Exception {
+    public ResponseEntity<?> colorsPalette(@RequestPart("image") MultipartFile image) throws Exception {
 
         MultipartFile upload = uploadImage.uploadImage(image);
 

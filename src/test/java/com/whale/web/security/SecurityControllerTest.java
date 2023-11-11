@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.whale.web.security.cryptograph.model.CryptographyForm;
 import com.whale.web.security.cryptograph.service.EncryptService;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -28,105 +27,66 @@ class SecurityControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private CryptographyForm criptographyFormSecurity = new CryptographyForm();
-
-    @Autowired
     EncryptService encryptService;
 
     @Test
-    void shouldReturnTheHTMLForm() throws Exception {
-
-        URI uri = new URI("/security/cryptograph");
-        mockMvc.perform(MockMvcRequestBuilders.get(uri)).andExpect(
-                MockMvcResultMatchers.status().is(200));
-
-    }
-
-    @Test
     void shouldReturnEncryptedFile() throws Exception {
-        URI uri = new URI("/security/cryptograph");
+        URI uri = new URI("http://localhost:8080/api/v1/security/cryptograph");
 
         MockMultipartFile file = new MockMultipartFile("file", "test.txt",
                 MediaType.TEXT_PLAIN_VALUE, "Test content".getBytes());
 
-        criptographyFormSecurity.setKey("TEST");
-        criptographyFormSecurity.setFile(file);
-        criptographyFormSecurity.setAction(true);
-
         mockMvc.perform(MockMvcRequestBuilders.multipart(uri)
                         .file(file)
-                        .param("key", criptographyFormSecurity.getKey())
-                        .param("action", String.valueOf(criptographyFormSecurity.getAction())))
+                        .param("key", "TEST")
+                        .param("action", String.valueOf(true)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.header().string("Content-Disposition", Matchers.containsString("attachment")))
-                //.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", Matchers.containsString("encryptedFile")))
                 .andExpect(result -> {
                     byte[] encryptedContent = result.getResponse().getContentAsByteArray();
-                    byte[] expectedEncryptedContent = encryptService.encryptFile(criptographyFormSecurity);
+                    byte[] expectedEncryptedContent = encryptService.encryptFile(file, "TEST");
                     Assertions.assertArrayEquals(expectedEncryptedContent, encryptedContent);
                 });
     }
 
     @Test
     void shouldReturnDecryptedFile() throws Exception {
-        URI uri = new URI("/security/cryptograph");
+        URI uri = new URI("http://localhost:8080/api/v1/security/cryptograph");
 
-        // Criação do arquivo simulado
         MockMultipartFile file = new MockMultipartFile("file", "test.txt",
                 MediaType.TEXT_PLAIN_VALUE, "Test content".getBytes());
 
-        criptographyFormSecurity.setKey("TEST");
-        criptographyFormSecurity.setFile(file);
-        criptographyFormSecurity.setAction(true);
-
-        byte[] encryptedContent = encryptService.encryptFile(criptographyFormSecurity);
+        byte[] encryptedContent = encryptService.encryptFile(file, "TEST");
         MockMultipartFile encryptedFile = new MockMultipartFile("file", "test.txt", MediaType.TEXT_PLAIN_VALUE, encryptedContent);
-
-        criptographyFormSecurity.setFile(encryptedFile);
-        criptographyFormSecurity.setAction(false);
 
         mockMvc.perform(MockMvcRequestBuilders.multipart(uri)
                         .file(encryptedFile)
-                        .param("key", criptographyFormSecurity.getKey())
-                        .param("action", String.valueOf(criptographyFormSecurity.getAction())))
+                        .param("key", "TEST")
+                        .param("action", String.valueOf(false)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.header().string("Content-Disposition", Matchers.containsString("attachment")))
-                //.andExpect(MockMvcResultMatchers.header().string("Content-Disposition", Matchers.containsString("decryptedFile")))
                 .andExpect(result -> {
                     byte[] decryptedContent = result.getResponse().getContentAsByteArray();
-                    byte[] expectedDecryptedContent = encryptService.decryptFile(criptographyFormSecurity);
+                    byte[] expectedDecryptedContent = encryptService.decryptFile(encryptedFile, "TEST");
                     Assertions.assertArrayEquals(expectedDecryptedContent, decryptedContent);
                 });
-
     }
 
     @Test
-    void shouldReturnRedirectStatusPage302() throws Exception {
-        URI uri = new URI("/security/cryptograph");
+    void shouldReturnStatus500ForWrongKey() throws Exception {
+        URI uri = new URI("http://localhost:8080/api/v1/security/cryptograph");
 
-        // Criação do arquivo simulado
         MockMultipartFile file = new MockMultipartFile("file", "test.txt",
                 MediaType.TEXT_PLAIN_VALUE, "Test content".getBytes());
 
-        criptographyFormSecurity.setKey("CORRECT KEY");
-        criptographyFormSecurity.setFile(file);
-        criptographyFormSecurity.setAction(true);
-
-        byte[] encryptedContent = encryptService.encryptFile(criptographyFormSecurity);
+        byte[] encryptedContent = encryptService.encryptFile(file, "TEST");
         MockMultipartFile encryptedFile = new MockMultipartFile("file", "test.txt", MediaType.TEXT_PLAIN_VALUE, encryptedContent);
-
-        criptographyFormSecurity.setFile(encryptedFile);
-        criptographyFormSecurity.setAction(false);
-        criptographyFormSecurity.setKey("WRONG KEY");
 
         mockMvc.perform(MockMvcRequestBuilders.multipart(uri)
                         .file(encryptedFile)
-                        .param("key", criptographyFormSecurity.getKey())
-                        .param("action", String.valueOf(criptographyFormSecurity.getAction())))
-                .andExpect(MockMvcResultMatchers.status().is(302));
+                        .param("key", "WRONG_KEY")
+                        .param("action", String.valueOf(false)))
+                .andExpect(MockMvcResultMatchers.status().is(500));
 
     }
-
-
-
 }

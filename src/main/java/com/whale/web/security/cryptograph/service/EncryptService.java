@@ -4,8 +4,6 @@ import com.whale.web.documents.imageconverter.exception.InvalidUploadedFileExcep
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.whale.web.security.cryptograph.model.CryptographyForm;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
@@ -16,9 +14,9 @@ import javax.crypto.spec.SecretKeySpec;
 @Service
 public class EncryptService {
 
-	public byte[] encryptFile(CryptographyForm form) throws Exception {
-		MultipartFile formFile = form.getFile();
-		String encryptionKey = form.getKey();
+	public byte[] encryptFile(MultipartFile file, String key) throws Exception {
+		MultipartFile formFile = file;
+		String encryptionKey = key;
 
 		try {
 
@@ -48,9 +46,9 @@ public class EncryptService {
 		}
 	}
 
-	public byte[] decryptFile(CryptographyForm form) throws Exception {
-		MultipartFile fileOfForm = form.getFile();
-		String encryptionKey = form.getKey();
+	public byte[] decryptFile(MultipartFile file, String key) throws Exception {
+		MultipartFile fileOfForm = file;
+		String encryptionKey = key;
 
 		try {
 

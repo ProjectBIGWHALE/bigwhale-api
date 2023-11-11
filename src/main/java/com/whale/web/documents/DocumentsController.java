@@ -44,21 +44,13 @@ import java.util.zip.ZipOutputStream;
 public class DocumentsController {
 
     private final CompactConverterService compactConverterService;
-
     private final FileCompressorService fileCompressorService;
-
     private final ImageConverterService imageConverterService;
-
     private final QRCodeLinkService qrCodeLinkService;
-
     private final QRCodeWhatsappService qrCodeWhatsappService;
-
     private final QRCodeEmailService qrCodeEmailService;
-
     private final ProcessWorksheetService processWorksheetService;
-
     private final CreateCertificateService createCertificateService;
-
 
     public DocumentsController(CompactConverterService compactConverterService,
                                FileCompressorService fileCompressorService, ImageConverterService imageConverterService,
@@ -86,9 +78,9 @@ public class DocumentsController {
             @ApiResponse(responseCode = "400", description = "Invalid request data", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", description = "Error compressing file", content = {@Content(schema = @Schema())})
     })
-    public ResponseEntity compactConverter(
-            @Parameter(description = "Choosse a zip file") @RequestPart("files") List<MultipartFile> files,
-            @Parameter(description = "Format for file compression") @RequestParam("outputFormat") String outputFormat) {
+    public ResponseEntity<?> compactConverter(
+            @Parameter(description = "Submit one or more zips file here") @RequestPart("files") List<MultipartFile> files,
+            @Parameter(description = "Enter the compression format. Choose a tar, zip, 7z or tar.gz") @RequestParam("outputFormat") String outputFormat) {
         try {
             List<byte[]> filesConverted = compactConverterService.converterFile(files, outputFormat);
             String convertedFileName = StringUtils.stripFilenameExtension(Objects.requireNonNull(files.get(0).getOriginalFilename()))
@@ -133,7 +125,8 @@ public class DocumentsController {
             @ApiResponse(responseCode = "400", description = "Invalid request data", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", description = "Error compressing file", content = {@Content(schema = @Schema())})
     })
-    public ResponseEntity fileCompressor(@RequestPart List<MultipartFile> file) {
+    public ResponseEntity<?> fileCompressor(
+        @Parameter(description = "Submit one or more files here.") @RequestPart List<MultipartFile> file) {
 
         try {
             byte[] bytes = fileCompressorService.compressFiles(file);
@@ -159,9 +152,9 @@ public class DocumentsController {
             @ApiResponse(responseCode = "400", description = "Invalid request data", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", description = "Error converting image", content = {@Content(schema = @Schema())})
     })
-    public ResponseEntity imageConverter(
-            @Parameter(description = "Enter the compression format") @RequestParam("outputFormat") String outputFormat,
-            @Parameter(description = "Submit an image here") @RequestPart MultipartFile image
+    public ResponseEntity<?> imageConverter(
+            @Parameter(description = "Enter the image format: Please choose a BMP, JPG, JPEG , GIF, PNG or TIFF") @RequestParam("outputFormat") String outputFormat,
+            @Parameter(description = "Submit an image here. Accepted formats: BMP, JPG, JPEG or GIF file.") @RequestPart MultipartFile image
     ) {
         try {
             byte[] bytes = imageConverterService.convertImageFormat(outputFormat, image);
@@ -191,7 +184,7 @@ public class DocumentsController {
             @ApiResponse(responseCode = "400", description = "Invalid request data", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", description = "Error generating qrcode", content = {@Content(schema = @Schema())})
     })
-    public ResponseEntity qrCodeGeneratorLink(@RequestBody @Valid QRCodeLinkRecordDto qrCodeLinkRecordDto) {
+    public ResponseEntity<?> qrCodeGeneratorLink(@RequestBody @Valid QRCodeLinkRecordDto qrCodeLinkRecordDto) {
         try {
             var qrCodeLinkModel = new QRCodeLinkModel();
             BeanUtils.copyProperties(qrCodeLinkRecordDto, qrCodeLinkModel);
@@ -218,7 +211,7 @@ public class DocumentsController {
             @ApiResponse(responseCode = "400", description = "Invalid request data", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", description = "Error generating qrcode", content = {@Content(schema = @Schema())})
     })
-    public ResponseEntity qrCodeGeneratorEmail(@RequestBody @Valid QRCodeEmailRecordDto qrCodeEmailRecordDto) {
+    public ResponseEntity<?> qrCodeGeneratorEmail(@RequestBody @Valid QRCodeEmailRecordDto qrCodeEmailRecordDto) {
 
         try {
             var qrCodeEmailModel = new QRCodeEmailModel();
@@ -246,7 +239,7 @@ public class DocumentsController {
             @ApiResponse(responseCode = "400", description = "Invalid request data", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", description = "Error generating qrcode", content = {@Content(schema = @Schema())})
     })
-    public ResponseEntity qrCodeGeneratorWhatsapp(@RequestBody @Valid QRCodeWhatsappRecordDto qrCodeWhatsappRecordDto) {
+    public ResponseEntity<?> qrCodeGeneratorWhatsapp(@RequestBody @Valid QRCodeWhatsappRecordDto qrCodeWhatsappRecordDto) {
 
         try {
             var qrCodeWhatsappModel = new QRCodeWhatsappModel();
@@ -275,7 +268,7 @@ public class DocumentsController {
             @ApiResponse(responseCode = "400", description = "Invalid request data", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", description = "Error generating qrcode", content = {@Content(schema = @Schema())})
     })
-    public ResponseEntity certificateGenerator(
+    public ResponseEntity<?> certificateGenerator(
             CertificateRecordDto certificateRecordDto,
             @Parameter(description = "Submit a csv file here") @RequestPart MultipartFile csvFileDto) {
         try {

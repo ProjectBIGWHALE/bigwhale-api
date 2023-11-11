@@ -2,104 +2,83 @@ package com.whale.web.design;
 
 import com.whale.web.design.altercolor.model.AlterColorForm;
 import com.whale.web.design.altercolor.service.AlterColorService;
-import com.whale.web.design.colorspalette.model.PaletteForm;
-import com.whale.web.design.colorspalette.model.ViewForm;
 import com.whale.web.design.colorspalette.service.CreateColorsPaletteService;
 import com.whale.web.utils.UploadImage;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Base64;
 import java.util.List;
 
-
-@Controller
-@RequestMapping("/design")
+@RestController
+@RequestMapping("api/v1/design")
+@Tag(name = "API for Design")
 public class DesignController {
 
-
-    private final AlterColorForm alterColorForm;
-
     private final AlterColorService alterColorService;
-
     private final UploadImage uploadImage;
-
-    private final PaletteForm paletteForm;
-
     private final CreateColorsPaletteService createColorsPaletteService;
 
-    public DesignController(AlterColorForm alterColorForm, AlterColorService alterColorService, UploadImage uploadImage,
-                            PaletteForm paletteForm, CreateColorsPaletteService createColorsPaletteService) {
-        this.alterColorForm = alterColorForm;
+    public DesignController(AlterColorForm alterColorForm, 
+        AlterColorService alterColorService, UploadImage uploadImage, 
+        CreateColorsPaletteService createColorsPaletteService) {
+
         this.alterColorService = alterColorService;
         this.uploadImage = uploadImage;
-        this.paletteForm = paletteForm;
         this.createColorsPaletteService = createColorsPaletteService;
     }
 
-
-    @GetMapping(value = "/altercolor")
-    public String alterColor(Model model) {
-
-        model.addAttribute("form", alterColorForm);
-        return "altercolor";
-    }
-
-
-    @PostMapping("/altercolor")
-    public String alterColor(AlterColorForm form, HttpServletResponse response) throws IOException {
+    @PostMapping(value = "/altercolor", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Change a Color of a image", description = "Change pixels of a specific color", method = "POST")
+    public ResponseEntity<?> alterColor(@RequestPart("image") MultipartFile image, 
+        @Parameter(description = "Color in Image for alteration") String colorOfImage, 
+        @Parameter(description = "New Color (or Trasnparency)") String colorForAlteration,
+        Double margin) throws IOException {
 
         try {
-            byte[] processedImage = alterColorService.alterColor(form.getImage(), form.getColorOfImage(), form.getColorForAlteration(), form.getMargin());
+            byte[] processedImage = alterColorService.alterColor(image, colorOfImage, colorForAlteration, margin);
 
-            response.setContentType("image/png");
-            response.setHeader("Content-Disposition", "attachment; filename=ModifiedImage.png");
-            response.setHeader("Cache-Control", "no-cache");
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ModifiedImage.png")
+                    .header(CacheControl.noCache().toString())
+                    .body(processedImage);
 
-            try (OutputStream os = response.getOutputStream()) {
-                os.write(processedImage);
-                os.flush();
-            }
         } catch (Exception e) {
-            response.sendRedirect("/design/altercolor");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-
-        return null;
     }
 
-    @GetMapping(value = "/colorspalette")
-    public String colorsPalette(Model model) {
+    @PostMapping(value = "/colorspalette", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Pallete From a Image", description = "Extract colors pallet from a image", method = "POST")
+    public ResponseEntity<?> colorsPalette(@RequestPart("image") MultipartFile image) throws Exception {
 
-        model.addAttribute("form", paletteForm);
-        return "colorspalette";
-    }
-
-    @PostMapping("/colorspalette")
-    public String colorsPalette(PaletteForm paletteForm, Model model) throws Exception {
-
-        ViewForm viewForm = new ViewForm();
-
-        MultipartFile upload = uploadImage.uploadImage(paletteForm.getImage());
+        MultipartFile upload = uploadImage.uploadImage(image);
 
         try {
             List<Color> listOfColors = createColorsPaletteService.createColorPalette(upload);
 
-            viewForm.setListOfColors(listOfColors);
-            viewForm.setImageBase64(Base64.getEncoder().encodeToString(paletteForm.getImage().getBytes()));
-
-            model.addAttribute("form", viewForm);
-            return "paletteview";
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(CacheControl.noCache().toString())
+                    .body(listOfColors);
 
         } catch (Exception e) {
-            return "redirect:/design/colorspalette";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }

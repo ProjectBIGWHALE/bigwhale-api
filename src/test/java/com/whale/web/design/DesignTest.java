@@ -1,7 +1,5 @@
 package com.whale.web.design;
 
-import com.whale.web.design.altercolor.model.AlterColorForm;
-import com.whale.web.design.colorspalette.model.PaletteForm;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -19,7 +17,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.net.URI;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @AutoConfigureMockMvc
@@ -28,20 +25,6 @@ class DesignTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Test
-    void shouldReturnTheHTMLFormForChangeColorsApp() throws Exception {
-        URI uri = new URI("/design/altercolor");
-        mockMvc.perform(MockMvcRequestBuilders.get(uri)).andExpect(
-                MockMvcResultMatchers.status().is(200));
-    }
-
-    @Test
-    void shouldReturnTheHTMLFormForPaletteColorsApp() throws Exception {
-        URI uri = new URI("/design/colorspalette");
-        mockMvc.perform(MockMvcRequestBuilders.get(uri)).andExpect(
-                MockMvcResultMatchers.status().is(200));
-    }
 
     @Test
     void shouldReturnAValidPNGProcessedImage() throws Exception {
@@ -63,25 +46,18 @@ class DesignTest {
                 imageBytes
         );
 
-        AlterColorForm formColors = new AlterColorForm();
-        formColors.setColorForAlteration("#FF0000");
-        formColors.setColorOfImage("#FFFFFF");
-        formColors.setMargin(4.0);
-        formColors.setImage(file);
-
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/design/altercolor")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("http://localhost:8080/api/v1/design/altercolor")
                         .file(file)
-                        .param("colorForAlteration", formColors.getColorForAlteration())
-                        .param("colorOfImage", formColors.getColorOfImage())
-                        .param("margin", String.valueOf(formColors.getMargin())))
+                        .param("colorForAlteration", "#FFFFFF")
+                        .param("colorOfImage", "#000000")
+                        .param("margin", "4.0"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.header().string("Content-Disposition", Matchers.containsString("attachment; filename=ModifiedImage.png")))
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.IMAGE_PNG));
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_OCTET_STREAM));
     }
 
-
     @Test
-    void shouldReturnARedirectionStatusCode302() throws Exception {
+    void shouldReturnAExceptionStatusCode500() throws Exception {
 
         byte[] imageBytes = null;
 
@@ -92,26 +68,16 @@ class DesignTest {
                 imageBytes
         );
 
-        AlterColorForm formColors = new AlterColorForm();
-        formColors.setColorForAlteration("#000000");
-        formColors.setColorOfImage("#FFFFFF");
-        formColors.setMargin(4.0);
-        formColors.setImage(null);
-
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/design/altercolor")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("http://localhost:8080/api/v1/design/altercolor")
                         .file(file)
-                        .param("colorForAlteration", formColors.getColorForAlteration())
-                        .param("colorOfImage", formColors.getColorOfImage())
-                        .param("margin", String.valueOf(formColors.getMargin())))
-                .andExpect(MockMvcResultMatchers.status().is(302));
-
+                        .param("colorForAlteration", "#FF0000")
+                        .param("colorOfImage", "")
+                        .param("margin", "4.0"))
+                .andExpect(MockMvcResultMatchers.status().is(500));
     }
 
-
     @Test
-    void shouldReturnAPaletteColorsPageView() throws Exception {
-
-        PaletteForm formPalette = new PaletteForm();
+    void shouldReturnAPaletteColorsList() throws Exception {
 
         BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = image.createGraphics();
@@ -130,11 +96,8 @@ class DesignTest {
                 imageBytes
         );
 
-        formPalette.setImage(file);
-
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/design/colorspalette")
-                        .file(file)
-                        .flashAttr("form", formPalette))
-                .andExpect(MockMvcResultMatchers.status().is(200));
+        mockMvc.perform(MockMvcRequestBuilders.multipart("http://localhost:8080/api/v1/design/colorspalette")
+                        .file(file))
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }

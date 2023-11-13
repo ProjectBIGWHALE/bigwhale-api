@@ -3,8 +3,8 @@ package com.whale.web.documents.certificategenerator.dto;
 import com.whale.web.documents.certificategenerator.model.enums.CertificateTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record CertificateRecordDto(
         @Schema(description = "Certificate Type Enum", example = "COURCE")

@@ -1,4 +1,4 @@
-package com.whale.web.documents.zipcompressor;
+package com.whale.web.documents.compactconverter;
 
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZOutputFile;

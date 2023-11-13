@@ -3,7 +3,7 @@ package com.whale.web.documents;
 import com.whale.web.documents.certificategenerator.dto.CertificateRecordDto;
 import com.whale.web.documents.certificategenerator.service.CreateCertificateService;
 import com.whale.web.documents.certificategenerator.service.ProcessWorksheetService;
-import com.whale.web.documents.filecompressor.FileCompressorService;
+import com.whale.web.documents.zipfilegenerator.ZipFileCompressorService;
 import com.whale.web.documents.imageconverter.service.ImageConverterService;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailRecordDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkRecordDto;
@@ -14,7 +14,7 @@ import com.whale.web.documents.qrcodegenerator.model.QRCodeWhatsappModel;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeEmailService;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeLinkService;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeWhatsappService;
-import com.whale.web.documents.zipcompressor.CompactConverterService;
+import com.whale.web.documents.compactconverter.CompactConverterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -44,7 +44,7 @@ import java.util.zip.ZipOutputStream;
 public class DocumentsController {
 
     private final CompactConverterService compactConverterService;
-    private final FileCompressorService fileCompressorService;
+    private final ZipFileCompressorService zipFileCompressorService;
     private final ImageConverterService imageConverterService;
     private final QRCodeLinkService qrCodeLinkService;
     private final QRCodeWhatsappService qrCodeWhatsappService;
@@ -53,12 +53,12 @@ public class DocumentsController {
     private final CreateCertificateService createCertificateService;
 
     public DocumentsController(CompactConverterService compactConverterService,
-                               FileCompressorService fileCompressorService, ImageConverterService imageConverterService,
+                               ZipFileCompressorService zipFileCompressorService, ImageConverterService imageConverterService,
                                QRCodeLinkService qrCodeLinkService, QRCodeWhatsappService qrCodeWhatsappService,
                                QRCodeEmailService qrCodeEmailService, ProcessWorksheetService processWorksheetService,
                                CreateCertificateService createCertificateService) {
         this.compactConverterService = compactConverterService;
-        this.fileCompressorService = fileCompressorService;
+        this.zipFileCompressorService = zipFileCompressorService;
         this.imageConverterService = imageConverterService;
         this.qrCodeLinkService = qrCodeLinkService;
         this.qrCodeWhatsappService = qrCodeWhatsappService;
@@ -129,7 +129,7 @@ public class DocumentsController {
         @Parameter(description = "Submit one or more files here.") @RequestPart List<MultipartFile> file) {
 
         try {
-            byte[] bytes = fileCompressorService.compressFiles(file);
+            byte[] bytes = zipFileCompressorService.compressFiles(file);
 
             logger.info("File compressed successfully");
             return ResponseEntity.ok()

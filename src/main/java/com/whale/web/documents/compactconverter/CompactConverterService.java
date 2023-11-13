@@ -1,4 +1,4 @@
-package com.whale.web.documents.zipcompressor;
+package com.whale.web.documents.compactconverter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

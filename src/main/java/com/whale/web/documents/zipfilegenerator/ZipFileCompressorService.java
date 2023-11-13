@@ -1,4 +1,4 @@
-package com.whale.web.documents.filecompressor;
+package com.whale.web.documents.zipfilegenerator;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,7 +13,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 @Service
-public class FileCompressorService {
+public class ZipFileCompressorService {
 
     public byte[] compressFiles(List<MultipartFile> multipartFiles) throws IOException {
         if (multipartFiles == null || multipartFiles.isEmpty()) {

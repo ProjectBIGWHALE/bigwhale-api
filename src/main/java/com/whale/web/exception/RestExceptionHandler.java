@@ -28,4 +28,3 @@ public class RestExceptionHandler {
         return ResponseEntity.badRequest().body(errorResponselist);
     }
 }
-r

@@ -76,7 +76,7 @@ public class DocumentsController {
     @Operation(summary = "Compact Converter", description = "Convert ZIP to other compression formats", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Compression performed successfully", content = {@Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)}),
-            @ApiResponse(responseCode = "400", description = "Invalid request data", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "400", description = "Error in validating form fields",  content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error compressing file", content = {@Content(schema = @Schema())})
     })
     public ResponseEntity<?> compactConverter(
@@ -123,8 +123,8 @@ public class DocumentsController {
     @Operation(summary = "File Compressor", description = "Compresses one or more files.", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Compression performed successfully", content = {@Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)}),
-            @ApiResponse(responseCode = "400", description = "Invalid request data", content = {@Content(schema = @Schema())}),
-            @ApiResponse(responseCode = "500", description = "Error compressing file", content = {@Content(schema = @Schema())})
+            @ApiResponse(responseCode = "400", description = "Error in validating form fields",  content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
+            @ApiResponse(responseCode = "500", description = "Error compressing file",          content = {@Content(mediaType = MediaType.TEXT_PLAIN_VALUE)})
     })
     public ResponseEntity<?> fileCompressor(
         @Parameter(description = "Submit one or more files here.") @RequestPart List<MultipartFile> file) {
@@ -150,8 +150,8 @@ public class DocumentsController {
     @Operation(summary = "Image Converter", description = "Convert an image to another format", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success", content = {@Content(mediaType = "application/octet-stream")}),
-            @ApiResponse(responseCode = "400", description = "Invalid request data", content = {@Content(schema = @Schema())}),
-            @ApiResponse(responseCode = "500", description = "Error converting image", content = {@Content(schema = @Schema())})
+            @ApiResponse(responseCode = "400", description = "Error in validating form fields",  content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
+            @ApiResponse(responseCode = "500", description = "Error converting image",          content = {@Content(mediaType = MediaType.TEXT_PLAIN_VALUE)})
     })
     public ResponseEntity<?> imageConverter(
             @Parameter(description = "Enter the image format: Please choose a BMP, JPG, JPEG , GIF, PNG or TIFF") @RequestParam("outputFormat") String outputFormat,
@@ -182,8 +182,8 @@ public class DocumentsController {
     @Operation(summary = "QRCOde Generator for link", description = "Generates QRCode for Link in the chosen color", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Qrcode generated successfully", content = {@Content(mediaType = "image/png")}),
-            @ApiResponse(responseCode = "400", description = "Invalid request data", content = {@Content(schema = @Schema())}),
-            @ApiResponse(responseCode = "500", description = "Error generating qrcode", content = {@Content(schema = @Schema())})
+            @ApiResponse(responseCode = "400", description = "Error in validating form fields",  content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
+            @ApiResponse(responseCode = "500", description = "Error generating qrcode",          content = {@Content(mediaType = MediaType.TEXT_PLAIN_VALUE)})
     })
     public ResponseEntity<?> qrCodeGeneratorLink(@RequestBody @Valid QRCodeLinkRecordDto qrCodeLinkRecordDto) {
         try {
@@ -209,8 +209,8 @@ public class DocumentsController {
     @Operation(summary = "QRCOde Generator for email", description = "Generates QRCode for Email in the chosen color", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Qrcode generated successfully", content = {@Content(mediaType = "image/png")}),
-            @ApiResponse(responseCode = "400", description = "Invalid request data", content = {@Content(schema = @Schema())}),
-            @ApiResponse(responseCode = "500", description = "Error generating qrcode", content = {@Content(schema = @Schema())})
+            @ApiResponse(responseCode = "400", description = "Error in validating form fields",  content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
+            @ApiResponse(responseCode = "500", description = "Error generating qrcode",          content = {@Content(mediaType = MediaType.TEXT_PLAIN_VALUE)})
     })
     public ResponseEntity<?> qrCodeGeneratorEmail(@RequestBody @Valid QRCodeEmailRecordDto qrCodeEmailRecordDto) {
 
@@ -237,8 +237,8 @@ public class DocumentsController {
     @Operation(summary = "QRCOde Generator for whatsapp", description = "Generates QRCode for WhatsApp in the chosen color", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Qrcode generated successfully", content = {@Content(mediaType = "image/png")}),
-            @ApiResponse(responseCode = "400", description = "Invalid request data", content = {@Content(schema = @Schema())}),
-            @ApiResponse(responseCode = "500", description = "Error generating qrcode", content = {@Content(schema = @Schema())})
+            @ApiResponse(responseCode = "400", description = "Error in validating form fields",  content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
+            @ApiResponse(responseCode = "500", description = "Error generating qrcode",          content = {@Content(mediaType = MediaType.TEXT_PLAIN_VALUE)})
     })
     public ResponseEntity<?> qrCodeGeneratorWhatsapp(@RequestBody @Valid QRCodeWhatsappRecordDto qrCodeWhatsappRecordDto) {
 

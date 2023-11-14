@@ -21,9 +21,9 @@ public class RestExceptionHandler {
         List<FieldError> fieldErrorsList = exception.getBindingResult().getFieldErrors();
 
         List<ErrorResponse> errorResponselist = new ArrayList<>();
-        fieldErrorsList.forEach(error -> {
-            errorResponselist.add(new ErrorResponse(error.getField(), error.getDefaultMessage()));
-        });
+        fieldErrorsList.forEach(error -> 
+            errorResponselist.add(new ErrorResponse(error.getField(), error.getDefaultMessage()))
+        );
 
         return ResponseEntity.badRequest().body(errorResponselist);
     }

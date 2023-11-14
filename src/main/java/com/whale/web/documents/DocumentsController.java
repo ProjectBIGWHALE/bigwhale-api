@@ -3,6 +3,7 @@ package com.whale.web.documents;
 import com.whale.web.documents.certificategenerator.dto.CertificateRecordDto;
 import com.whale.web.documents.certificategenerator.service.CreateCertificateService;
 import com.whale.web.documents.certificategenerator.service.ProcessWorksheetService;
+import com.whale.web.documents.compressedfileconverter.CompactConverterService;
 import com.whale.web.documents.zipfilegenerator.ZipFileCompressorService;
 import com.whale.web.documents.imageconverter.service.ImageConverterService;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailRecordDto;
@@ -14,7 +15,7 @@ import com.whale.web.documents.qrcodegenerator.model.QRCodeWhatsappModel;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeEmailService;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeLinkService;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeWhatsappService;
-import com.whale.web.documents.compactconverter.CompactConverterService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

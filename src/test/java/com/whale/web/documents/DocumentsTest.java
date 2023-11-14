@@ -3,12 +3,13 @@ package com.whale.web.documents;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whale.web.documents.certificategenerator.dto.CertificateRecordDto;
 import com.whale.web.documents.certificategenerator.model.enums.CertificateTypeEnum;
+import com.whale.web.documents.compressedfileconverter.CompactConverterService;
 import com.whale.web.documents.zipfilegenerator.ZipFileCompressorService;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailRecordDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkRecordDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeWhatsappRecordDto;
 import com.whale.web.documents.textextract.TextExtractService;
-import com.whale.web.documents.compactconverter.CompactConverterService;
+
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.hamcrest.Matchers;

@@ -79,7 +79,7 @@ public class DocumentsController {
             @ApiResponse(responseCode = "400", description = "Error in validating form fields",  content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error compressing file", content = {@Content(schema = @Schema())})
     })
-    public ResponseEntity<?> compactConverter(
+    public ResponseEntity<Object> compactConverter(
             @Parameter(description = "Submit one or more zips file here") @RequestPart("files") List<MultipartFile> files,
             @Parameter(description = "Enter the compression format. Choose a tar, zip, 7z or tar.gz") @RequestParam("outputFormat") String outputFormat) {
         try {
@@ -126,7 +126,7 @@ public class DocumentsController {
             @ApiResponse(responseCode = "400", description = "Error in validating form fields",  content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error compressing file",          content = {@Content(mediaType = MediaType.TEXT_PLAIN_VALUE)})
     })
-    public ResponseEntity<?> fileCompressor(
+    public ResponseEntity<Object> fileCompressor(
         @Parameter(description = "Submit one or more files here.") @RequestPart List<MultipartFile> file) {
 
         try {
@@ -153,7 +153,7 @@ public class DocumentsController {
             @ApiResponse(responseCode = "400", description = "Error in validating form fields",  content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error converting image",          content = {@Content(mediaType = MediaType.TEXT_PLAIN_VALUE)})
     })
-    public ResponseEntity<?> imageConverter(
+    public ResponseEntity<Object> imageConverter(
             @Parameter(description = "Enter the image format: Please choose a BMP, JPG, JPEG , GIF, PNG or TIFF") @RequestParam("outputFormat") String outputFormat,
             @Parameter(description = "Submit an image here. Accepted formats: BMP, JPG, JPEG or GIF file.") @RequestPart MultipartFile image
     ) {
@@ -185,7 +185,7 @@ public class DocumentsController {
             @ApiResponse(responseCode = "400", description = "Error in validating form fields",  content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error generating qrcode",          content = {@Content(mediaType = MediaType.TEXT_PLAIN_VALUE)})
     })
-    public ResponseEntity<?> qrCodeGeneratorLink(@RequestBody @Valid QRCodeLinkRecordDto qrCodeLinkRecordDto) {
+    public ResponseEntity<Object> qrCodeGeneratorLink(@RequestBody @Valid QRCodeLinkRecordDto qrCodeLinkRecordDto) {
         try {
             var qrCodeLinkModel = new QRCodeLinkModel();
             BeanUtils.copyProperties(qrCodeLinkRecordDto, qrCodeLinkModel);
@@ -212,7 +212,7 @@ public class DocumentsController {
             @ApiResponse(responseCode = "400", description = "Error in validating form fields",  content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error generating qrcode",          content = {@Content(mediaType = MediaType.TEXT_PLAIN_VALUE)})
     })
-    public ResponseEntity<?> qrCodeGeneratorEmail(@RequestBody @Valid QRCodeEmailRecordDto qrCodeEmailRecordDto) {
+    public ResponseEntity<Object> qrCodeGeneratorEmail(@RequestBody @Valid QRCodeEmailRecordDto qrCodeEmailRecordDto) {
 
         try {
             var qrCodeEmailModel = new QRCodeEmailModel();
@@ -240,7 +240,7 @@ public class DocumentsController {
             @ApiResponse(responseCode = "400", description = "Error in validating form fields",  content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error generating qrcode",          content = {@Content(mediaType = MediaType.TEXT_PLAIN_VALUE)})
     })
-    public ResponseEntity<?> qrCodeGeneratorWhatsapp(@RequestBody @Valid QRCodeWhatsappRecordDto qrCodeWhatsappRecordDto) {
+    public ResponseEntity<Object> qrCodeGeneratorWhatsapp(@RequestBody @Valid QRCodeWhatsappRecordDto qrCodeWhatsappRecordDto) {
 
         try {
             var qrCodeWhatsappModel = new QRCodeWhatsappModel();
@@ -269,7 +269,7 @@ public class DocumentsController {
             @ApiResponse(responseCode = "400", description = "Invalid request data", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", description = "Error generating qrcode", content = {@Content(schema = @Schema())})
     })
-    public ResponseEntity<?> certificateGenerator(
+    public ResponseEntity<Object> certificateGenerator(
             CertificateRecordDto certificateRecordDto,
             @Parameter(description = "Submit a csv file here") @RequestPart MultipartFile csvFileDto) {
         try {

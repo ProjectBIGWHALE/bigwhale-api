@@ -1,6 +1,9 @@
 package com.whale.web.exception;
 
 
+import lombok.Getter;
+
+@Getter
 public class ErrorResponse {
 
     private String field;
@@ -13,14 +16,5 @@ public class ErrorResponse {
         this.message = message;
     }
 
-    public String getfield() {
-        return field;
-    }
-    
-    public String getMessage() {
-        return message;
-    }
 
-
-    
 }

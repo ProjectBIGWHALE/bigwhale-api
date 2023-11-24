@@ -81,26 +81,21 @@ public class DocumentsController {
     })
     public ResponseEntity<Object> compactConverter(
             @Parameter(description = "Submit one or more zips file here") @RequestPart("files") List<MultipartFile> files,
-            @Parameter(description = "Enter the compression format. Choose a tar, zip, 7z or tar.gz") @RequestParam("outputFormat") String outputFormat) {
-        try {
-            List<byte[]> filesConverted = compactConverterService.converterFile(files, outputFormat);
-            String convertedFileName = StringUtils.stripFilenameExtension(Objects.requireNonNull(files.get(0).getOriginalFilename()))
-                    + outputFormat.toLowerCase();
+            @Parameter(description = "Enter the compression format. Choose a tar, zip, 7z or tar.gz") @RequestParam("outputFormat") String outputFormat) throws IOException {
+        List<byte[]> filesConverted = compactConverterService.converterFile(files, outputFormat);
+        String convertedFileName = StringUtils.stripFilenameExtension(Objects.requireNonNull(files.get(0).getOriginalFilename()))
+                + outputFormat.toLowerCase();
 
-            byte[] responseBytes;
-            if (filesConverted.size() == 1) responseBytes = filesConverted.get(0);
-            else responseBytes = createZipArchive(filesConverted);
+        byte[] responseBytes;
+        if (filesConverted.size() == 1) responseBytes = filesConverted.get(0);
+        else responseBytes = createZipArchive(filesConverted);
 
-            logger.info("Compressed file conversion successful");
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + convertedFileName)
-                    .header(CacheControl.noCache().toString())
-                    .body(responseBytes);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+        logger.info("Compressed file conversion successful");
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + convertedFileName)
+                .header(CacheControl.noCache().toString())
+                .body(responseBytes);
     }
 
 

@@ -64,6 +64,10 @@ java -jar target/whale-api.jar
 
 <br>
 
+## Collaborating
+
+Please read [contributions.md](https://github.com/ProjectBIGWHALE/bigwhale-api/blob/develop/contributions.md) for details on the process for sending us solicitation requests.
+
 ## Contact
 E-mail: contact@mybigwhale.com
 

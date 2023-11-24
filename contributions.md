@@ -10,7 +10,7 @@
 
 ```bash
 git clone https://github.com/seu_nome_usuario/bigwhale-api.git
-cd original_project
+cd bigwhale-api
 ```
 
 ### 3. Crie uma Nova Branch para suas Alterações

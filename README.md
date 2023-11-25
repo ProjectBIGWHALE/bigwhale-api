@@ -83,6 +83,8 @@ Distributed under the MIT License. See <a href="https://github.com/ProjectBIGWHA
 <a href="https://github.com/LeoSilva011"><img src="https://github.com/ProjectBIGWHALE/bigwhale/assets/90486302/8cc62cfd-c987-4b43-bc04-3ae7db9690e4" width="100" height="100"></a>
 <a href="https://github.com/Estrela-Marques"><img src="https://github.com/ProjectBIGWHALE/bigwhale/assets/90486302/26dbb5ba-7635-438f-95ce-212054eca08d" width="100" height="100"></a>
 <a href="https://github.com/SyllasBraga"><img src="https://github.com/ProjectBIGWHALE/bigwhale/assets/90486302/b8b1a4ef-6dd9-4dbc-a4b1-76c19f544ac7" width="100" height="100"></a>
+<a href="https://github.com/RafaZol"><img src="https://github.com/ProjectBIGWHALE/bigwhale-api/assets/57486221/67e8a9d8-0f77-4e43-9e96-96cce1ff2953" width="100" height="100"></a>
+
 
 
 

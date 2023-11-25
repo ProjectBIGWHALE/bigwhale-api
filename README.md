@@ -82,7 +82,14 @@ Distributed under the MIT License. See <a href="https://github.com/ProjectBIGWHA
 <a href="https://github.com/LarissaLunguinho"><img src="https://github.com/ProjectBIGWHALE/bigwhale/assets/90486302/c540875d-5e67-44eb-9708-8aacd848c1c6" width="100" height="100"></a>
 <a href="https://github.com/LeoSilva011"><img src="https://github.com/ProjectBIGWHALE/bigwhale/assets/90486302/8cc62cfd-c987-4b43-bc04-3ae7db9690e4" width="100" height="100"></a>
 <a href="https://github.com/Estrela-Marques"><img src="https://github.com/ProjectBIGWHALE/bigwhale/assets/90486302/26dbb5ba-7635-438f-95ce-212054eca08d" width="100" height="100"></a>
-<a href="https://github.com/SyllasBraga"><img src="https://github.com/ProjectBIGWHALE/bigwhale/assets/90486302/b8b1a4ef-6dd9-4dbc-a4b1-76c19f544ac7" width="100" height="100"></a>
+<a href="https://github.com/SyllasBraga"><img src="https://github.com/ProjectBIGWHALE/bigwhale-api/assets/57486221/7a97e979-b0fd-46f2-b9c9-3f499b58725d" width="100" height="100"></a>
+<a href="https://github.com/RafaZol"><img src="https://github.com/ProjectBIGWHALE/bigwhale-api/assets/57486221/5b59dfbe-079b-4719-b6a9-ada623bbf189" width="100" height="100"></a>
+<a href="https://github.com/kduferreira"><img src="https://github.com/ProjectBIGWHALE/bigwhale-api/assets/57486221/c6f2fc08-0549-4258-87c8-3280540b87a4" width="100" height="100"></a>
+<a href="https://github.com/ZecaSouza"><img src="https://github.com/ProjectBIGWHALE/bigwhale-api/assets/57486221/9f85a2b5-fda0-47f9-aa80-825247c462d4" width="100" height="100"></a>
+
+
+
+
 
 
 

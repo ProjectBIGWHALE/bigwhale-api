@@ -17,11 +17,10 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("My Big Whale API")
-                        .description("API developed for manipulating images and documents for free.")
-                        .contact(new Contact().name("Whalers team").email("mybigwhale@gmail.com").url("https://mybigwhale.com/"))
-                        .version("1.0.0"))
-                .externalDocs(new ExternalDocumentation().description("Documentation")
-                        .url("https://pastoral-thorn-cf3.notion.site/WHALE-0227a8c241084a1998fa7bb8bc01e35b?pvs=4"));
+                        .description("API developed for manipulating images and documents.")
+                        .contact(new Contact().name("Whalers team").email("mybigwhale@gmail.com"))
+                        .version("1.0.0"));
+
     }
 
     @Bean

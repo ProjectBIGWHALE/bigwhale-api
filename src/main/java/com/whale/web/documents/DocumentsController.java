@@ -84,7 +84,7 @@ public class DocumentsController {
             @Parameter(description = "Enter the compression format. Choose a tar, zip, 7z or tar.gz") @RequestParam("outputFormat") String outputFormat) throws IOException {
         List<byte[]> filesConverted = compactConverterService.converterFile(files, outputFormat);
         String convertedFileName = StringUtils.stripFilenameExtension(Objects.requireNonNull(files.get(0).getOriginalFilename()))
-                + outputFormat.toLowerCase();
+                + "." + outputFormat.toLowerCase();
 
         byte[] responseBytes;
         if (filesConverted.size() == 1) responseBytes = filesConverted.get(0);

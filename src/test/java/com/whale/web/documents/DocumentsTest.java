@@ -137,17 +137,13 @@ class DocumentsTest {
         MockMultipartFile file = createTestZipFile();
         String outputFormat = "tar";
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/compactconverter")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/compactconverter")
                         .file(file)
                         .param("outputFormat", outputFormat))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.header().string("Content-Disposition", "attachment; filename=zip-test" + outputFormat))
+                .andExpect(MockMvcResultMatchers.header().string("Content-Disposition", "attachment; filename=zip-test." + outputFormat))
                 .andExpect(MockMvcResultMatchers.header().string("Content-Type", "application/octet-stream"))
-                .andReturn();
-
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals("application/octet-stream", response.getContentType());
-        assertEquals("attachment; filename=zip-test" + outputFormat, response.getHeader("Content-Disposition"));
+                .andReturn();       
     }
 
     @Test
@@ -156,18 +152,15 @@ class DocumentsTest {
         MockMultipartFile file2 = createTestZipFile();
         String outputFormat = "7z";
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/compactconverter")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/compactconverter")
                         .file(file1)
                         .file(file2)
                         .param("outputFormat", outputFormat))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.header().string("Content-Disposition", "attachment; filename=zip-test" + outputFormat))
+                .andExpect(MockMvcResultMatchers.header().string("Content-Disposition", "attachment; filename=zip-test." + outputFormat))
                 .andExpect(MockMvcResultMatchers.header().string("Content-Type", "application/octet-stream"))
                 .andReturn();
 
-        MockHttpServletResponse response = mvcResult.getResponse();
-        assertEquals("application/octet-stream", response.getContentType());
-        assertEquals("attachment; filename=zip-test" + outputFormat, response.getHeader("Content-Disposition"));
     }
 
     @Test

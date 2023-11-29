@@ -1,1 +1,1 @@
-web: java -jar target/whale.jar
+web: java -jar target/whale-api.jar

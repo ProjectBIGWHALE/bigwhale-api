@@ -42,6 +42,7 @@ import java.util.zip.ZipOutputStream;
 @RestController
 @RequestMapping(value = "api/v1/documents")
 @Tag(name = "API for documents resource palette")
+@CrossOrigin(origins = "*")
 public class DocumentsController {
 
     private final CompactConverterService compactConverterService;

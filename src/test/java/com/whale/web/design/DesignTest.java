@@ -46,7 +46,7 @@ class DesignTest {
                 imageBytes
         );
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("http://localhost:8080/api/v1/design/altercolor")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("http://localhost:8080/api/v1/design/alter-color")
                         .file(file)
                         .param("colorForAlteration", "#FFFFFF")
                         .param("colorOfImage", "#000000")
@@ -68,7 +68,7 @@ class DesignTest {
                 imageBytes
         );
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("http://localhost:8080/api/v1/design/altercolor")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("http://localhost:8080/api/v1/design/alter-color")
                         .file(file)
                         .param("colorForAlteration", "#FF0000")
                         .param("colorOfImage", "")
@@ -96,7 +96,7 @@ class DesignTest {
                 imageBytes
         );
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("http://localhost:8080/api/v1/design/colorspalette")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("http://localhost:8080/api/v1/design/colors-palette")
                         .file(file))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }

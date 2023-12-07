@@ -1,4 +1,4 @@
-package com.whale.web.security;
+package com.whale.web.security.cryptograph.controller;
 
 import com.whale.web.security.cryptograph.service.EncryptService;
 
@@ -21,17 +21,17 @@ import java.util.Objects;
 @RestController
 @RequestMapping("api/v1/security")
 @Tag(name = "API for cryptograph and decryptograph files")
-public class SecurityController {
+public class EncryptController {
 
     private final EncryptService encryptService;
 
-    public SecurityController(EncryptService encryptService) {
+    public EncryptController(EncryptService encryptService) {
         this.encryptService = encryptService;
     }
 
     @PostMapping(value = "/cryptograph", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Cryptograph Archive", description = "Convert Archive for a cryptograph or decrypted version", method = "POST")
-    public ResponseEntity<?> cryptograph(@RequestPart("file") MultipartFile file, 
+    public ResponseEntity<Object> cryptograph(@RequestPart("file") MultipartFile file, 
         @Parameter(description = "Insert a password for decrypt and encrypt") @RequestParam("key") String key, 
         @Parameter(description = "True for encrypt and False for decrypt") @RequestParam("action") Boolean action) throws IOException {
 

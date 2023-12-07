@@ -1,19 +1,16 @@
 package com.whale.web.design;
 
-import com.whale.web.design.altercolor.model.AlterColorForm;
 import com.whale.web.design.altercolor.service.AlterColorService;
 import com.whale.web.design.colorspalette.service.CreateColorsPaletteService;
 import com.whale.web.exceptions.domain.ImageIsNullException;
 import com.whale.web.utils.UploadImage;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -27,7 +27,7 @@ class AlterColorTest {
     @Order(1)
     void shouldReturnAValidPNGProcessedImage() throws Exception {
         MockMultipartFile file = ImageService.createTestImage("png", "image");
-        mockMvc.perform(MockMvcRequestBuilders.multipart("http://localhost:8080/api/v1/design/altercolor")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("http://localhost:8080/api/v1/design/alter-color")
                         .file(file)
                         .param("colorForAlteration", "#FFFFFF")
                         .param("colorOfImage", "#000000")
@@ -41,7 +41,7 @@ class AlterColorTest {
     @Order(2)
     void shouldReturnAInternalServerError() throws Exception {
         MockMultipartFile file = ImageService.createTestNullImage();
-        mockMvc.perform(MockMvcRequestBuilders.multipart("http://localhost:8080/api/v1/design/altercolor")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("http://localhost:8080/api/v1/design/alter-color")
                         .file(file)
                         .param("colorForAlteration", "#FF0000")
                         .param("colorOfImage", "#00FF00")
@@ -54,7 +54,7 @@ class AlterColorTest {
     @Order(3)
     void testAlterColorWithoutColor() throws Exception {
         MockMultipartFile file = ImageService.createTestImage("png", "image");
-        mockMvc.perform(MockMvcRequestBuilders.multipart("http://localhost:8080/api/v1/design/altercolor")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("http://localhost:8080/api/v1/design/alter-color")
                         .file(file)
                         .param("colorForAlteration", "#FF0000")
                         .param("colorOfImage", "")

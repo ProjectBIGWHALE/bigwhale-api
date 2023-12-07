@@ -8,6 +8,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /*
  * Class to read the pixels of an image and replace the pixels that are in
@@ -25,7 +26,7 @@ public class AlterColorService {
         this.uploadImage = uploadImage;
     }
 
-    public byte[] alterColor(MultipartFile imageForm, String colorOfImage, String replacementColor, double marginValue) throws Exception {
+    public byte[] alterColor(MultipartFile imageForm, String colorOfImage, String replacementColor, double marginValue) throws IOException {
 
         MultipartFile upload = uploadImage.uploadImage(imageForm);
         BufferedImage img = ImageIO.read(upload.getInputStream());

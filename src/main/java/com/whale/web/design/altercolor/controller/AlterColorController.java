@@ -2,6 +2,7 @@ package com.whale.web.design.altercolor.controller;
 
 import java.io.IOException;
 
+import com.whale.web.design.altercolor.model.AlterColorForm;
 import jakarta.validation.Valid;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
@@ -34,11 +35,10 @@ public class AlterColorController {
 
     @PostMapping(value = "/alter-color", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Change a Color of a image", description = "Change pixels of a specific color", method = "POST")
-    public ResponseEntity<byte[]> alterColor(@RequestPart MultipartFile image,
-                                             @Valid String colorOfImage,
-                                             @Valid String colorForAlteration,
-                                             @Valid Double margin) throws IOException {
-        byte[] processedImage = alterColorService.alterColor(image, colorOfImage, colorForAlteration, margin);
+    public ResponseEntity<byte[]> alterColor(
+            @Parameter(description = "Submit a png image here") @RequestPart MultipartFile image,
+            @Valid AlterColorForm form) throws IOException {
+        byte[] processedImage = alterColorService.alterColor(image, form.getColorOfImage(), form.getColorForAlteration(), form.getMargin());
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)

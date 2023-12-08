@@ -1,4 +1,4 @@
-package com.whale.web.security;
+package com.whale.web.security.cryptograph;
 
 import java.net.URI;
 
@@ -21,7 +21,7 @@ import com.whale.web.security.cryptograph.service.EncryptService;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @AutoConfigureMockMvc
 @SpringBootTest
-class SecurityControllerTest {
+class CryptographTest {
 
     @Autowired
     private MockMvc mockMvc;

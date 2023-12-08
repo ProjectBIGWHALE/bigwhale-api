@@ -73,7 +73,7 @@ class DesignTest {
                         .param("colorForAlteration", "#FF0000")
                         .param("colorOfImage", "")
                         .param("margin", "4.0"))
-                .andExpect(MockMvcResultMatchers.status().is(500));
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test

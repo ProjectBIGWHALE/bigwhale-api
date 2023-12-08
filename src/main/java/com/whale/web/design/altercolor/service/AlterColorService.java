@@ -1,5 +1,6 @@
 package com.whale.web.design.altercolor.service;
 
+import com.whale.web.exceptions.domain.ImageIsNullException;
 import com.whale.web.utils.UploadImage;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -8,6 +9,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /*
  * Class to read the pixels of an image and replace the pixels that are in
@@ -25,7 +27,7 @@ public class AlterColorService {
         this.uploadImage = uploadImage;
     }
 
-    public byte[] alterColor(MultipartFile imageForm, String colorOfImage, String replacementColor, double marginValue) throws Exception {
+    public byte[] alterColor(MultipartFile imageForm, String colorOfImage, String replacementColor, double marginValue) throws IOException {
 
         MultipartFile upload = uploadImage.uploadImage(imageForm);
         BufferedImage img = ImageIO.read(upload.getInputStream());
@@ -36,14 +38,8 @@ public class AlterColorService {
         int r = markedColor.getRed();
         int g = markedColor.getGreen();
         int b = markedColor.getBlue();
-
-
         double porcentagemMargin = marginValue / 100;
-
-
         int intensity = (r + g + b) / 3; // Intensidade média da cor original
-
-
         int margin = (int) (intensity * porcentagemMargin); // 1% da intensidade como margem (ajuste conforme necessário)
 
         // Sets the top and bottom margin for each RGB component

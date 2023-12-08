@@ -3,6 +3,7 @@ package com.whale.web.design.colorspalette.controller;
 import java.awt.Color;
 import java.util.List;
 
+import com.whale.web.exceptions.domain.ImageIsNullException;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,7 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 
 @RestController
-@RequestMapping("api/v1/design/colors-palette")
+@RequestMapping("api/v1/design")
 @Tag(name = "API for Design")
 public class ColorsPalleteController {
 
@@ -35,22 +36,16 @@ public class ColorsPalleteController {
     }
 
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/colors-palette", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Pallete From a Image", description = "Extract colors pallet from a image", method = "POST")
-    public ResponseEntity<Object> colorsPalette(@RequestPart("image") MultipartFile image) throws Exception {
+    public ResponseEntity<List<Color>> colorsPalette(@RequestPart("image") MultipartFile image) throws ImageIsNullException {
 
         MultipartFile upload = uploadImage.uploadImage(image);
+        List<Color> listOfColors = createColorsPaletteService.createColorPalette(upload);
 
-        try {
-            List<Color> listOfColors = createColorsPaletteService.createColorPalette(upload);
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .header(CacheControl.noCache().toString())
-                    .body(listOfColors);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(CacheControl.noCache().toString())
+                .body(listOfColors);
     }
 }

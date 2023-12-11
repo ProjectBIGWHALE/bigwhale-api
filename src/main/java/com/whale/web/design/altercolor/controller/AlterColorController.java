@@ -2,6 +2,8 @@ package com.whale.web.design.altercolor.controller;
 
 import java.io.IOException;
 
+import com.whale.web.design.altercolor.model.AlterColorForm;
+import jakarta.validation.Valid;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,25 +32,18 @@ public class AlterColorController {
     public AlterColorController(AlterColorService alterColorService) {
         this.alterColorService = alterColorService;    }
 
-
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Change a Color of a image", description = "Change pixels of a specific color", method = "POST")
     public ResponseEntity<Object> alterColor(@RequestPart("image") MultipartFile image, 
-        @Parameter(description = "Color in Image for alteration") String colorOfImage, 
-        @Parameter(description = "New Color (or Trasnparency)") String colorForAlteration,
-        Double margin) throws IOException {
+        @Parameter(description = "Color in Image for alteration") @Valid AlterColorForm alterColorForm) throws IOException {
 
-        try {
-            byte[] processedImage = alterColorService.alterColor(image, colorOfImage, colorForAlteration, margin);
+        byte[] processedImage = alterColorService.alterColor(image, alterColorForm.getColorOfImage(),
+                alterColorForm.getColorForAlteration(), alterColorForm.getMargin());
 
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ModifiedImage.png")
-                    .header(CacheControl.noCache().toString())
-                    .body(processedImage);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ModifiedImage.png")
+                .header(CacheControl.noCache().toString())
+                .body(processedImage);
     }
 }

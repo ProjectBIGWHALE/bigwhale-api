@@ -27,30 +27,22 @@ public class ColorsPalleteController {
 
     private final UploadImage uploadImage;
     private final CreateColorsPaletteService createColorsPaletteService;
-    
 
     public ColorsPalleteController(UploadImage uploadImage, CreateColorsPaletteService createColorsPaletteService) {
         this.uploadImage = uploadImage;
         this.createColorsPaletteService = createColorsPaletteService;
     }
 
-
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Pallete From a Image", description = "Extract colors pallet from a image", method = "POST")
     public ResponseEntity<Object> colorsPalette(@RequestPart("image") MultipartFile image) throws Exception {
 
         MultipartFile upload = uploadImage.uploadImage(image);
+        List<Color> listOfColors = createColorsPaletteService.createColorPalette(upload);
 
-        try {
-            List<Color> listOfColors = createColorsPaletteService.createColorPalette(upload);
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .header(CacheControl.noCache().toString())
-                    .body(listOfColors);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(CacheControl.noCache().toString())
+                .body(listOfColors);
     }
 }

@@ -1,6 +1,7 @@
 package com.whale.web.design.altercolor.model;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,6 @@ public class AlterColorForm {
     private String colorOfImage;
     @NotBlank(message = "No 'colorForAlteration' was provided")
     private String colorForAlteration;
-    @NotBlank(message = "No 'margin' was provided")
+    @NotNull(message = "No 'margin' was provided")
     private Double margin;
 }

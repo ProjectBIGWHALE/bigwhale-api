@@ -1,5 +1,6 @@
 package com.whale.web.design;
 
+import com.whale.web.design.altercolor.model.AlterColorForm;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ class DesignTest {
     @Test
     void shouldReturnAValidPNGProcessedImage() throws Exception {
 
+        AlterColorForm alterColorForm = new AlterColorForm(null, "#000000", "#FFFFFF", 4.0);
         BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = image.createGraphics();
         graphics.setColor(Color.WHITE);
@@ -48,16 +50,15 @@ class DesignTest {
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("http://localhost:8080/api/v1/design/alter-color")
                         .file(file)
-                        .param("colorForAlteration", "#FFFFFF")
-                        .param("colorOfImage", "#000000")
-                        .param("margin", "4.0"))
+                        .flashAttr("alterColorForm", alterColorForm)
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.header().string("Content-Disposition", Matchers.containsString("attachment; filename=ModifiedImage.png")))
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_OCTET_STREAM));
     }
 
     @Test
-    void shouldReturnAExceptionStatusCode500() throws Exception {
+    void shouldReturnAExceptionStatusCode400() throws Exception {
 
         byte[] imageBytes = null;
 
@@ -73,7 +74,7 @@ class DesignTest {
                         .param("colorForAlteration", "#FF0000")
                         .param("colorOfImage", "")
                         .param("margin", "4.0"))
-                .andExpect(MockMvcResultMatchers.status().is(500));
+                .andExpect(MockMvcResultMatchers.status().is(400));
     }
 
     @Test

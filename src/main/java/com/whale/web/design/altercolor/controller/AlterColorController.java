@@ -4,9 +4,10 @@ import java.io.IOException;
 
 import com.whale.web.design.altercolor.model.AlterColorForm;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 
+@Slf4j
 @RestController
 @RequestMapping("api/v1/design")
 @Tag(name = "API for Design")
@@ -39,7 +41,7 @@ public class AlterColorController {
             @Parameter(description = "Submit a png image here") @RequestPart MultipartFile image,
             @Valid AlterColorForm form) throws IOException {
         byte[] processedImage = alterColorService.alterColor(image, form.getColorOfImage(), form.getColorForAlteration(), form.getMargin());
-
+        log.info("Image color changed successfully");        
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ModifiedImage.png")

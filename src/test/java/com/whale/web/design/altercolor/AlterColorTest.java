@@ -1,8 +1,6 @@
 package com.whale.web.design.altercolor;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whale.web.utils.ImageService;
 import com.whale.web.utils.JsonService;
 import org.hamcrest.Matchers;
@@ -20,10 +18,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.io.UnsupportedEncodingException;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @AutoConfigureMockMvc

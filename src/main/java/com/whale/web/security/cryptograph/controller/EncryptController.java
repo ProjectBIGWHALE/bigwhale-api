@@ -5,6 +5,7 @@ import com.whale.web.security.cryptograph.service.EncryptService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.*;
 import org.springframework.util.StringUtils;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Objects;
 
+@Slf4j
 @RestController
 @RequestMapping("api/v1/security")
 @Tag(name = "API for cryptograph and decryptograph files")
@@ -43,7 +45,7 @@ public class EncryptController {
 
             if (Boolean.TRUE.equals(action)) {
                 encryptedFile = encryptService.encryptFile(file, key);
-                
+                log.info("File encrypted successfully");
                 return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + originalFilename + ".encrypted")
@@ -51,7 +53,7 @@ public class EncryptController {
                     .body(encryptedFile);
             } else {
                 encryptedFile = encryptService.decryptFile(file, key);
-            
+                log.info("File decrypted successfully");
                 return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + originalFileNameWithoutExtension)

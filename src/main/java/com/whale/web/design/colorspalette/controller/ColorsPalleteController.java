@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.whale.web.exceptions.domain.ImageIsNullException;
 import org.springframework.http.CacheControl;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +18,9 @@ import com.whale.web.utils.UploadImage;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Slf4j
 @RestController
 @RequestMapping("api/v1/design")
 @Tag(name = "API for Design")
@@ -42,7 +42,7 @@ public class ColorsPalleteController {
 
         MultipartFile upload = uploadImage.uploadImage(image);
         List<Color> listOfColors = createColorsPaletteService.createColorPalette(upload);
-
+        log.info("Successfully generated image color palette");
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(CacheControl.noCache().toString())

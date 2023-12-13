@@ -2,6 +2,7 @@ package com.whale.web.security;
 
 import java.net.URI;
 
+import com.whale.web.security.cryptograph.model.EncryptModel;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
@@ -32,61 +33,65 @@ class SecurityControllerTest {
     @Test
     void shouldReturnEncryptedFile() throws Exception {
         URI uri = new URI("http://localhost:8080/api/v1/security/cryptograph");
+        boolean action = true;
+        String key = "TEST";
 
         MockMultipartFile file = new MockMultipartFile("file", "test.txt",
                 MediaType.TEXT_PLAIN_VALUE, "Test content".getBytes());
 
         mockMvc.perform(MockMvcRequestBuilders.multipart(uri)
                         .file(file)
-                        .param("key", "TEST")
-                        .param("action", String.valueOf(true)))
+                        .param("key", key)
+                        .param("action", String.valueOf(action)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.header().string("Content-Disposition", Matchers.containsString("attachment")))
                 .andExpect(result -> {
                     byte[] encryptedContent = result.getResponse().getContentAsByteArray();
-                    byte[] expectedEncryptedContent = encryptService.encryptFile(file, "TEST");
-                    Assertions.assertArrayEquals(expectedEncryptedContent, encryptedContent);
+                    EncryptModel expectedEncryptedContent = encryptService.choiceEncryptService(action, key, file);
+                    Assertions.assertArrayEquals(expectedEncryptedContent.getFile(), encryptedContent);
                 });
     }
 
     @Test
     void shouldReturnDecryptedFile() throws Exception {
         URI uri = new URI("http://localhost:8080/api/v1/security/cryptograph");
+        boolean action = false;
+        String key = "TEST";
 
         MockMultipartFile file = new MockMultipartFile("file", "test.txt",
                 MediaType.TEXT_PLAIN_VALUE, "Test content".getBytes());
 
-        byte[] encryptedContent = encryptService.encryptFile(file, "TEST");
-        MockMultipartFile encryptedFile = new MockMultipartFile("file", "test.txt", MediaType.TEXT_PLAIN_VALUE, encryptedContent);
+        EncryptModel encryptedContent = encryptService.choiceEncryptService(true, key, file);
+        MockMultipartFile encryptedFile = new MockMultipartFile("file", "test.txt", MediaType.TEXT_PLAIN_VALUE, encryptedContent.getFile());
 
         mockMvc.perform(MockMvcRequestBuilders.multipart(uri)
                         .file(encryptedFile)
-                        .param("key", "TEST")
-                        .param("action", String.valueOf(false)))
+                        .param("key", key)
+                        .param("action", String.valueOf(action)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.header().string("Content-Disposition", Matchers.containsString("attachment")))
                 .andExpect(result -> {
                     byte[] decryptedContent = result.getResponse().getContentAsByteArray();
-                    byte[] expectedDecryptedContent = encryptService.decryptFile(encryptedFile, "TEST");
-                    Assertions.assertArrayEquals(expectedDecryptedContent, decryptedContent);
+                    Assertions.assertArrayEquals(file.getBytes(), decryptedContent);
                 });
     }
 
     @Test
-    void shouldReturnStatus500ForWrongKey() throws Exception {
+    void shouldReturnStatus401ForWrongKey() throws Exception {
         URI uri = new URI("http://localhost:8080/api/v1/security/cryptograph");
+        boolean action = true;
+        String key = "TEST";
 
         MockMultipartFile file = new MockMultipartFile("file", "test.txt",
                 MediaType.TEXT_PLAIN_VALUE, "Test content".getBytes());
 
-        byte[] encryptedContent = encryptService.encryptFile(file, "TEST");
-        MockMultipartFile encryptedFile = new MockMultipartFile("file", "test.txt", MediaType.TEXT_PLAIN_VALUE, encryptedContent);
+        EncryptModel encryptedContent = encryptService.choiceEncryptService(action, key, file);
+        MockMultipartFile encryptedFile = new MockMultipartFile("file", "test.txt", MediaType.TEXT_PLAIN_VALUE, encryptedContent.getFile());
 
         mockMvc.perform(MockMvcRequestBuilders.multipart(uri)
                         .file(encryptedFile)
                         .param("key", "WRONG_KEY")
                         .param("action", String.valueOf(false)))
-                .andExpect(MockMvcResultMatchers.status().is(500));
-
+                .andExpect(MockMvcResultMatchers.status().is(401));
     }
 }

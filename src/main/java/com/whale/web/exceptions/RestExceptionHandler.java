@@ -4,14 +4,18 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.whale.web.documents.imageconverter.exception.InvalidUploadedFileException;
 import com.whale.web.exceptions.domain.ImageIsNullException;
 import com.whale.web.exceptions.domain.WhaleRunTimeException;
+import com.whale.web.exceptions.domain.WhaleUnauthorizedException;
 import com.whale.web.exceptions.errors.ErrorResponse;
 import com.whale.web.exceptions.errors.StandardError;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -62,5 +66,37 @@ public class RestExceptionHandler {
                 "Someone Fields are is blank", exception.getBody().getDetail(), http.getRequestURI());
 
         return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(InvalidUploadedFileException.class)
+    public ResponseEntity<StandardError> invalidUploadedFileException(InvalidUploadedFileException e, HttpServletRequest http){
+        StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
+                "BAD REQUEST", e.getMessage(), http.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<StandardError> httpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException e, HttpServletRequest http){
+        StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
+                "BAD REQUEST", e.getMessage(), http.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<StandardError> httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e, HttpServletRequest http){
+        StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
+                "BAD REQUEST", e.getMessage(), http.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(WhaleUnauthorizedException.class)
+    public ResponseEntity<StandardError> whaleUnauthorizedException(WhaleUnauthorizedException e, HttpServletRequest http){
+        StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
+                "BAD REQUEST", e.getMessage(), http.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 }

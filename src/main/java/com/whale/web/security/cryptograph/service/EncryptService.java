@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileOutputStream;
@@ -31,10 +32,6 @@ public class EncryptService {
 	private byte[] encryptFile(MultipartFile formFile, String encryptionKey){
 
 		try {
-			if (formFile.isEmpty() || encryptionKey.isEmpty()) {
-				throw new InvalidUploadedFileException("An invalid file was sent");
-			}
-
 			byte[] bytesInFile = formFile.getBytes();
 			byte[] keyBytes = Arrays.copyOf(encryptionKey.getBytes(StandardCharsets.UTF_8), 16); // Adjust the key size to 16 bytes
 			SecretKeySpec secretKey = new SecretKeySpec(keyBytes, "AES");
@@ -52,17 +49,13 @@ public class EncryptService {
 	private byte[] decryptFile(MultipartFile fileOfForm, String encryptionKey) {
 
 		try {
-
-			if (fileOfForm.isEmpty() || encryptionKey.isEmpty()) {
-				throw new InvalidUploadedFileException("An invalid file was sent");
-			}
-
 			byte[] encryptedFile = fileOfForm.getBytes();
 			byte[] keyBytes = Arrays.copyOf(encryptionKey.getBytes(StandardCharsets.UTF_8), 16); // Adjust the key size to 16 bytes
 			SecretKeySpec secretKey = new SecretKeySpec(keyBytes, "AES");
 			Cipher cipher = Cipher.getInstance(CIPHER_INSTANCE);
 			IvParameterSpec ivParameterSpec = new IvParameterSpec(new byte[16]);
 			cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec);
+
 			log.info("File decrypted");
 			return cipher.doFinal(encryptedFile);
 		} catch (Exception e) {
@@ -72,16 +65,23 @@ public class EncryptService {
 	}
 
 	public EncryptModel choiceEncryptService(Boolean action, String key, MultipartFile file){
-		if (Boolean.TRUE.equals(action)) {
-			String fileName = file.getOriginalFilename()+".encrypted";
-			byte[] newFile = encryptFile(file, key);
-
-			return new EncryptModel(fileName, newFile);
-		} else {
-			String fileName = StringUtils.stripFilenameExtension(Objects.requireNonNull(file.getOriginalFilename()));
-			byte[] newFile = decryptFile(file, key);
-
-			return new EncryptModel(fileName, newFile);
+		if (file.isEmpty()) {
+			throw new InvalidUploadedFileException("An invalid file was sent");
 		}
-	}
+		if (key.isEmpty()) {
+			throw new IllegalArgumentException("The key field is blank");
+		}
+        String fileName;
+        byte[] newFile;
+        if (Boolean.TRUE.equals(action)) {
+            fileName = file.getOriginalFilename() + ".encrypted";
+            newFile = encryptFile(file, key);
+
+        } else {
+            fileName = StringUtils.stripFilenameExtension(Objects.requireNonNull(file.getOriginalFilename()));
+            newFile = decryptFile(file, key);
+
+        }
+        return new EncryptModel(fileName, newFile);
+    }
 }

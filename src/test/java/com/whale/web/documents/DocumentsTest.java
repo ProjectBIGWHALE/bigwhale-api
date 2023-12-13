@@ -8,7 +8,6 @@ import com.whale.web.documents.zipfilegenerator.ZipFileCompressorService;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailRecordDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkRecordDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeWhatsappRecordDto;
-import com.whale.web.documents.textextract.TextExtractService;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -51,8 +50,6 @@ class DocumentsTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    @MockBean
-    private TextExtractService textExtractService;
     @MockBean
     private ZipFileCompressorService compressorService;
     @MockBean

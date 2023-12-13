@@ -1,5 +1,6 @@
 package com.whale.web.design.altercolor.service;
 
+import com.whale.web.exceptions.domain.ImageIsNullException;
 import com.whale.web.utils.UploadImage;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,6 +10,15 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+<<<<<<< HEAD
+
+/*
+ * Class to read the pixels of an image and replace the pixels that are in
+ * a certain color spectrum. It is possible to change the edge of the spectrum and change it by a color
+ * any other than transparency
+ */
+=======
+>>>>>>> eecfbb41c00a9f942f1480b26fe210a8d2609a4f
 
 @Service
 public class AlterColorService {
@@ -44,7 +54,29 @@ public class AlterColorService {
         return new ColorRange(markedColor, intensity, delta);
     }
 
+<<<<<<< HEAD
+        int r = markedColor.getRed();
+        int g = markedColor.getGreen();
+        int b = markedColor.getBlue();
+        double porcentagemMargin = marginValue / 100;
+        int intensity = (r + g + b) / 3; // Intensidade média da cor original
+        int margin = (int) (intensity * porcentagemMargin); // 1% da intensidade como margem (ajuste conforme necessário)
+
+        // Sets the top and bottom margin for each RGB component
+        int delta = (int) Math.round(255 * (margin / 100.0)); // Margin percentage
+
+        int newRmin = Math.max(0, r - delta); // Lower limit for the R component
+        int newRmax = Math.min(255, r + delta); // Lower limit for the R component
+        int newGmin = Math.max(0, g - delta); // Lower limit for the G component
+        int newGmax = Math.min(255, g + delta); // Upper limit for the G component
+        int newBmin = Math.max(0, b - delta); // Lower limit for the B component
+        int newBmax = Math.min(255, b + delta); // Upper limit for the B component
+
+        // Sets current color and new color
+        Color newColor;
+=======
     private Color getReplacementColor(String replacementColor) {
+>>>>>>> eecfbb41c00a9f942f1480b26fe210a8d2609a4f
         if (replacementColor == null || replacementColor.isEmpty()) {
             return new Color(0, 0, 0, 0);
         } else {

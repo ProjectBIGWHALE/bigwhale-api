@@ -10,16 +10,18 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+<<<<<<< HEAD
 
 /*
  * Class to read the pixels of an image and replace the pixels that are in
  * a certain color spectrum. It is possible to change the edge of the spectrum and change it by a color
  * any other than transparency
  */
+=======
+>>>>>>> eecfbb41c00a9f942f1480b26fe210a8d2609a4f
 
 @Service
 public class AlterColorService {
-
 
     private final UploadImage uploadImage;
 
@@ -32,9 +34,27 @@ public class AlterColorService {
         MultipartFile upload = uploadImage.uploadImage(imageForm);
         BufferedImage img = ImageIO.read(upload.getInputStream());
 
-        // Defines the marked color
-        Color markedColor = Color.decode(colorOfImage);
+        // Calculate color range
+        ColorRange colorRange = calculateColorRange(colorOfImage, marginValue);
 
+        // Get the replacement color
+        Color newColor = getReplacementColor(replacementColor);
+
+        // Apply color transformation
+        BufferedImage newImg = applyColorTransformation(img, colorRange, newColor);
+
+        // Convert BufferedImage to byte array
+        return convertImageToByteArray(newImg);
+    }
+
+    private ColorRange calculateColorRange(String colorOfImage, double marginValue) {
+        Color markedColor = Color.decode(colorOfImage);
+        int intensity = (markedColor.getRed() + markedColor.getGreen() + markedColor.getBlue()) / 3;
+        int delta = (int) Math.round(255 * (marginValue / 100.0));
+        return new ColorRange(markedColor, intensity, delta);
+    }
+
+<<<<<<< HEAD
         int r = markedColor.getRed();
         int g = markedColor.getGreen();
         int b = markedColor.getBlue();
@@ -54,45 +74,60 @@ public class AlterColorService {
 
         // Sets current color and new color
         Color newColor;
+=======
+    private Color getReplacementColor(String replacementColor) {
+>>>>>>> eecfbb41c00a9f942f1480b26fe210a8d2609a4f
         if (replacementColor == null || replacementColor.isEmpty()) {
-            newColor = new Color(0, 0, 0, 0);
+            return new Color(0, 0, 0, 0);
         } else {
             Color color = Color.decode(replacementColor);
-            newColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
+            return new Color(color.getRed(), color.getGreen(), color.getBlue());
         }
+    }
 
-        // Creates a new image with transparency
+    private BufferedImage applyColorTransformation(BufferedImage img, ColorRange colorRange, Color newColor) {
         BufferedImage newImg = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
-        // Cycles through all pixels in the image
         for (int x = 0; x < img.getWidth(); x++) {
             for (int y = 0; y < img.getHeight(); y++) {
-                // Checks the current pixel color
                 Color pixelColor = new Color(img.getRGB(x, y));
-                int pixelR = pixelColor.getRed();
-                int pixelG = pixelColor.getGreen();
-                int pixelB = pixelColor.getBlue();
-                if (pixelR >= newRmin && pixelR <= newRmax &&
-                        pixelG >= newGmin && pixelG <= newGmax &&
-                        pixelB >= newBmin && pixelB <= newBmax) {
-                    // Set the full RGBA value using the getRGB() method
-                    int newPixelValue = newColor.getRGB();
-                    // Sets the new pixel value in the new image
-                    newImg.setRGB(x, y, newPixelValue);
+                if (colorRange.isWithinRange(pixelColor)) {
+                    newImg.setRGB(x, y, newColor.getRGB());
                 } else {
-                    // Copies the original pixel to the new image
                     newImg.setRGB(x, y, img.getRGB(x, y));
                 }
             }
         }
 
-        // Convert BufferedImage to byte array
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ImageIO.write(newImg, "png", bos);
-        bos.flush();
-        byte[] imageBytes = bos.toByteArray();
-        bos.close();
+        return newImg;
+    }
 
-        return imageBytes;
+    private byte[] convertImageToByteArray(BufferedImage img) throws IOException {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            ImageIO.write(img, "png", bos);
+            return bos.toByteArray();
+        }
+    }
+
+    private static class ColorRange {
+        private final int rMin, rMax, gMin, gMax, bMin, bMax;
+
+        public ColorRange(Color color, int intensity, int delta) {
+            this.rMin = Math.max(0, color.getRed() - delta);
+            this.rMax = Math.min(255, color.getRed() + delta);
+            this.gMin = Math.max(0, color.getGreen() - delta);
+            this.gMax = Math.min(255, color.getGreen() + delta);
+            this.bMin = Math.max(0, color.getBlue() - delta);
+            this.bMax = Math.min(255, color.getBlue() + delta);
+        }
+
+        public boolean isWithinRange(Color color) {
+            int r = color.getRed();
+            int g = color.getGreen();
+            int b = color.getBlue();
+            return r >= rMin && r <= rMax &&
+                   g >= gMin && g <= gMax &&
+                   b >= bMin && b <= bMax;
+        }
     }
 }

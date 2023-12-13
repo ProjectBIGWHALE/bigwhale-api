@@ -4,9 +4,13 @@ import java.io.IOException;
 
 import com.whale.web.design.altercolor.model.AlterColorForm;
 import jakarta.validation.Valid;
+<<<<<<< HEAD
+=======
+import lombok.extern.slf4j.Slf4j;
+
+>>>>>>> eecfbb41c00a9f942f1480b26fe210a8d2609a4f
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,16 +26,18 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 
+@Slf4j
 @RestController
-@RequestMapping("api/v1/design/alter-color")
+@RequestMapping("api/v1/design")
 @Tag(name = "API for Design")
 public class AlterColorController {
     
-    private final AlterColorService alterColorService;    
-    
+    private final AlterColorService alterColorService;
+
     public AlterColorController(AlterColorService alterColorService) {
         this.alterColorService = alterColorService;    }
 
+<<<<<<< HEAD
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Change a Color of a image", description = "Change pixels of a specific color", method = "POST")
     public ResponseEntity<Object> alterColor(@RequestPart("image") MultipartFile image, 
@@ -40,6 +46,16 @@ public class AlterColorController {
         byte[] processedImage = alterColorService.alterColor(image, alterColorForm.getColorOfImage(),
                 alterColorForm.getColorForAlteration(), alterColorForm.getMargin());
 
+=======
+
+    @PostMapping(value = "/alter-color", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Change a Color of a image", description = "Change pixels of a specific color", method = "POST")
+    public ResponseEntity<byte[]> alterColor(
+            @Parameter(description = "Submit a png image here") @RequestPart MultipartFile image,
+            @Valid AlterColorForm form) throws IOException {
+        byte[] processedImage = alterColorService.alterColor(image, form.getColorOfImage(), form.getColorForAlteration(), form.getMargin());
+        log.info("Image color changed successfully");        
+>>>>>>> eecfbb41c00a9f942f1480b26fe210a8d2609a4f
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ModifiedImage.png")

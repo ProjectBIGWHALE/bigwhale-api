@@ -6,6 +6,7 @@ import com.whale.web.security.cryptograph.service.EncryptService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.*;
 import org.springframework.util.StringUtils;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Objects;
 
+@Slf4j
 @RestController
 @RequestMapping("api/v1/security")
 @Tag(name = "API for cryptograph and decryptograph files")

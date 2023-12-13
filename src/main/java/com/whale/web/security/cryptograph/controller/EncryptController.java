@@ -1,5 +1,6 @@
 package com.whale.web.security.cryptograph.controller;
 
+import com.whale.web.security.cryptograph.model.EncryptModel;
 import com.whale.web.security.cryptograph.service.EncryptService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,34 +36,13 @@ public class EncryptController {
     @Operation(summary = "Cryptograph Archive", description = "Convert Archive for a cryptograph or decrypted version", method = "POST")
     public ResponseEntity<Object> cryptograph(@RequestPart("file") MultipartFile file, 
         @Parameter(description = "Insert a password for decrypt and encrypt") @RequestParam("key") String key, 
-        @Parameter(description = "True for encrypt and False for decrypt") @RequestParam("action") Boolean action) throws IOException {
+        @Parameter(description = "True for encrypt and False for decrypt") @RequestParam("action") Boolean action){
+            EncryptModel encryptedFile = encryptService.choiceEncryptService(action, key, file);
 
-        try {
-
-            byte[] encryptedFile;
-            String originalFilename = file.getOriginalFilename();
-            String originalFileNameWithoutExtension = StringUtils.stripFilenameExtension(Objects.requireNonNull(originalFilename));
-
-            if (Boolean.TRUE.equals(action)) {
-                encryptedFile = encryptService.encryptFile(file, key);
-                log.info("File encrypted successfully");
-                return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + originalFilename + ".encrypted")
-                    .header(CacheControl.noCache().toString())
-                    .body(encryptedFile);
-            } else {
-                encryptedFile = encryptService.decryptFile(file, key);
-                log.info("File decrypted successfully");
-                return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + originalFileNameWithoutExtension)
-                    .header(CacheControl.noCache().toString())
-                    .body(encryptedFile);
-            }
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+            return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + encryptedFile.getFileName())
+                .header(CacheControl.noCache().toString())
+                .body(encryptedFile.getFile());
     }
 }

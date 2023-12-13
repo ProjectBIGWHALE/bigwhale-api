@@ -8,15 +8,26 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+<<<<<<< HEAD
+import java.util.HashMap;
+=======
 import java.util.*;
+>>>>>>> eecfbb41c00a9f942f1480b26fe210a8d2609a4f
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class CreateColorsPaletteService {
 
+<<<<<<< HEAD
+    public List<Color> createColorPalette(MultipartFile multipartFile){
+
+        int numColors = 6; // Number of predominant colors to be extracted
+        int maxColorDistance = 70; // Maximum allowed distance between colors
+=======
     private static final int NUM_COLORS = 6; // Number of predominant colors to be extracted
     private static final int MAX_COLOR_DISTANCE = 70; // Maximum allowed distance between colors
+>>>>>>> eecfbb41c00a9f942f1480b26fe210a8d2609a4f
 
     public List<Color> createColorPalette(MultipartFile multipartFile) {
         try {
@@ -55,7 +66,11 @@ public class CreateColorsPaletteService {
                     .map(entry -> new Color(entry.getKey(), true))
                     .collect(Collectors.toList());
 
+<<<<<<< HEAD
+        } catch (WhaleRunTimeException | IOException e) {
+=======
         } catch (IOException e) {
+>>>>>>> eecfbb41c00a9f942f1480b26fe210a8d2609a4f
             throw new WhaleRunTimeException(e.getMessage());
         }
     }

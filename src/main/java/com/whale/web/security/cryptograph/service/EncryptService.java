@@ -4,6 +4,7 @@ import com.whale.web.documents.imageconverter.exception.InvalidUploadedFileExcep
 import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import com.whale.web.exceptions.domain.WhaleUnauthorizedException;
 import com.whale.web.security.cryptograph.model.EncryptModel;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+@Slf4j
 @Service
 public class EncryptService {
 
@@ -39,9 +41,10 @@ public class EncryptService {
 			Cipher cipher = Cipher.getInstance(CIPHER_INSTANCE);
 			IvParameterSpec ivParameterSpec = new IvParameterSpec(new byte[16]);
 			cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec);
-
+			log.info("File encrypted");
 			return cipher.doFinal(bytesInFile);
 		} catch (Exception e) {
+			log.error("File encrypted failed: " + e.getMessage());
 			throw new WhaleRunTimeException(e.getMessage());
 		}
 	}
@@ -60,9 +63,10 @@ public class EncryptService {
 			Cipher cipher = Cipher.getInstance(CIPHER_INSTANCE);
 			IvParameterSpec ivParameterSpec = new IvParameterSpec(new byte[16]);
 			cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec);
-
+			log.info("File decrypted");
 			return cipher.doFinal(encryptedFile);
 		} catch (Exception e) {
+			log.error("File decryption failed: " + e.getMessage());
 			throw new WhaleUnauthorizedException(e.getMessage());
 		}
 	}

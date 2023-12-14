@@ -6,17 +6,24 @@ networks:
 
 volumes:
   prometheus_data:
+  grafana_data:
 
 services:
   prometheus:
     image: prom/prometheus:latest
-    container_name: prometheus
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
     networks:
      - aw-network
     ports:
-      - 9090:9090
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - "9090:9090"
 
+  grafana:
+    image: grafana/grafana:latest
+    networks:
+     - aw-network
+    ports:
+      - "3000:3000"
 
   

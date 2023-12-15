@@ -17,6 +17,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
@@ -62,6 +63,26 @@ public class RestExceptionHandler {
 
         StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
                 "Someone Fields are is blank", exception.getBody().getDetail(), http.getRequestURI());
+
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<StandardError> missingServletRequestParameterException(MissingServletRequestParameterException exception,
+                                                                            HttpServletRequest http) {
+
+        StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
+                "Someone Fields are is blank", exception.getBody().getDetail(), http.getRequestURI());
+
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<StandardError> illegalArgumentException(IllegalArgumentException exception,
+                                                                                 HttpServletRequest http) {
+
+        StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
+                "Someone Fields are is blank", exception.getMessage(), http.getRequestURI());
 
         return ResponseEntity.badRequest().body(error);
     }

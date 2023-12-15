@@ -53,6 +53,8 @@ public class DocumentsController {
     private final QRCodeEmailService qrCodeEmailService;
     private final ProcessWorksheetService processWorksheetService;
     private final CreateCertificateService createCertificateService;
+    private static final Logger logger = LoggerFactory.getLogger(DocumentsController.class);
+    private static final String ATTACHMENT_FILENAME = "attachment; filename=";
 
     public DocumentsController(CompactConverterService compactConverterService,
                                ZipFileCompressorService zipFileCompressorService, ImageConverterService imageConverterService,
@@ -68,10 +70,6 @@ public class DocumentsController {
         this.processWorksheetService = processWorksheetService;
         this.createCertificateService = createCertificateService;
     }
-
-    private static final Logger logger = LoggerFactory.getLogger(DocumentsController.class);
-    private static final String ATTACHMENT_FILENAME = "attachment; filename=";
-
 
     @PostMapping(value = "/compactconverter", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Compact Converter", description = "Convert ZIP to other compression formats", method = "POST")
@@ -256,7 +254,6 @@ public class DocumentsController {
         }
     }
 
-
     @PostMapping(value = "/certificategenerator", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Certificate Generator", description = "Generates certificates with a chosen layout", method = "POST")
     @ApiResponses(value = {
@@ -277,5 +274,4 @@ public class DocumentsController {
                     .header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "certificates.zip")
                     .body(bytes);
     }
-
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import com.whale.web.documents.imageconverter.exception.InvalidUploadedFileException;
 import com.whale.web.exceptions.domain.ImageIsNullException;
 import com.whale.web.exceptions.domain.WhaleRunTimeException;
+import com.whale.web.exceptions.domain.WhaleTransformerException;
 import com.whale.web.exceptions.domain.WhaleUnauthorizedException;
 import com.whale.web.exceptions.errors.ErrorResponse;
 import com.whale.web.exceptions.errors.StandardError;
@@ -117,5 +118,13 @@ public class RestExceptionHandler {
                 "BAD REQUEST", e.getMessage(), http.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
+    @ExceptionHandler(WhaleTransformerException.class)
+    public ResponseEntity<StandardError> whaleTransformerException(WhaleTransformerException e, HttpServletRequest http){
+        StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
+                "BAD REQUEST", e.getMessage(), http.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 }

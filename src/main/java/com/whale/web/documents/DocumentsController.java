@@ -268,7 +268,6 @@ public class DocumentsController {
     public ResponseEntity<Object> certificateGenerator(
             CertificateRecordDto certificateRecordDto,
             @Parameter(description = "Submit a csv file here") @RequestPart MultipartFile csvFileDto) {
-        try {
             List<String> names = processWorksheetService.savingNamesInAList(csvFileDto);
             byte[] bytes = createCertificateService.createCertificates(certificateRecordDto, names);
 
@@ -277,11 +276,6 @@ public class DocumentsController {
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "certificates.zip")
                     .body(bytes);
-
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
     }
 
 }

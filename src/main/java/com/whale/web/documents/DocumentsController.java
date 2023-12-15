@@ -97,7 +97,6 @@ public class DocumentsController {
                 .body(responseBytes);
     }
 
-
     private byte[] createZipArchive(List<byte[]> files) throws IOException {
         ByteArrayOutputStream zipStream = new ByteArrayOutputStream();
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(zipStream)) {
@@ -151,26 +150,16 @@ public class DocumentsController {
             @Parameter(description = "Enter the image format: Please choose a BMP, JPG, JPEG , GIF, PNG or TIFF") @RequestParam("outputFormat") String outputFormat,
             @Parameter(description = "Submit an image here. Accepted formats: BMP, JPG, JPEG or GIF file.") @RequestPart MultipartFile image
     ) {
-        try {
-            byte[] bytes = imageConverterService.convertImageFormat(outputFormat, image);
-
-            String originalFileNameWithoutExtension = StringUtils.stripFilenameExtension(Objects.requireNonNull(image.getOriginalFilename()));
-            String convertedFileName = originalFileNameWithoutExtension + "." + outputFormat.toLowerCase();
-
-            logger.info("Image converted successfully");
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + convertedFileName)
-                    .header(CacheControl.noCache().toString())
-                    .body(bytes);
-
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-
+        byte[] bytes = imageConverterService.convertImageFormat(outputFormat, image);
+        String originalFileNameWithoutExtension = StringUtils.stripFilenameExtension(Objects.requireNonNull(image.getOriginalFilename()));
+        String convertedFileName = originalFileNameWithoutExtension + "." + outputFormat.toLowerCase();
+        logger.info("Image converted successfully");
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + convertedFileName)
+                .header(CacheControl.noCache().toString())
+                .body(bytes);
     }
-
 
     @PostMapping(value = "/qrcodegenerator/link", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "QRCOde Generator for link", description = "Generates QRCode for Link in the chosen color", method = "POST")
@@ -198,7 +187,6 @@ public class DocumentsController {
         }
     }
 
-
     @PostMapping(value = "/qrcodegenerator/email", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "QRCOde Generator for email", description = "Generates QRCode for Email in the chosen color", method = "POST")
     @ApiResponses(value = {
@@ -225,7 +213,6 @@ public class DocumentsController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-
 
     @PostMapping(value = "/qrcodegenerator/whatsapp", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "QRCOde Generator for whatsapp", description = "Generates QRCode for WhatsApp in the chosen color", method = "POST")

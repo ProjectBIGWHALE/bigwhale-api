@@ -1,6 +1,5 @@
 package com.whale.web.security.cryptograph.service;
 
-import com.whale.web.documents.imageconverter.exception.InvalidUploadedFileException;
 import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import com.whale.web.exceptions.domain.WhaleUnauthorizedException;
 import com.whale.web.security.cryptograph.model.EncryptModel;
@@ -25,7 +24,7 @@ public class EncryptService {
 
 		try {
 			if (formFile.isEmpty() || encryptionKey.isEmpty()) {
-				throw new InvalidUploadedFileException("An invalid file was sent");
+				throw new WhaleRunTimeException("An invalid file was sent");
 			}
 			byte[] bytesInFile = formFile.getBytes();
 			byte[] keyBytes = Arrays.copyOf(encryptionKey.getBytes(StandardCharsets.UTF_8), 16); // Adjust the key size to 16 bytes
@@ -46,7 +45,7 @@ public class EncryptService {
 		try {
 
 			if (fileOfForm.isEmpty() || encryptionKey.isEmpty()) {
-				throw new InvalidUploadedFileException("An invalid file was sent");
+				throw new WhaleUnauthorizedException("An invalid file was sent");
 			}
 
 			byte[] encryptedFile = fileOfForm.getBytes();
@@ -64,7 +63,7 @@ public class EncryptService {
 
 	public EncryptModel choiceEncryptService(Boolean action, String key, MultipartFile file){
 		if (file.isEmpty()) {
-			throw new InvalidUploadedFileException("An invalid file was sent");
+			throw new WhaleUnauthorizedException("An invalid file was sent");
 		}
 		if (key.isEmpty()) {
 			throw new IllegalArgumentException("The key field is blank");

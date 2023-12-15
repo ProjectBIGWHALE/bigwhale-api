@@ -370,7 +370,7 @@ class DocumentsTest {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
                         .file(image)
                         .param("outputFormat", outputFormat))
-                .andExpect(MockMvcResultMatchers.status().isInternalServerError())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andReturn();
     }
 
@@ -387,7 +387,7 @@ class DocumentsTest {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
                         .file(image)
                         .param("outputFormat", "png"))
-                .andExpect(MockMvcResultMatchers.status().isInternalServerError());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
@@ -402,6 +402,6 @@ class DocumentsTest {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
                         .file(image)
                         .param("outputFormat", "png"))
-                .andExpect(MockMvcResultMatchers.status().isInternalServerError());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }

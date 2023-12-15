@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.whale.web.documents.imageconverter.exception.InvalidUploadedFileException;
 import com.whale.web.exceptions.domain.ImageIsNullException;
 import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import com.whale.web.exceptions.domain.WhaleTransformerException;
@@ -96,15 +95,6 @@ public class RestExceptionHandler {
 
         logger(e.getLocalizedMessage(), e.getMessage());
         return ResponseEntity.badRequest().body(error);
-    }
-
-    @ExceptionHandler(InvalidUploadedFileException.class)
-    public ResponseEntity<StandardError> invalidUploadedFileException(InvalidUploadedFileException e, HttpServletRequest http){
-        StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
-                BAD_REQUEST, e.getMessage(), http.getRequestURI());
-
-        logger(e.getLocalizedMessage(), e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)

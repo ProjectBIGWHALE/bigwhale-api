@@ -1,4 +1,4 @@
-package com.whale.web.documents.compressedfileconverter;
+package com.whale.web.documents.compressedfileconverter.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

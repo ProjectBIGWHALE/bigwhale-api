@@ -3,7 +3,7 @@ package com.whale.web.documents;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whale.web.documents.certificategenerator.dto.CertificateRecordDto;
 import com.whale.web.documents.certificategenerator.model.enums.CertificateTypeEnum;
-import com.whale.web.documents.compressedfileconverter.CompactConverterService;
+import com.whale.web.documents.compressedfileconverter.service.CompactConverterService;
 import com.whale.web.documents.zipfilegenerator.ZipFileCompressorService;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailRecordDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkRecordDto;
@@ -12,7 +12,6 @@ import com.whale.web.documents.textextract.TextExtractService;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -176,7 +175,7 @@ class DocumentsTest {
 
         when(compressorService.compressFiles(any())).thenReturn(multipartFile.getBytes());
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/filecompressor")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/file-compressor")
                         .file(multipartFile)
                         .file(multipartFile2))
                 .andExpect(status().isOk())
@@ -238,7 +237,7 @@ class DocumentsTest {
         );
 
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/certificategenerator")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/certificate-generator/certificate-generator")
                         .file(csvFileDto)
                         .flashAttr("certificateDto", certificateDto)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
@@ -252,7 +251,7 @@ class DocumentsTest {
                 "https://www.example.com",
                 "red");
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/documents/qrcodegenerator/link")
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/documents/qr-code/qrcode-generator/link")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -271,7 +270,7 @@ class DocumentsTest {
                 "URI inválida",
                 "red");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/documents/qrcodegenerator/link")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/documents/qr-code/qrcode-generator/link")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -286,7 +285,7 @@ class DocumentsTest {
                 "Este é um email de Teste",
                 "blue");
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/documents/qrcodegenerator/email")
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/documents/qr-code/qrcode-generator/email")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -307,7 +306,7 @@ class DocumentsTest {
                 "Este é um email de Teste",
                 "blue");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/documents/qrcodegenerator/email")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/documents/qr-code/qrcode-generator/email")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -321,7 +320,7 @@ class DocumentsTest {
                 "Mensagem de teste",
                 "green");
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/documents/qrcodegenerator/whatsapp")
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/documents/qr-code/qrcode-generator/whatsapp")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -341,7 +340,7 @@ class DocumentsTest {
                 null,
                 "green");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/documents/qrcodegenerator/whatsapp")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/documents/qr-code/qrcode-generator/whatsapp")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -354,7 +353,7 @@ class DocumentsTest {
         MockMultipartFile file = createTestImage("jpeg", "image");
         String outputFormat = "png";
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/file-compressor/image-converter")
                         .file(file)
                         .param("outputFormat", outputFormat))
                 .andExpect(status().isOk())
@@ -370,7 +369,7 @@ class DocumentsTest {
 
         MockMultipartFile image = createTestImage("png", "image");
         String outputFormat = "invalid-format";
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/file-compressor/image-converter")
                         .file(image)
                         .param("outputFormat", outputFormat))
                 .andExpect(MockMvcResultMatchers.status().isInternalServerError())
@@ -387,7 +386,7 @@ class DocumentsTest {
                 "Este é um arquivo de texto".getBytes()
         );
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/file-compressor/image-converter")
                         .file(image)
                         .param("outputFormat", "png"))
                 .andExpect(MockMvcResultMatchers.status().isInternalServerError());
@@ -402,7 +401,7 @@ class DocumentsTest {
                 new byte[0]
         );
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/file-compressor/image-converter")
                         .file(image)
                         .param("outputFormat", "png"))
                 .andExpect(MockMvcResultMatchers.status().isInternalServerError());

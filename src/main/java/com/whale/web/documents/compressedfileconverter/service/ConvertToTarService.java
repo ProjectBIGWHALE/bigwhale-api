@@ -1,4 +1,4 @@
-package com.whale.web.documents.compressedfileconverter;
+package com.whale.web.documents.compressedfileconverter.service;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;

@@ -65,6 +65,9 @@ There are tools that easily allow you to build interaction interfaces with your 
 After performing the steps in the Confgurations section, access our API's interactive documentation at:
 - [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html).
 
+## Metrics 
+To help identify issues, optimize performance, and maintain the reliability of our web application in production, we chose Prometheus to collect, store, and process metrics, and Grafana to visualize those metrics in an effective and interactive way
+Together, these tools play a key role in monitoring and observability of web applications.
 
 ## 🤝 Collaborate with the project
 If you encounter any issues or have suggestions for improving the API, please read [contributions.md](https://github.com/ProjectBIGWHALE/bigwhale-api/blob/develop/contributions.md) for details on the process for sending us solicitation requests.

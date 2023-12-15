@@ -10,7 +10,11 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-
+/*
+ * Class to read the pixels of an image and replace the pixels that are in
+ * a certain color spectrum. It is possible to change the edge of the spectrum and change it by a color
+ * any other than transparency
+ */
 @Service
 public class AlterColorService {
 
@@ -44,7 +48,6 @@ public class AlterColorService {
         int delta = (int) Math.round(255 * (marginValue / 100.0));
         return new ColorRange(markedColor, intensity, delta);
     }
-
 
     private Color getReplacementColor(String replacementColor) {
         if (replacementColor == null || replacementColor.isEmpty()) {

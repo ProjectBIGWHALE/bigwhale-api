@@ -3,17 +3,17 @@ package com.whale.web.design.colorspalette.service;
 import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
+import java.util.HashMap;
 import java.util.*;
 import java.util.List;
 
 @Service
 public class CreateColorsPaletteService {
+
     private static final int NUM_COLORS = 6; // Number of predominant colors to be extracted
     private static final int MAX_COLOR_DISTANCE = 70; // Maximum allowed distance between colors
 
@@ -54,7 +54,7 @@ public class CreateColorsPaletteService {
                     .map(entry -> new Color(entry.getKey(), true))
                     .toList();
 
-        } catch (IOException e) {
+        } catch (WhaleRunTimeException | IOException e) {
             throw new WhaleRunTimeException(e.getMessage());
         }
     }

@@ -1,5 +1,6 @@
 package com.whale.web.documents.compressedfileconverter;
 
+import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -17,7 +18,7 @@ import java.util.List;
 
 @Service
 public class ConvertToTarGzService {
-    public List<byte[]> convertToTarGz(List<MultipartFile> files) throws IOException {
+    public List<byte[]> convertToTarGz(List<MultipartFile> files){
         List<byte[]> filesConverted = new ArrayList<>();
 
         for (MultipartFile file : files) {
@@ -36,10 +37,14 @@ public class ConvertToTarGzService {
                     IOUtils.copy(zipArchiveInputStream, tarArchiveOutputStream);
                     tarArchiveOutputStream.closeArchiveEntry();
                 }
+            }catch (IOException e){
+                throw new WhaleRunTimeException(e.getMessage());
             }
 
             try (GzipCompressorOutputStream gzipOutputStream = new GzipCompressorOutputStream(tarGzOutputStream)) {
                 gzipOutputStream.write(tarGzOutputStream.toByteArray());
+            }catch (IOException e){
+                throw new WhaleRunTimeException(e.getMessage());
             }
             filesConverted.add(tarGzOutputStream.toByteArray());
         }

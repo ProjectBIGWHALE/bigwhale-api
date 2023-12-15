@@ -1,5 +1,6 @@
 package com.whale.web.documents.zipfilegenerator;
 
+import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,12 +18,12 @@ public class ZipFileCompressorService {
 
     public byte[] compressFiles(List<MultipartFile> multipartFiles) throws IOException {
         if (multipartFiles == null || multipartFiles.isEmpty()) {
-            throw new IllegalArgumentException("The input file list is null or empty.");
+            throw new WhaleRunTimeException("The input file list is null or empty.");
         }
 
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-             ZipOutputStream zipOut = new ZipOutputStream(byteArrayOutputStream)) {
-
+        try{
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ZipOutputStream zipOut = new ZipOutputStream(byteArrayOutputStream);
             zipOut.setLevel(Deflater.BEST_COMPRESSION);
 
             for (MultipartFile multipartFile : multipartFiles) {
@@ -43,6 +44,8 @@ public class ZipFileCompressorService {
 
             zipOut.finish();
             return byteArrayOutputStream.toByteArray();
+        }catch (Exception e){
+            throw new WhaleRunTimeException(e.getMessage());
         }
     }
 }

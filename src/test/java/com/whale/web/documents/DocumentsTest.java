@@ -11,6 +11,7 @@ import com.whale.web.documents.qrcodegenerator.dto.QRCodeWhatsappRecordDto;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -182,7 +183,7 @@ class DocumentsTest {
         verify(compressorService, times(1)).compressFiles(any());
     }
 
-/*    @Test
+    @Test
     void shouldReturnTheCertificatesStatusCode200() throws Exception {
 
         String csvContent = "col1,col2,col3\nvalue1,value2,value3";
@@ -210,10 +211,10 @@ class DocumentsTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE))
                 .andExpect(MockMvcResultMatchers.header().string("Content-Disposition", Matchers.containsString("attachment")));
-    }*/
+    }
 
     @Test
-    void shouldReturnARedirectionStatusCode500() throws Exception {
+    void shouldReturnARedirectionStatusCode400() throws Exception {
 
         String csvContent = "col1,col2,col3\nvalue1,value2,value3";
         MockMultipartFile csvFileDto = new MockMultipartFile(
@@ -238,7 +239,7 @@ class DocumentsTest {
                         .file(csvFileDto)
                         .flashAttr("certificateDto", certificateDto)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -369,7 +370,7 @@ class DocumentsTest {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
                         .file(image)
                         .param("outputFormat", outputFormat))
-                .andExpect(MockMvcResultMatchers.status().isInternalServerError())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andReturn();
     }
 
@@ -386,7 +387,7 @@ class DocumentsTest {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
                         .file(image)
                         .param("outputFormat", "png"))
-                .andExpect(MockMvcResultMatchers.status().isInternalServerError());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
@@ -401,6 +402,6 @@ class DocumentsTest {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
                         .file(image)
                         .param("outputFormat", "png"))
-                .andExpect(MockMvcResultMatchers.status().isInternalServerError());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }

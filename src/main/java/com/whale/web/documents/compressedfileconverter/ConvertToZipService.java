@@ -1,5 +1,6 @@
 package com.whale.web.documents.compressedfileconverter;
 
+import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -15,29 +16,26 @@ import java.util.List;
 
 @Service
 public class ConvertToZipService {
-    public List<byte[]> convertToZip(List<MultipartFile> files) throws IOException {
+    public List<byte[]> convertToZip(List<MultipartFile> files) {
         List<byte[]> zipFiles = new ArrayList<>();
-
-        for (MultipartFile file : files) {
-
-            ByteArrayOutputStream zipOutputStream = new ByteArrayOutputStream();
-            ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(zipOutputStream);
-            ZipArchiveInputStream zipArchiveInputStream = new ZipArchiveInputStream(file.getInputStream());
-
-            ZipArchiveEntry zipEntry;
-            while ((zipEntry = zipArchiveInputStream.getNextZipEntry()) != null) {
-
-                ZipArchiveEntry newZipEntry = new ZipArchiveEntry(zipEntry.getName());
-                zipArchiveOutputStream.putArchiveEntry(newZipEntry);
-                IOUtils.copy(zipArchiveInputStream, zipArchiveOutputStream);
-                zipArchiveOutputStream.closeArchiveEntry();
+        try{
+            for (MultipartFile file : files) {
+                ByteArrayOutputStream zipOutputStream = new ByteArrayOutputStream();
+                ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(zipOutputStream);
+                ZipArchiveInputStream zipArchiveInputStream = new ZipArchiveInputStream(file.getInputStream());
+                ZipArchiveEntry zipEntry;
+                while ((zipEntry = zipArchiveInputStream.getNextZipEntry()) != null) {
+                    ZipArchiveEntry newZipEntry = new ZipArchiveEntry(zipEntry.getName());
+                    zipArchiveOutputStream.putArchiveEntry(newZipEntry);
+                    IOUtils.copy(zipArchiveInputStream, zipArchiveOutputStream);
+                    zipArchiveOutputStream.closeArchiveEntry();
+                }
+                zipArchiveInputStream.close();
+                zipArchiveOutputStream.close();
+                zipFiles.add(zipOutputStream.toByteArray());
             }
-
-            zipArchiveInputStream.close();
-            zipArchiveOutputStream.close();
-            zipFiles.add(zipOutputStream.toByteArray());
-
-
+        }catch (IOException e){
+            throw new WhaleRunTimeException(e.getMessage());
         }
         return zipFiles;
     }

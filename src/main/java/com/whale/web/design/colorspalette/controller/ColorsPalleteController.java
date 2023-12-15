@@ -34,15 +34,12 @@ public class ColorsPalleteController {
         this.createColorsPaletteService = createColorsPaletteService;
     }
 
-
     @PostMapping(value = "/colors-palette", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Pallete From a Image", description = "Extract colors pallet from a image", method = "POST")
     public ResponseEntity<List<Color>> colorsPalette(@RequestPart("image") MultipartFile image) throws ImageIsNullException {
-
         MultipartFile upload = uploadImage.uploadImage(image);
         List<Color> listOfColors = createColorsPaletteService.createColorPalette(upload);
         log.info("Successfully generated image color palette");
-
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(CacheControl.noCache().toString())

@@ -1,23 +1,17 @@
 package com.whale.web.documents.compressedfileconverter;
 
+import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
-
 
 @Service
 public class CompactConverterService {
-
     private final ConvertToZipService convertToZip;
-
     private final ConvertToTarService convertToTar;
-
     private final ConvertTo7zService converterTo7z;
-
     private final ConvertToTarGzService convertToTarGz;
-
 
     public CompactConverterService(ConvertToZipService convertToZip, ConvertToTarService convertToTar,
             ConvertTo7zService converterTo7z, ConvertToTarGzService convertToTarGz) {
@@ -27,17 +21,17 @@ public class CompactConverterService {
         this.convertToTarGz = convertToTarGz;
     }
 
-    public List<byte[]> converterFile(List<MultipartFile> files, String outputFormat) throws IOException {
+    public List<byte[]> converterFile(List<MultipartFile> files, String outputFormat){
 
         if (files == null || files.isEmpty() || !areAllFilesZip(files)) {
-            throw new IllegalArgumentException("The input is not a valid zip file");
+            throw new WhaleRunTimeException("The input is not a valid zip file");
         } else {
             return switch (outputFormat.toLowerCase()) {
                 case "zip" -> convertToZip.convertToZip(files);
                 case "tar.gz" -> convertToTarGz.convertToTarGz(files);
                 case "7z" -> converterTo7z.convertTo7z(files);
                 case "tar" -> convertToTar.convertToTar(files);
-                default -> throw new IllegalArgumentException("Invalid compression format");
+                default -> throw new WhaleRunTimeException("Invalid compression format");
             };
         }
     }

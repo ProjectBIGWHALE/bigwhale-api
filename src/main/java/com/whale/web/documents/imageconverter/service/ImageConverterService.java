@@ -1,11 +1,8 @@
 package com.whale.web.documents.imageconverter.service;
 
-import com.whale.web.documents.imageconverter.exception.InvalidFileFormatException;
-import com.whale.web.documents.imageconverter.exception.InvalidUploadedFileException;
-import com.whale.web.documents.imageconverter.exception.UnsuccessfulFileConversionException;
+import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -16,7 +13,7 @@ import java.util.Arrays;
 @Service
 public class ImageConverterService {
 
-    public byte[] convertImageFormat(String outputFormat, MultipartFile imageFile) throws IOException {
+    public byte[] convertImageFormat(String outputFormat, MultipartFile imageFile){
 
         isValidImageFormat(imageFile);
         isValidOutputFormat(outputFormat);
@@ -29,21 +26,22 @@ public class ImageConverterService {
             convertedImage.flush();
 
             if (!successfullyConverted) {
-                throw new UnsuccessfulFileConversionException("Could not convert an image.");
+                throw new WhaleRunTimeException("Could not convert an image.");
             } else {
                 return convertedImage.toByteArray();
             }
+        }catch (IOException e){
+            throw new WhaleRunTimeException(e.getMessage());
         }
     }
 
-
     private void isValidImageFormat(MultipartFile imageFile) {
         if (imageFile == null || imageFile.isEmpty()) {
-            throw new InvalidUploadedFileException("Uploaded image file is null, empty or image format is not supported");
+            throw new WhaleRunTimeException("Uploaded image file is null, empty or image format is not supported");
         }
 
         if (!Arrays.asList("bmp", "jpg", "jpeg", "gif").contains(getFileExtension(imageFile))) {
-            throw new InvalidFileFormatException("Unsupported file format. Please choose a  bmp, jpg, jpeg, or gif file.");
+            throw new WhaleRunTimeException("Unsupported file format. Please choose a  bmp, jpg, jpeg, or gif file.");
         }
     }
 
@@ -60,7 +58,7 @@ public class ImageConverterService {
 
     private void isValidOutputFormat(String outputFOrmat) {
         if (!Arrays.asList("bmp", "jpg", "jpeg", "gif", "png", "tiff").contains(outputFOrmat.toLowerCase())) {
-            throw new InvalidFileFormatException("Unsupported file output format. Please choose a bmp, jpg, jpeg, gif, png, tiff.");
+            throw new WhaleRunTimeException("Unsupported file output format. Please choose a bmp, jpg, jpeg, gif, png, tiff.");
         }
     }
 }

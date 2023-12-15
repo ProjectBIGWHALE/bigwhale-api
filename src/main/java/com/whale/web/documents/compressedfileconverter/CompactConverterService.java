@@ -11,13 +11,9 @@ import java.util.List;
 public class CompactConverterService {
 
     private final ConvertToZipService convertToZip;
-
     private final ConvertToTarService convertToTar;
-
     private final ConvertTo7zService converterTo7z;
-
     private final ConvertToTarGzService convertToTarGz;
-
 
     public CompactConverterService(ConvertToZipService convertToZip, ConvertToTarService convertToTar,
             ConvertTo7zService converterTo7z, ConvertToTarGzService convertToTarGz) {
@@ -27,7 +23,7 @@ public class CompactConverterService {
         this.convertToTarGz = convertToTarGz;
     }
 
-    public List<byte[]> converterFile(List<MultipartFile> files, String outputFormat) throws IOException {
+    public List<byte[]> converterFile(List<MultipartFile> files, String outputFormat){
 
         if (files == null || files.isEmpty() || !areAllFilesZip(files)) {
             throw new IllegalArgumentException("The input is not a valid zip file");

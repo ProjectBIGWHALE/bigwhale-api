@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.whale.web.documents.qrcodegenerator.exception.QRCodeException;
 import com.whale.web.exceptions.domain.ImageIsNullException;
 import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import com.whale.web.exceptions.domain.WhaleTransformerException;
@@ -30,6 +31,7 @@ public class RestExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(RestExceptionHandler.class);
     private static final String BAD_REQUEST = "BAD REQUEST";
     private static final String FIELDS_ARE_BLANK = "Someone Fields are is blank";
+    private static final String UNPROCESSABLE_ENTITY = "UNPROCESSABLE ENTITY";
 
     @ExceptionHandler(WhaleRunTimeException.class)
     public ResponseEntity<StandardError> whaleRunTimeException(WhaleRunTimeException e, HttpServletRequest http){
@@ -131,6 +133,15 @@ public class RestExceptionHandler {
 
         logger(e.getLocalizedMessage(), e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(QRCodeException.class)
+    public ResponseEntity<StandardError> qrCodeException(QRCodeException e, HttpServletRequest http){
+        StandardError error = new StandardError(Instant.now(), HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                UNPROCESSABLE_ENTITY, e.getMessage(), http.getRequestURI());
+
+        logger(e.getLocalizedMessage(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(error);
     }
 
     private void logger(String classException, String msg){

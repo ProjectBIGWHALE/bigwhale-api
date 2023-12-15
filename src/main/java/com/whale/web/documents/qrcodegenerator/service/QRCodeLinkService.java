@@ -47,7 +47,7 @@ public class QRCodeLinkService {
 
             return imageBytes;
         } catch (WriterException | IOException e) {
-            throw new QRCodeException("An error occurred when trying to generate the qrcode");
+            throw new QRCodeException("An error occurred when trying to generate the qrcode: "+e.getMessage());
         }
     }
 

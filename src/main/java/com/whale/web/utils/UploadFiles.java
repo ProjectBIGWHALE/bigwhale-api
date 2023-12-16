@@ -1,6 +1,6 @@
 package com.whale.web.utils;
 
-import com.whale.web.exceptions.domain.FileIsNullException;
+import com.whale.web.exceptions.domain.FileIsEmptyException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
@@ -13,13 +13,13 @@ public class UploadFiles {
     private UploadFiles() {
         throw new IllegalStateException("UploadFiles");
     }
-    public static List<MultipartFile> fileUploadAndValidation(List<MultipartFile> files) throws FileIsNullException {
+    public static List<MultipartFile> fileUploadAndValidation(List<MultipartFile> files) throws FileIsEmptyException {
 
         List<MultipartFile> uploadedFiles = new ArrayList<>();
 
         for (MultipartFile file : files) {
             if (file.isEmpty()) {
-                throw new FileIsNullException("File cannot be null");
+                throw new FileIsEmptyException("File cannot be null");
             }
 
             try {
@@ -27,7 +27,7 @@ public class UploadFiles {
                 ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
                 uploadedFiles.add(new CustomMultipartFile(file.getOriginalFilename(), file.getContentType(), inputStream));
             } catch (IOException ex) {
-                throw new FileIsNullException(ex.getMessage());
+                throw new FileIsEmptyException(ex.getMessage());
             }
         }
 

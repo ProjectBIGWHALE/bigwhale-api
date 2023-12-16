@@ -7,7 +7,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.UnsupportedEncodingException;
 
-public class JsonService {
+public class JsonServiceUtilTest {
     public static JsonNode getJsonResponse(MvcResult result) throws UnsupportedEncodingException, JsonProcessingException {
         String responseBody = result.getResponse().getContentAsString();
         ObjectMapper objectMapper = new ObjectMapper();

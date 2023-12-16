@@ -1,6 +1,5 @@
 package com.whale.web.documents.compactconverter.service;
 
-import com.whale.web.exceptions.domain.FileIsNullException;
 import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

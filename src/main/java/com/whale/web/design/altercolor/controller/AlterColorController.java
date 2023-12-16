@@ -3,6 +3,7 @@ package com.whale.web.design.altercolor.controller;
 import java.io.IOException;
 
 import com.whale.web.design.altercolor.model.AlterColorForm;
+import com.whale.web.exceptions.domain.WhaleCheckedException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.CacheControl;
@@ -38,7 +39,7 @@ public class AlterColorController {
     @Operation(summary = "Change a Color of a image", description = "Change pixels of a specific color", method = "POST")
     public ResponseEntity<byte[]> alterColor(
             @Parameter(description = "Submit a png image here") @RequestPart MultipartFile image,
-            @Valid AlterColorForm form) throws IOException {
+            @Valid AlterColorForm form) throws IOException, WhaleCheckedException {
         byte[] processedImage = alterColorService.alterColor(image, form.getColorOfImage(), form.getColorForAlteration(), form.getMargin());
         log.info("Image color changed successfully");
         log.info("Image color changed successfully");

@@ -1,5 +1,7 @@
 package com.whale.web.design.altercolor.service;
 
+import com.whale.web.exceptions.domain.ImageIsNullException;
+import com.whale.web.exceptions.domain.WhaleCheckedException;
 import com.whale.web.utils.UploadImage;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,23 +26,27 @@ public class AlterColorService {
         this.uploadImage = uploadImage;
     }
 
-    public byte[] alterColor(MultipartFile imageForm, String colorOfImage, String replacementColor, double marginValue) throws IOException {
+    public byte[] alterColor(MultipartFile imageForm, String colorOfImage, String replacementColor, double marginValue) throws WhaleCheckedException, ImageIsNullException {
+        try {
+            MultipartFile upload = uploadImage.uploadImage(imageForm);
+            BufferedImage img = ImageIO.read(upload.getInputStream());
 
-        MultipartFile upload = uploadImage.uploadImage(imageForm);
-        BufferedImage img = ImageIO.read(upload.getInputStream());
+            ColorRange colorRange = calculateColorRange(colorOfImage, marginValue);
+            Color newColor = getReplacementColor(replacementColor);
+            BufferedImage newImg = applyColorTransformation(img, colorRange, newColor);
 
-        // Calculate color range
-        ColorRange colorRange = calculateColorRange(colorOfImage, marginValue);
+            try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+                ImageIO.write(newImg, "png", bos);
+                return bos.toByteArray();
+            }
+        }catch (ImageIsNullException iie) {
+            throw new ImageIsNullException("Image cannot be null");
+        }catch (IOException ioe) {
+            throw new WhaleCheckedException("A failure occurred in the color change of the image");
+        }
 
-        // Get the replacement color
-        Color newColor = getReplacementColor(replacementColor);
-
-        // Apply color transformation
-        BufferedImage newImg = applyColorTransformation(img, colorRange, newColor);
-
-        // Convert BufferedImage to byte array
-        return convertImageToByteArray(newImg);
     }
+
 
     private ColorRange calculateColorRange(String colorOfImage, double marginValue) {
         Color markedColor = Color.decode(colorOfImage);
@@ -71,15 +77,7 @@ public class AlterColorService {
                 }
             }
         }
-
         return newImg;
-    }
-
-    private byte[] convertImageToByteArray(BufferedImage img) throws IOException {
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-            ImageIO.write(img, "png", bos);
-            return bos.toByteArray();
-        }
     }
 
     private static class ColorRange {

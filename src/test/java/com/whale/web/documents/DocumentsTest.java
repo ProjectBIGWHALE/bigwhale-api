@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whale.web.documents.certificategenerator.dto.CertificateRecordDto;
 import com.whale.web.documents.certificategenerator.model.enums.CertificateTypeEnum;
 import com.whale.web.documents.compactconverter.service.CompactConverterService;
-import com.whale.web.documents.zipfilegenerator.ZipFileCompressorService;
+import com.whale.web.documents.zipfilecompressor.service.ZipFileCompressorService;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailRecordDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkRecordDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeWhatsappRecordDto;
@@ -173,7 +173,7 @@ class DocumentsTest {
 
         when(compressorService.compressFiles(any())).thenReturn(multipartFile.getBytes());
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/filecompressor")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/file-compressor")
                         .file(multipartFile)
                         .file(multipartFile2))
                 .andExpect(status().isOk())

@@ -1,4 +1,4 @@
-package com.whale.web.documents.zipfilegenerator;
+package com.whale.web.documents.zipfilecompressor.service;
 
 import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import org.springframework.stereotype.Service;

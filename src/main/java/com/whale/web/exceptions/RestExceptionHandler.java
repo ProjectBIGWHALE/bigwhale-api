@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.whale.web.documents.qrcodegenerator.exception.QRCodeException;
 import com.whale.web.exceptions.domain.ImageIsNullException;
 import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import com.whale.web.exceptions.domain.WhaleTransformerException;
@@ -133,15 +132,6 @@ public class RestExceptionHandler {
 
         logger(e.getLocalizedMessage(), e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-    }
-
-    @ExceptionHandler(QRCodeException.class)
-    public ResponseEntity<StandardError> qrCodeException(QRCodeException e, HttpServletRequest http){
-        StandardError error = new StandardError(Instant.now(), HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                UNPROCESSABLE_ENTITY, e.getMessage(), http.getRequestURI());
-
-        logger(e.getLocalizedMessage(), e.getMessage());
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(error);
     }
 
     private void logger(String classException, String msg){

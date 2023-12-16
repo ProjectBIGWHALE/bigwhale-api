@@ -5,7 +5,7 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.whale.web.documents.qrcodegenerator.exception.QRCodeException;
+
 import com.whale.web.documents.qrcodegenerator.model.QRCodeLinkModel;
 import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import org.springframework.stereotype.Service;

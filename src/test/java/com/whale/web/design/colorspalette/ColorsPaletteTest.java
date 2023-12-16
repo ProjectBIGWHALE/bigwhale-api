@@ -1,7 +1,7 @@
 package com.whale.web.design.colorspalette;
 
-import com.whale.web.utils.ImageService;
-import com.whale.web.utils.JsonService;
+import com.whale.web.utils.ImageServiceUtilTest;
+import com.whale.web.utils.JsonServiceUtilTest;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ class ColorsPaletteTest {
     @Test
     @Order(1)
     void shouldReturnAPaletteColorsList() throws Exception {
-        MockMultipartFile file = ImageService.createTestImage("png", "image");
+        MockMultipartFile file = ImageServiceUtilTest.createTestImage("png", "image");
         mockMvc.perform(MockMvcRequestBuilders.multipart(colorsPaletteUri)
                         .file(file))
                 .andExpect(MockMvcResultMatchers.status().isOk());
@@ -39,13 +39,13 @@ class ColorsPaletteTest {
     @Test
     @Order(2)
     void shouldReturnAExceptionStatusCode500() throws Exception {
-        MockMultipartFile file = ImageService.createTestNullImage();
+        MockMultipartFile file = ImageServiceUtilTest.createTestNullImage();
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart(colorsPaletteUri)
                         .file(file))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andReturn();
 
-        String error = JsonService.getJsonResponse(result).get("error").asText();
+        String error = JsonServiceUtilTest.getJsonResponse(result).get("error").asText();
         assertEquals("Image cannot be null", error);
 
     }

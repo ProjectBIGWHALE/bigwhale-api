@@ -1,13 +1,16 @@
 package com.whale.web.design.altercolor;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.whale.web.utils.ImageService;
-import com.whale.web.utils.JsonService;
+import com.whale.web.design.altercolor.service.AlterColorService;
+import com.whale.web.documents.imageconverter.service.ImageConverterService;
+import com.whale.web.utils.ImageServiceUtilTest;
+import com.whale.web.utils.JsonServiceUtilTest;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,9 +35,9 @@ class AlterColorTest {
     @Test
     @Order(1)
     void shouldReturnAValidPNGProcessedImage() throws Exception {
-        MockMultipartFile file = ImageService.createTestImage("png", "image");
+        MockMultipartFile image = ImageServiceUtilTest.createTestImage("png", "image");
         mockMvc.perform(MockMvcRequestBuilders.multipart(alterColorUri)
-                        .file(file)
+                        .file(image)
                         .param("colorForAlteration", "#FFFFFF")
                         .param("colorOfImage", "#000000")
                         .param("margin", "4.0"))
@@ -46,24 +49,24 @@ class AlterColorTest {
 
     @Test
     @Order(2)
-    void shouldReturnAInternalServerError() throws Exception {
-        MockMultipartFile file = ImageService.createTestNullImage();
+    void sendNullImageAndReturnStatus400() throws Exception {
+        MockMultipartFile nullImage = ImageServiceUtilTest.createTestNullImage();
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart(alterColorUri)
-                        .file(file)
+                        .file(nullImage)
                         .param("colorForAlteration", "#FF0000")
                         .param("colorOfImage", "#00FF00")
                         .param("margin", "4.0"))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andReturn();
 
-        String error = JsonService.getJsonResponse(result).get("error").asText();
+        String error = JsonServiceUtilTest.getJsonResponse(result).get("error").asText();
         assertEquals("Image cannot be null", error);
     }
 
     @Test
     @Order(3)
     void testAlterColorWithoutColor() throws Exception {
-        MockMultipartFile file = ImageService.createTestImage("png", "image");
+        MockMultipartFile file = ImageServiceUtilTest.createTestImage("png", "image");
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart(alterColorUri)
                         .file(file)
                         .param("colorForAlteration", "#FF0000")
@@ -72,8 +75,8 @@ class AlterColorTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andReturn();
 
-        JsonNode listFieldErrors = JsonService.getJsonResponse(result).get("listFieldErrors");
-        String error = JsonService.getJsonResponse(result).get("error").asText();
+        JsonNode listFieldErrors = JsonServiceUtilTest.getJsonResponse(result).get("listFieldErrors");
+        String error = JsonServiceUtilTest.getJsonResponse(result).get("error").asText();
 
         assertEquals("Someone Fields are is blank", error);
         assertEquals("[{\"field\":\"margin\",\"message\":\"No 'margin' was provided\"}]", listFieldErrors.toString());

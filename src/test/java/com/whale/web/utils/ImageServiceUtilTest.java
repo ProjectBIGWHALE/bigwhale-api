@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class ImageService {
+public class ImageServiceUtilTest {
     public static MockMultipartFile createTestImage(String inputFormat, String name) throws IOException {
         BufferedImage bufferedImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = bufferedImage.createGraphics();

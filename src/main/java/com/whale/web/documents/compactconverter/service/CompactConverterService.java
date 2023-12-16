@@ -1,5 +1,6 @@
-package com.whale.web.documents.compressedfileconverter;
+package com.whale.web.documents.compactconverter.service;
 
+import com.whale.web.exceptions.domain.FileIsNullException;
 import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,17 +22,16 @@ public class CompactConverterService {
         this.convertToTarGz = convertToTarGz;
     }
 
-    public List<byte[]> converterFile(List<MultipartFile> files, String outputFormat){
-
-        if (files == null || files.isEmpty() || !areAllFilesZip(files)) {
-            throw new WhaleRunTimeException("The input is not a valid zip file");
+    public List<byte[]> converterFile(List<MultipartFile> files, String outputFormat) {
+        if (!areAllFilesZip(files)) {
+            throw new WhaleRunTimeException("File is null or not a valid zip file");
         } else {
             return switch (outputFormat.toLowerCase()) {
                 case "zip" -> convertToZip.convertToZip(files);
                 case "tar.gz" -> convertToTarGz.convertToTarGz(files);
                 case "7z" -> converterTo7z.convertTo7z(files);
                 case "tar" -> convertToTar.convertToTar(files);
-                default -> throw new WhaleRunTimeException("Invalid compression format");
+                default -> throw new WhaleRunTimeException("Input is null or the format entered is invalid");
             };
         }
     }

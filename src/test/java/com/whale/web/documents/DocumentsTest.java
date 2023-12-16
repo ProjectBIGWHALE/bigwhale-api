@@ -3,8 +3,8 @@ package com.whale.web.documents;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whale.web.documents.certificategenerator.dto.CertificateRecordDto;
 import com.whale.web.documents.certificategenerator.model.enums.CertificateTypeEnum;
-import com.whale.web.documents.compressedfileconverter.CompactConverterService;
-import com.whale.web.documents.zipfilegenerator.ZipFileCompressorService;
+import com.whale.web.documents.compactconverter.service.CompactConverterService;
+import com.whale.web.documents.zipfilecompressor.service.ZipFileCompressorService;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailRecordDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkRecordDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeWhatsappRecordDto;
@@ -134,7 +134,7 @@ class DocumentsTest {
         MockMultipartFile file = createTestZipFile();
         String outputFormat = "tar";
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/compactconverter")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/compact-converter")
                         .file(file)
                         .param("outputFormat", outputFormat))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -149,7 +149,7 @@ class DocumentsTest {
         MockMultipartFile file2 = createTestZipFile();
         String outputFormat = "7z";
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/compactconverter")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/compact-converter")
                         .file(file1)
                         .file(file2)
                         .param("outputFormat", outputFormat))
@@ -173,7 +173,7 @@ class DocumentsTest {
 
         when(compressorService.compressFiles(any())).thenReturn(multipartFile.getBytes());
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/filecompressor")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/file-compressor")
                         .file(multipartFile)
                         .file(multipartFile2))
                 .andExpect(status().isOk())
@@ -204,7 +204,7 @@ class DocumentsTest {
                 1L
         );
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/certificategenerator")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/certificate-generator")
                         .file(csvFileDto)
                         .flashAttr("certificateRecordDto", certificateRecordDto)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
@@ -235,7 +235,7 @@ class DocumentsTest {
         );
 
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/certificategenerator")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/certificate-generator")
                         .file(csvFileDto)
                         .flashAttr("certificateDto", certificateDto)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
@@ -351,7 +351,7 @@ class DocumentsTest {
         MockMultipartFile file = createTestImage("jpeg", "image");
         String outputFormat = "png";
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/image-converter")
                         .file(file)
                         .param("outputFormat", outputFormat))
                 .andExpect(status().isOk())
@@ -367,7 +367,7 @@ class DocumentsTest {
 
         MockMultipartFile image = createTestImage("png", "image");
         String outputFormat = "invalid-format";
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/image-converter")
                         .file(image)
                         .param("outputFormat", outputFormat))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -384,7 +384,7 @@ class DocumentsTest {
                 "Este é um arquivo de texto".getBytes()
         );
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/image-converter")
                         .file(image)
                         .param("outputFormat", "png"))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -399,7 +399,7 @@ class DocumentsTest {
                 new byte[0]
         );
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/image-converter")
                         .file(image)
                         .param("outputFormat", "png"))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());

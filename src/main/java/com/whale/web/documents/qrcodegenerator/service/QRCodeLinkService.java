@@ -5,8 +5,9 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.whale.web.documents.qrcodegenerator.exception.QRCodeException;
+
 import com.whale.web.documents.qrcodegenerator.model.QRCodeLinkModel;
+import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -47,7 +48,7 @@ public class QRCodeLinkService {
 
             return imageBytes;
         } catch (WriterException | IOException e) {
-            throw new QRCodeException("An error occurred when trying to generate the qrcode: "+e.getMessage());
+            throw new WhaleRunTimeException("An error occurred when trying to generate the qrcode: "+e.getMessage());
         }
     }
 

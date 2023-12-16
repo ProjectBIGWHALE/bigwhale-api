@@ -36,7 +36,7 @@ public record CertificateRecordDto(
         String eventLocale,
 
         @Schema(description =  "Certificate Model ID",example = "1")
-        @NotBlank(message = "No certificateModelId was provided")
+        @NotNull(message = "No certificateModelId was provided")
         Long certificateModelId
 ) {
 }

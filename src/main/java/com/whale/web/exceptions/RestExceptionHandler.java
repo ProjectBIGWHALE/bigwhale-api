@@ -4,10 +4,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.whale.web.exceptions.domain.ImageIsNullException;
-import com.whale.web.exceptions.domain.WhaleRunTimeException;
-import com.whale.web.exceptions.domain.WhaleTransformerException;
-import com.whale.web.exceptions.domain.WhaleUnauthorizedException;
+import com.whale.web.exceptions.domain.*;
 import com.whale.web.exceptions.errors.ErrorResponse;
 import com.whale.web.exceptions.errors.StandardError;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -47,6 +45,16 @@ public class RestExceptionHandler {
 
         logger(e.getLocalizedMessage(), e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(FileIsNullException.class)
+    public ResponseEntity<StandardError> fileIsNullException(FileIsNullException e, HttpServletRequest http) {
+
+        StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
+                "File cannot be null", e.getMessage(), http.getRequestURI());
+
+        logger(e.getLocalizedMessage(), e.getMessage());
+        return ResponseEntity.badRequest().body(error);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -1,6 +1,7 @@
 package com.whale.web.documents.zipfilecompressor.controller;
 
 import com.whale.web.documents.zipfilecompressor.service.ZipFileCompressorService;
+import com.whale.web.utils.UploadFiles;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -40,9 +41,8 @@ public class ZipFileCompressorController {
     })
     public ResponseEntity<Object> fileCompressor(
             @Parameter(description = "Submit one or more files here.") @RequestPart List<MultipartFile> file) throws IOException {
-
-            byte[] bytes = zipFileCompressorService.compressFiles(file);
-
+            List<MultipartFile> uploads = UploadFiles.fileUploadAndValidation(file);
+            byte[] bytes = zipFileCompressorService.compressFiles(uploads);
             log.info("File compressed successfully");
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)

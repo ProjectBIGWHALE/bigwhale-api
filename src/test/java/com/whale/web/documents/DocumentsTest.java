@@ -204,7 +204,7 @@ class DocumentsTest {
                 1L
         );
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/certificategenerator")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/certificate-generator")
                         .file(csvFileDto)
                         .flashAttr("certificateRecordDto", certificateRecordDto)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
@@ -235,7 +235,7 @@ class DocumentsTest {
         );
 
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/certificategenerator")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/certificate-generator")
                         .file(csvFileDto)
                         .flashAttr("certificateDto", certificateDto)
                         .contentType(MediaType.MULTIPART_FORM_DATA))

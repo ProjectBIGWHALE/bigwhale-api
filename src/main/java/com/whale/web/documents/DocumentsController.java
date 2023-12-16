@@ -237,24 +237,4 @@ public class DocumentsController {
         }
     }
 
-    @PostMapping(value = "/certificategenerator", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Certificate Generator", description = "Generates certificates with a chosen layout", method = "POST")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Certificate generated successfully",
-                    content = {@Content(mediaType = "application/octet-stream")}),
-            @ApiResponse(responseCode = "400", description = "Invalid request data", content = {@Content(schema = @Schema())}),
-            @ApiResponse(responseCode = "500", description = "Error generating qrcode", content = {@Content(schema = @Schema())})
-    })
-    public ResponseEntity<Object> certificateGenerator(
-            CertificateRecordDto certificateRecordDto,
-            @Parameter(description = "Submit a csv file here") @RequestPart MultipartFile csvFileDto) {
-        List<String> names = processWorksheetService.savingNamesInAList(csvFileDto);
-        byte[] bytes = createCertificateService.createCertificates(certificateRecordDto, names);
-
-        logger.info("Certificate generated successfully");
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "certificates.zip")
-                .body(bytes);
-    }
 }

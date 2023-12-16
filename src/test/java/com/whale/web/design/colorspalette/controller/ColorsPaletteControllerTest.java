@@ -1,4 +1,4 @@
-package com.whale.web.design.colorspalette;
+package com.whale.web.design.colorspalette.controller;
 
 import com.whale.web.utils.ImageServiceUtilTest;
 import com.whale.web.utils.JsonServiceUtilTest;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @AutoConfigureMockMvc
 @SpringBootTest
-class ColorsPaletteTest {
+class ColorsPaletteControllerTest {
 
     @Autowired
     private MockMvc mockMvc;

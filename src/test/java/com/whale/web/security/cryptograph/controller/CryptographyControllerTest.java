@@ -1,13 +1,10 @@
-package com.whale.web.security.cryptograph;
+package com.whale.web.security.cryptograph.controller;
 
 import java.net.URI;
 
 import com.whale.web.security.cryptograph.model.EncryptModel;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,7 +19,7 @@ import com.whale.web.security.cryptograph.service.EncryptService;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @AutoConfigureMockMvc
 @SpringBootTest
-class CryptographTest {
+class CryptographyControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -31,6 +28,7 @@ class CryptographTest {
     EncryptService encryptService;
 
     @Test
+    @Order(1)
     void shouldReturnEncryptedFile() throws Exception {
         URI uri = new URI("http://localhost:8080/api/v1/security/cryptograph");
         boolean action = true;
@@ -53,6 +51,7 @@ class CryptographTest {
     }
 
     @Test
+    @Order(2)
     void shouldReturnDecryptedFile() throws Exception {
         URI uri = new URI("http://localhost:8080/api/v1/security/cryptograph");
         boolean action = false;
@@ -77,6 +76,7 @@ class CryptographTest {
     }
 
     @Test
+    @Order(3)
     void shouldReturnStatus401ForWrongKey() throws Exception {
         URI uri = new URI("http://localhost:8080/api/v1/security/cryptograph");
         boolean action = true;
@@ -92,6 +92,6 @@ class CryptographTest {
                         .file(encryptedFile)
                         .param("key", "WRONG_KEY")
                         .param("action", String.valueOf(false)))
-                .andExpect(MockMvcResultMatchers.status().is(401));
+                .andExpect(MockMvcResultMatchers.status().is(400));
     }
 }

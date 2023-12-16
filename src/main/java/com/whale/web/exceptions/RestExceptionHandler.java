@@ -1,5 +1,6 @@
 package com.whale.web.exceptions;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
-import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -47,11 +47,11 @@ public class RestExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
-    @ExceptionHandler(FileIsNullException.class)
-    public ResponseEntity<StandardError> fileIsNullException(FileIsNullException e, HttpServletRequest http) {
+    @ExceptionHandler(FileIsEmptyException.class)
+    public ResponseEntity<StandardError> fileIsEmptyException(FileIsEmptyException e, HttpServletRequest http) {
 
         StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
-                "File cannot be null", e.getMessage(), http.getRequestURI());
+                "File cannot be empty", e.getMessage(), http.getRequestURI());
 
         logger(e.getLocalizedMessage(), e.getMessage());
         return ResponseEntity.badRequest().body(error);
@@ -137,6 +137,15 @@ public class RestExceptionHandler {
     public ResponseEntity<StandardError> whaleTransformerException(WhaleTransformerException e, HttpServletRequest http){
         StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
                 BAD_REQUEST, e.getMessage(), http.getRequestURI());
+
+        logger(e.getLocalizedMessage(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(WhaleCheckedException.class)
+    public ResponseEntity<StandardError> whaleCheckedException(WhaleCheckedException e, HttpServletRequest http){
+        StandardError error = new StandardError(Instant.now(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Server error", e.getMessage(), http.getRequestURI());
 
         logger(e.getLocalizedMessage(), e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);

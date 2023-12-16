@@ -1,8 +1,6 @@
-package com.whale.web.design.altercolor;
+package com.whale.web.design.altercolor.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.whale.web.design.altercolor.service.AlterColorService;
-import com.whale.web.documents.imageconverter.service.ImageConverterService;
 import com.whale.web.utils.ImageServiceUtilTest;
 import com.whale.web.utils.JsonServiceUtilTest;
 import org.hamcrest.Matchers;
@@ -10,7 +8,6 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @AutoConfigureMockMvc
 @SpringBootTest
-class AlterColorTest {
+class AlterColorControllerTest {
 
     @Autowired
     private MockMvc mockMvc;

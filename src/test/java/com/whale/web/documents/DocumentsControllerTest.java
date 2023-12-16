@@ -45,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @AutoConfigureMockMvc
 @SpringBootTest
-class DocumentsTest {
+class DocumentsControllerTest {
 
     @Autowired
     private MockMvc mockMvc;

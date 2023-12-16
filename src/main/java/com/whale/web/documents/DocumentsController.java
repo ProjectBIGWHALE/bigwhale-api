@@ -98,29 +98,6 @@ public class DocumentsController {
         }
     }
 
-
-    @PostMapping(value = "/imageconverter", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Image Converter", description = "Convert an image to another format", method = "POST")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Success", content = {@Content(mediaType = "application/octet-stream")}),
-            @ApiResponse(responseCode = "400", description = "Error in validating form fields", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "500", description = "Error converting image", content = {@Content(mediaType = MediaType.TEXT_PLAIN_VALUE)})
-    })
-    public ResponseEntity<Object> imageConverter(
-            @Parameter(description = "Enter the image format: Please choose a BMP, JPG, JPEG , GIF, PNG or TIFF") @RequestParam("outputFormat") String outputFormat,
-            @Parameter(description = "Submit an image here. Accepted formats: BMP, JPG, JPEG or GIF file.") @RequestPart MultipartFile image
-    ) {
-        byte[] bytes = imageConverterService.convertImageFormat(outputFormat, image);
-        String originalFileNameWithoutExtension = StringUtils.stripFilenameExtension(Objects.requireNonNull(image.getOriginalFilename()));
-        String convertedFileName = originalFileNameWithoutExtension + "." + outputFormat.toLowerCase();
-        logger.info("Image converted successfully");
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + convertedFileName)
-                .header(CacheControl.noCache().toString())
-                .body(bytes);
-    }
-
     @PostMapping(value = "/qrcodegenerator/link", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "QRCOde Generator for link", description = "Generates QRCode for Link in the chosen color", method = "POST")
     @ApiResponses(value = {

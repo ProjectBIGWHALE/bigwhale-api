@@ -351,7 +351,7 @@ class DocumentsTest {
         MockMultipartFile file = createTestImage("jpeg", "image");
         String outputFormat = "png";
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/image-converter")
                         .file(file)
                         .param("outputFormat", outputFormat))
                 .andExpect(status().isOk())
@@ -367,7 +367,7 @@ class DocumentsTest {
 
         MockMultipartFile image = createTestImage("png", "image");
         String outputFormat = "invalid-format";
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/image-converter")
                         .file(image)
                         .param("outputFormat", outputFormat))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -384,7 +384,7 @@ class DocumentsTest {
                 "Este é um arquivo de texto".getBytes()
         );
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/image-converter")
                         .file(image)
                         .param("outputFormat", "png"))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -399,7 +399,7 @@ class DocumentsTest {
                 new byte[0]
         );
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/imageconverter")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/image-converter")
                         .file(image)
                         .param("outputFormat", "png"))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());

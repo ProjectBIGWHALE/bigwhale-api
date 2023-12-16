@@ -69,6 +69,9 @@ After performing the steps in the Confgurations section, access our API's intera
 To help identify issues, optimize performance, and maintain the reliability of our web application in production, we chose Prometheus to collect, store, and process metrics, and Grafana to visualize those metrics in an effective and interactive way
 Together, these tools play a key role in monitoring and observability of web applications.
 
+![Captura de tela_2023-08-07_13-25-39](https://github.com/erasmobezerra/bigwhale-api/assets/57486221/2a64ef9b-2661-4aa1-bf1f-182de4473dea)
+
+
 ## 🤝 Collaborate with the project
 If you encounter any issues or have suggestions for improving the API, please read [contributions.md](https://github.com/ProjectBIGWHALE/bigwhale-api/blob/develop/contributions.md) for details on the process for sending us solicitation requests.
 

@@ -1,5 +1,7 @@
 package com.whale.web.documents.certificategenerator.controller;
 
+import java.util.List;
+
 import com.whale.web.documents.certificategenerator.dto.CertificateRecordDto;
 import com.whale.web.documents.certificategenerator.service.CreateCertificateService;
 import com.whale.web.documents.certificategenerator.service.ProcessWorksheetService;
@@ -11,10 +13,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,8 +26,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping(value = "api/v1/documents")
 @Tag(name = "API for documents resource palette")
@@ -55,7 +58,7 @@ public class CertificateGenerateController {
         List<String> names = processWorksheetService.savingNamesInAList(csvFileDto);
         byte[] bytes = createCertificateService.createCertificates(certificateRecordDto, names);
 
-        logger.info("Certificate generated successfully");
+        log.info("Certificate generated successfully");
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "certificates.zip")

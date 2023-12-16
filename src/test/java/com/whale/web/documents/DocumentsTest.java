@@ -3,7 +3,7 @@ package com.whale.web.documents;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whale.web.documents.certificategenerator.dto.CertificateRecordDto;
 import com.whale.web.documents.certificategenerator.model.enums.CertificateTypeEnum;
-import com.whale.web.documents.compressedfileconverter.CompactConverterService;
+import com.whale.web.documents.compactconverter.service.CompactConverterService;
 import com.whale.web.documents.zipfilegenerator.ZipFileCompressorService;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailRecordDto;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeLinkRecordDto;
@@ -134,7 +134,7 @@ class DocumentsTest {
         MockMultipartFile file = createTestZipFile();
         String outputFormat = "tar";
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/compactconverter")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/compact-converter")
                         .file(file)
                         .param("outputFormat", outputFormat))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -149,7 +149,7 @@ class DocumentsTest {
         MockMultipartFile file2 = createTestZipFile();
         String outputFormat = "7z";
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/compactconverter")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/compact-converter")
                         .file(file1)
                         .file(file2)
                         .param("outputFormat", outputFormat))

@@ -1,9 +1,8 @@
 package com.whale.web.documents;
 
-import com.whale.web.documents.certificategenerator.dto.CertificateRecordDto;
 import com.whale.web.documents.certificategenerator.service.CreateCertificateService;
 import com.whale.web.documents.certificategenerator.service.ProcessWorksheetService;
-import com.whale.web.documents.compressedfileconverter.CompactConverterService;
+import com.whale.web.documents.compactconverter.service.CompactConverterService;
 import com.whale.web.documents.zipfilegenerator.ZipFileCompressorService;
 import com.whale.web.documents.imageconverter.service.ImageConverterService;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailRecordDto;
@@ -70,46 +69,6 @@ public class DocumentsController {
         this.qrCodeEmailService = qrCodeEmailService;
         this.processWorksheetService = processWorksheetService;
         this.createCertificateService = createCertificateService;
-    }
-
-    @PostMapping(value = "/compactconverter", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Compact Converter", description = "Convert ZIP to other compression formats", method = "POST")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Compression performed successfully", content = {@Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)}),
-            @ApiResponse(responseCode = "400", description = "Error in validating form fields", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "500", description = "Error compressing file", content = {@Content(schema = @Schema())})
-    })
-    public ResponseEntity<Object> compactConverter(
-            @Parameter(description = "Submit one or more zips file here") @RequestPart("files") List<MultipartFile> files,
-            @Parameter(description = "Enter the compression format. Choose a tar, zip, 7z or tar.gz") @RequestParam("outputFormat") String outputFormat) throws IOException {
-        List<byte[]> filesConverted = compactConverterService.converterFile(files, outputFormat);
-        String convertedFileName = StringUtils.stripFilenameExtension(Objects.requireNonNull(files.get(0).getOriginalFilename()))
-                + "." + outputFormat.toLowerCase();
-
-        byte[] responseBytes;
-        if (filesConverted.size() == 1) responseBytes = filesConverted.get(0);
-        else responseBytes = createZipArchive(filesConverted);
-
-        logger.info("Compressed file conversion successful");
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + convertedFileName)
-                .header(CacheControl.noCache().toString())
-                .body(responseBytes);
-    }
-
-    private byte[] createZipArchive(List<byte[]> files) throws IOException {
-        ByteArrayOutputStream zipStream = new ByteArrayOutputStream();
-        try (ZipOutputStream zipOutputStream = new ZipOutputStream(zipStream)) {
-            for (int i = 0; i < files.size(); i++) {
-                byte[] fileBytes = files.get(i);
-                ZipEntry zipEntry = new ZipEntry("file" + (i + 1) + ".zip");
-                zipOutputStream.putNextEntry(zipEntry);
-                zipOutputStream.write(fileBytes);
-                zipOutputStream.closeEntry();
-            }
-        }
-        return zipStream.toByteArray();
     }
 
 

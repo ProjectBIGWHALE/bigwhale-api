@@ -1,4 +1,4 @@
-package com.whale.web.documents.compressedfileconverter;
+package com.whale.web.documents.compactconverter.service;
 
 import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;

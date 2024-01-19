@@ -45,14 +45,4 @@ public class ZipFileCompressorService {
         }
     }
 
-    private void isValidFile(List<MultipartFile> multipartFiles) {
-        if (multipartFiles.isEmpty()) {
-            throw new WhaleRunTimeException("The input file list is null or empty.");
-        }
-        for (MultipartFile file : multipartFiles) {
-            if (file == null) {
-                throw new WhaleRunTimeException("One or more files in the input file list are null.");
-            }
-        }
-    }
 }

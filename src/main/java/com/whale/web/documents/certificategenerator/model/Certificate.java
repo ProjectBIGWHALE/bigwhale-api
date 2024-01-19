@@ -1,16 +1,12 @@
 package com.whale.web.documents.certificategenerator.model;
 
-import com.whale.web.documents.certificategenerator.model.enums.CertificateTypeEnum;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.whale.web.documents.certificategenerator.enums.CertificateTypeEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Component
 public class Certificate {
 

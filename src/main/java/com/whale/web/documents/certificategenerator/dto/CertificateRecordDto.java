@@ -1,6 +1,6 @@
 package com.whale.web.documents.certificategenerator.dto;
 
-import com.whale.web.documents.certificategenerator.model.enums.CertificateTypeEnum;
+import com.whale.web.documents.certificategenerator.enums.CertificateTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import jakarta.validation.constraints.NotBlank;

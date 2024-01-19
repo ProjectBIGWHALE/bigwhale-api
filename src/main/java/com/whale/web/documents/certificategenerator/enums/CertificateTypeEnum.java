@@ -1,7 +1,6 @@
 package com.whale.web.documents.certificategenerator.enums;
 
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
 public enum CertificateTypeEnum {

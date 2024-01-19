@@ -1,9 +1,10 @@
 package com.whale.web.documents.certificategenerator.service;
 
 import com.whale.web.documents.certificategenerator.model.Certificate;
-import com.whale.web.documents.certificategenerator.model.enums.CertificateBasicInfosEnum;
-import com.whale.web.documents.certificategenerator.model.enums.PersonBasicInfosEnum;
-import com.whale.web.exceptions.domain.WhaleRunTimeException;
+import com.whale.web.documents.certificategenerator.enums.CertificateBasicInfosEnum;
+import com.whale.web.documents.certificategenerator.enums.PersonBasicInfosEnum;
+import com.whale.web.exceptions.domain.WhaleCheckedException;
+import com.whale.web.exceptions.domain.WhaleIOException;
 import com.whale.web.exceptions.domain.WhaleTransformerException;
 import com.whale.web.utils.FormatDataUtil;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ import java.util.List;
 @Service
 public class EditSVGFiles {
 
-    public List<String> cretateListCertificate(Certificate certificate, List<String> names, String certificateTemplate) {
+    public List<String> cretateListCertificate(Certificate certificate, List<String> names, String certificateTemplate) throws WhaleCheckedException, WhaleIOException {
         Document patchModel = preparateCertificateWithBasicInfos(certificate, certificateTemplate);
         List<String> listCertificates = new ArrayList<>();
 
@@ -63,7 +64,7 @@ public class EditSVGFiles {
         return convertDocumentToString(document);
     }
 
-    private Document preparateCertificateWithBasicInfos(Certificate certificate, String certificateTemplate) {
+    private Document preparateCertificateWithBasicInfos(Certificate certificate, String certificateTemplate) throws WhaleCheckedException, WhaleIOException {
         List<CertificateBasicInfosEnum> basicInfos = Arrays.asList(CertificateBasicInfosEnum.values());
 
         Document document = readSVG(certificateTemplate);
@@ -89,7 +90,7 @@ public class EditSVGFiles {
         return document;
     }
 
-    private Document readSVG(String certificateTemplate) {
+    private Document readSVG(String certificateTemplate) throws WhaleCheckedException, WhaleIOException {
         try {
             File svgFile = new File(certificateTemplate);
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -97,8 +98,10 @@ public class EditSVGFiles {
             DocumentBuilder builder = null;
             builder = factory.newDocumentBuilder();
             return builder.parse(svgFile);
-        } catch (ParserConfigurationException | IOException | SAXException e) {
-            throw new WhaleRunTimeException(e.getMessage());
+        } catch (ParserConfigurationException | SAXException e) {
+            throw new WhaleCheckedException(e.getMessage());
+        } catch (IOException e) {
+            throw new WhaleIOException(e.getMessage());
         }
     }
 

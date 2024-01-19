@@ -4,6 +4,7 @@ import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import com.whale.web.documents.certificategenerator.dto.WorksheetRecordDto;
 import com.whale.web.documents.certificategenerator.model.Worksheet;
+import com.whale.web.exceptions.domain.WhaleCheckedException;
 import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ import java.util.List;
 @Service
 public class ProcessWorksheetService {
 
-    public List<String> savingNamesInAList(MultipartFile csvFileDto){
+    public List<String> savingNamesInAList(MultipartFile csvFileDto) throws WhaleCheckedException {
 
         if (csvFileDto.isEmpty()) {
             throw new WhaleRunTimeException("csvFileDto cannot be null.");
@@ -39,7 +40,7 @@ public class ProcessWorksheetService {
                 }
             }
         } catch (IOException | CsvException e) {
-            throw new WhaleRunTimeException(e.getMessage());
+            throw new WhaleCheckedException(e.getMessage());
         }
 
         return names;

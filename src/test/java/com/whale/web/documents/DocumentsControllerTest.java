@@ -2,7 +2,7 @@ package com.whale.web.documents;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whale.web.documents.certificategenerator.dto.CertificateRecordDto;
-import com.whale.web.documents.certificategenerator.model.enums.CertificateTypeEnum;
+import com.whale.web.documents.certificategenerator.enums.CertificateTypeEnum;
 import com.whale.web.documents.compactconverter.service.CompactConverterService;
 import com.whale.web.documents.zipfilecompressor.service.ZipFileCompressorService;
 import com.whale.web.documents.qrcodegenerator.dto.QRCodeEmailRecordDto;
@@ -184,14 +184,15 @@ class DocumentsControllerTest {
     }
 
     @Test
-    void shouldReturnTheCertificatesStatusCode200() throws Exception {
+    void generateCertificateAndReturnStatusCode200() throws Exception {
 
         String csvContent = "col1,col2,col3\nvalue1,value2,value3";
-        MockMultipartFile csvFileDto = new MockMultipartFile(
+/*        MockMultipartFile csvFileDto = new MockMultipartFile(
                 "csvFileDto",
                 "worksheet.csv",
                 MediaType.TEXT_PLAIN_VALUE,
-                csvContent.getBytes());
+                csvContent.getBytes());*/
+        MockMultipartFile csvFileDto = createTestImage("jpeg", "csvFileDto");
 
         var certificateRecordDto = new CertificateRecordDto(
                 CertificateTypeEnum.COURCE,
@@ -214,7 +215,7 @@ class DocumentsControllerTest {
     }
 
     @Test
-    void shouldReturnARedirectionStatusCode400() throws Exception {
+    void returnStatusCode401WhenFormContainsEmptyorNullField_CertiificateGenerator() throws Exception {
 
         String csvContent = "col1,col2,col3\nvalue1,value2,value3";
         MockMultipartFile csvFileDto = new MockMultipartFile(
@@ -227,7 +228,7 @@ class DocumentsControllerTest {
                 CertificateTypeEnum.COURCE,
                 "ABC dos DEVS",
                 "Ronnyscley",
-                null,
+                " ",
                 "20",
                 "2023-09-12",
                 "São Paulo",

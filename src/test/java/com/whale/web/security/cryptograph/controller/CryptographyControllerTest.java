@@ -79,19 +79,19 @@ class CryptographyControllerTest {
     @Order(3)
     void shouldReturnStatus401ForWrongKey() throws Exception {
         URI uri = new URI("http://localhost:8080/api/v1/security/cryptograph");
-        boolean action = true;
+        boolean action = false;
         String key = "TEST";
 
         MockMultipartFile file = new MockMultipartFile("file", "test.txt",
                 MediaType.TEXT_PLAIN_VALUE, "Test content".getBytes());
 
-        EncryptModel encryptedContent = encryptService.choiceEncryptService(action, key, file);
+        EncryptModel encryptedContent = encryptService.choiceEncryptService(true, key, file);
         MockMultipartFile encryptedFile = new MockMultipartFile("file", "test.txt", MediaType.TEXT_PLAIN_VALUE, encryptedContent.getFile());
 
         mockMvc.perform(MockMvcRequestBuilders.multipart(uri)
                         .file(encryptedFile)
                         .param("key", "WRONG_KEY")
-                        .param("action", String.valueOf(false)))
-                .andExpect(MockMvcResultMatchers.status().is(400));
+                        .param("action", String.valueOf(action)))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 }

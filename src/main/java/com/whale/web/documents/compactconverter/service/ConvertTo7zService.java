@@ -24,19 +24,20 @@ public class ConvertTo7zService {
             for (MultipartFile file : files) {
                 File tempFile = File.createTempFile("temp", ".7z");
                 tempFile.deleteOnExit();
-                SevenZOutputFile sevenZOutputFile = new SevenZOutputFile(tempFile);
-                InputStream zipInputStream = file.getInputStream();
-                ZipArchiveInputStream zipArchiveInputStream = new ZipArchiveInputStream(zipInputStream);
-                ZipArchiveEntry zipEntry;
-                while ((zipEntry = zipArchiveInputStream.getNextZipEntry()) != null) {
-                    SevenZArchiveEntry sevenZEntry = sevenZOutputFile.createArchiveEntry(new File(zipEntry.getName()), zipEntry.getName());
-                    sevenZOutputFile.putArchiveEntry(sevenZEntry);
-                    byte[] buffer = new byte[8192];
-                    int bytesRead;
-                    while ((bytesRead = zipArchiveInputStream.read(buffer)) != -1) {
-                        sevenZOutputFile.write(buffer, 0, bytesRead);
+                try (SevenZOutputFile sevenZOutputFile = new SevenZOutputFile(tempFile)) {
+                    InputStream zipInputStream = file.getInputStream();
+                    ZipArchiveInputStream zipArchiveInputStream = new ZipArchiveInputStream(zipInputStream);
+                    ZipArchiveEntry zipEntry;
+                    while ((zipEntry = zipArchiveInputStream.getNextZipEntry()) != null) {
+                        SevenZArchiveEntry sevenZEntry = sevenZOutputFile.createArchiveEntry(new File(zipEntry.getName()), zipEntry.getName());
+                        sevenZOutputFile.putArchiveEntry(sevenZEntry);
+                        byte[] buffer = new byte[8192];
+                        int bytesRead;
+                        while ((bytesRead = zipArchiveInputStream.read(buffer)) != -1) {
+                            sevenZOutputFile.write(buffer, 0, bytesRead);
+                        }
+                        sevenZOutputFile.closeArchiveEntry();
                     }
-                    sevenZOutputFile.closeArchiveEntry();
                 }
                 byte[] sevenZBytes = Files.readAllBytes(tempFile.toPath());
                 filesConverted.add(sevenZBytes);

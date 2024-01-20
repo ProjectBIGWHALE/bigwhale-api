@@ -72,11 +72,15 @@ public class EncryptService {
 			IvParameterSpec ivParameterSpec = new IvParameterSpec(new byte[16]);
 			cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec);
 			return cipher.doFinal(encryptedFile);
+		} catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+			log.error("Invalid key" + e.getMessage());
+			throw new WhaleUnauthorizedException("Invalid key");
 		} catch (Exception e) {
-			log.error("Failed to encrypt the file" + e.getMessage());
+			log.error("Failed to decrypt the file" + e.getMessage());
 			throw new WhaleCheckedException("Failed to decrypt the file");
 		}
-	}
+
+    }
 
 
 }

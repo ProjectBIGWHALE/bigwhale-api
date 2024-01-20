@@ -5,6 +5,8 @@ import java.util.List;
 import com.whale.web.documents.certificategenerator.dto.CertificateRecordDto;
 import com.whale.web.documents.certificategenerator.service.CreateCertificateService;
 import com.whale.web.documents.certificategenerator.service.ProcessWorksheetService;
+import com.whale.web.exceptions.domain.WhaleCheckedException;
+import com.whale.web.exceptions.domain.WhaleIOException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,8 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.http.HttpHeaders;
 
 import org.springframework.http.MediaType;
@@ -33,7 +34,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Tag(name = "API for documents resource palette")
 public class CertificateGenerateController {
 
-    private static final Logger logger = LoggerFactory.getLogger(CertificateGenerateController.class);
     private static final String ATTACHMENT_FILENAME = "attachment; filename=";
 
     private final ProcessWorksheetService processWorksheetService;
@@ -54,7 +54,7 @@ public class CertificateGenerateController {
     })
     public ResponseEntity<Object> certificateGenerator(
             @Valid CertificateRecordDto certificateRecordDto,
-            @Parameter(description = "Submit a csv file here") @RequestPart MultipartFile csvFileDto) {
+            @Parameter(description = "Submit a csv file here") @RequestPart MultipartFile csvFileDto) throws WhaleCheckedException, WhaleIOException {
         List<String> names = processWorksheetService.savingNamesInAList(csvFileDto);
         byte[] bytes = createCertificateService.createCertificates(certificateRecordDto, names);
 

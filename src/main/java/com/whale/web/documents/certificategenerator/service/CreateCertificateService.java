@@ -2,6 +2,8 @@ package com.whale.web.documents.certificategenerator.service;
 
 import com.whale.web.documents.certificategenerator.dto.CertificateRecordDto;
 import com.whale.web.documents.certificategenerator.model.Certificate;
+import com.whale.web.exceptions.domain.WhaleCheckedException;
+import com.whale.web.exceptions.domain.WhaleIOException;
 import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Random;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
 @Service
@@ -29,7 +32,7 @@ public class CreateCertificateService {
         this.random = random;
     }
 
-    public byte[] createCertificates(CertificateRecordDto certificateRecordDto, List<String> names) {
+    public byte[] createCertificates(CertificateRecordDto certificateRecordDto, List<String> names) throws WhaleCheckedException, WhaleIOException {
         var certificate = new Certificate();
         BeanUtils.copyProperties(certificateRecordDto, certificate);
         validate(certificate);
@@ -50,7 +53,7 @@ public class CreateCertificateService {
             }
             zos.close();
         }catch (IOException e){
-            throw new WhaleRunTimeException(e.getMessage());
+            throw new WhaleIOException(e.getMessage());
         }
         return bos.toByteArray();
     }
@@ -63,7 +66,7 @@ public class CreateCertificateService {
         };
     }
 
-    private void validate(Certificate certificate) {
+    private void validate(Certificate certificate) throws WhaleCheckedException {
         Class<Certificate> certificateClass = Certificate.class;
         Field[] fields = certificateClass.getDeclaredFields();
 
@@ -75,8 +78,8 @@ public class CreateCertificateService {
                     throw new WhaleRunTimeException("Field: " + field.getName() + " is null");
                 }
             }
-        } catch (IllegalAccessException e) {
-            throw new WhaleRunTimeException(e.getMessage());
+        } catch (Exception e) {
+            throw new WhaleCheckedException(e.getMessage());
         }
     }
 }

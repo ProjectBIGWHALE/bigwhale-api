@@ -126,8 +126,8 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(WhaleUnauthorizedException.class)
     public ResponseEntity<StandardError> whaleUnauthorizedException(WhaleUnauthorizedException e, HttpServletRequest http){
-        StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
-                BAD_REQUEST, e.getMessage(), http.getRequestURI());
+        StandardError error = new StandardError(Instant.now(), HttpStatus.UNAUTHORIZED.value(),
+                "Invalid Password", e.getMessage(), http.getRequestURI());
 
         logger(e.getLocalizedMessage(), e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
@@ -148,8 +148,18 @@ public class RestExceptionHandler {
                 "Server error", e.getMessage(), http.getRequestURI());
 
         logger(e.getLocalizedMessage(), e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
+
+    @ExceptionHandler(WhaleIOException.class)
+    public ResponseEntity<StandardError> whaleIOException(WhaleIOException e, HttpServletRequest http){
+        StandardError error = new StandardError(Instant.now(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "An error occurred in the data input/output processing.", e.getMessage(), http.getRequestURI());
+
+        logger(e.getLocalizedMessage(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
 
     private void logger(String classException, String msg){
         logger.error(classException,": ",msg);

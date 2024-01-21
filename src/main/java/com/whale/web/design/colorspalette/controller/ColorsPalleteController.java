@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.whale.web.exceptions.domain.ImageIsNullException;
 import com.whale.web.exceptions.domain.WhaleCheckedException;
+import com.whale.web.exceptions.domain.WhaleIOException;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class ColorsPalleteController {
 
     @PostMapping(value = "/colors-palette", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Pallete From a Image", description = "Extract colors pallet from a image", method = "POST")
-    public ResponseEntity<List<Color>> colorsPalette(@RequestPart("image") MultipartFile image) throws ImageIsNullException,WhaleCheckedException {
+    public ResponseEntity<List<Color>> colorsPalette(@RequestPart("image") MultipartFile image) throws ImageIsNullException, WhaleCheckedException, WhaleIOException {
         MultipartFile upload = uploadImage.uploadImage(image);
         List<Color> listOfColors = createColorsPaletteService.createColorPalette(upload);
         log.info("Successfully generated image color palette");

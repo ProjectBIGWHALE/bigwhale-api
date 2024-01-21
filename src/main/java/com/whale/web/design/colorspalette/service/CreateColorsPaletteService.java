@@ -1,9 +1,7 @@
 package com.whale.web.design.colorspalette.service;
 
 import com.whale.web.exceptions.domain.ImageIsNullException;
-import com.whale.web.exceptions.domain.WhaleCheckedException;
-import com.whale.web.exceptions.domain.WhaleRunTimeException;
-import com.whale.web.utils.UploadImage;
+import com.whale.web.exceptions.domain.WhaleIOException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
@@ -20,7 +18,7 @@ public class CreateColorsPaletteService {
     private static final int NUM_COLORS = 6; // Number of predominant colors to be extracted
     private static final int MAX_COLOR_DISTANCE = 70; // Maximum allowed distance between colors
 
-    public List<Color> createColorPalette(MultipartFile multipartFile) throws ImageIsNullException, WhaleCheckedException {
+    public List<Color> createColorPalette(MultipartFile multipartFile) throws ImageIsNullException, WhaleIOException {
         try {
             BufferedImage image = ImageIO.read(multipartFile.getInputStream());
             int width = image.getWidth();
@@ -58,9 +56,9 @@ public class CreateColorsPaletteService {
                     .toList();
 
         } catch (NullPointerException e) {
-            throw new ImageIsNullException("Image is null");
+            throw new ImageIsNullException("This file is not a valid image");
         } catch (IOException ioe) {
-            throw new WhaleCheckedException("Failed to created colors pallete from image");
+            throw new WhaleIOException("Failed to created colors pallete from image");
         }
     }
 

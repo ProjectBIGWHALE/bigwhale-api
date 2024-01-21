@@ -40,9 +40,9 @@ public class AlterColorService {
                 return bos.toByteArray();
             }
         }catch (ImageIsNullException iie) {
-            throw new ImageIsNullException("Image cannot be null");
+            throw new ImageIsNullException(iie.getMessage());
         }catch (IOException ioe) {
-            throw new WhaleCheckedException("A failure occurred in the color change of the image");
+            throw new WhaleCheckedException("A failure occurred in the color change of the image: " + ioe.getMessage());
         }
 
     }

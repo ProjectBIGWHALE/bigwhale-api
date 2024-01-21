@@ -1,6 +1,8 @@
 package com.whale.web.documents.imageconverter.controller;
 
 import com.whale.web.documents.imageconverter.service.ImageConverterService;
+import com.whale.web.exceptions.domain.WhaleCheckedException;
+import com.whale.web.exceptions.domain.WhaleIOException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -42,7 +44,7 @@ public class ImageConverterController {
     public ResponseEntity<Object> imageConverter(
             @Parameter(description = "Enter the image format: Please choose a BMP, JPG, JPEG , GIF, PNG or TIFF") @RequestParam("outputFormat") String outputFormat,
             @Parameter(description = "Submit an image here. Accepted formats: BMP, JPG, JPEG or GIF file.") @RequestPart MultipartFile image
-    ) {
+    ) throws WhaleCheckedException, WhaleIOException {
         byte[] bytes = imageConverterService.convertImageFormat(outputFormat, image);
         String originalFileNameWithoutExtension = StringUtils.stripFilenameExtension(Objects.requireNonNull(image.getOriginalFilename()));
         String convertedFileName = originalFileNameWithoutExtension + "." + outputFormat.toLowerCase();

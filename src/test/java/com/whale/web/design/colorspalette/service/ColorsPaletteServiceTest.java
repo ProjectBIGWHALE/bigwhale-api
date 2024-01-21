@@ -48,7 +48,7 @@ class ColorsPaletteServiceTest {
         ImageIsNullException exception = assertThrows(ImageIsNullException.class, () -> {
             createColorsPaletteService.createColorPalette(nullImage);
         });
-        String expectedMessage = "Image is null";
+        String expectedMessage = "This file is not a valid image";
         assertEquals(expectedMessage, exception.getMessage());
 
     }

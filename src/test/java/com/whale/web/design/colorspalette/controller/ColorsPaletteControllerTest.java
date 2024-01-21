@@ -45,8 +45,8 @@ class ColorsPaletteControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andReturn();
 
-        String error = JsonServiceUtilTest.getJsonResponse(result).get("error").asText();
-        assertEquals("Image cannot be null", error);
+        String error = JsonServiceUtilTest.getJsonResponse(result).get("message").asText();
+        assertEquals("Image cannot be null or empty", error);
 
     }
 }

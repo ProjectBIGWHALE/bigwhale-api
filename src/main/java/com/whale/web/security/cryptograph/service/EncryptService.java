@@ -1,6 +1,6 @@
 package com.whale.web.security.cryptograph.service;
 
-import com.whale.web.exceptions.domain.FileIsEmptyException;
+import com.whale.web.exceptions.domain.FileNotValidException;
 import com.whale.web.exceptions.domain.WhaleCheckedException;
 import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import com.whale.web.exceptions.domain.WhaleUnauthorizedException;
@@ -10,17 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Objects;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -30,8 +26,8 @@ public class EncryptService {
 
 	private static final String CIPHER_INSTANCE = "AES/CBC/PKCS5Padding";
 
-	public EncryptModel choiceEncryptService(Boolean action, String key, MultipartFile file) throws FileIsEmptyException, WhaleCheckedException {
-		if (file.isEmpty()) throw new FileIsEmptyException("An invalid file was sent");
+	public EncryptModel choiceEncryptService(Boolean action, String key, MultipartFile file) throws FileNotValidException, WhaleCheckedException {
+		if (file.isEmpty()) throw new FileNotValidException("An invalid file was sent");
 		if (key.isBlank()) throw new WhaleRunTimeException("The key field is blank");
 
 		String fileName;

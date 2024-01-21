@@ -56,8 +56,10 @@ class AlterColorControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andReturn();
 
-        String error = JsonServiceUtilTest.getJsonResponse(result).get("error").asText();
-        assertEquals("Image cannot be null", error);
+        JsonNode jsonResponse = JsonServiceUtilTest.getJsonResponse(result);
+        JsonNode messageNode = jsonResponse.get("message");
+
+        assertEquals("Image cannot be null or empty", messageNode.asText());
     }
 
     @Test

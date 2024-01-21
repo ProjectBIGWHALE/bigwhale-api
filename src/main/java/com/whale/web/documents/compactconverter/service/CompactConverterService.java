@@ -23,14 +23,14 @@ public class CompactConverterService {
 
     public List<byte[]> converterFile(List<MultipartFile> files, String outputFormat) {
         if (!areAllFilesZip(files)) {
-            throw new WhaleRunTimeException("File is null or not a valid zip file");
+            throw new WhaleRunTimeException("Upload file not a valid zip file");
         } else {
             return switch (outputFormat.toLowerCase()) {
                 case "zip" -> convertToZip.convertToZip(files);
                 case "tar.gz" -> convertToTarGz.convertToTarGz(files);
                 case "7z" -> converterTo7z.convertTo7z(files);
                 case "tar" -> convertToTar.convertToTar(files);
-                default -> throw new WhaleRunTimeException("Input is null or the format entered is invalid");
+                default -> throw new WhaleRunTimeException("The format provided is not accepted");
             };
         }
     }
@@ -46,8 +46,7 @@ public class CompactConverterService {
 
     public static boolean isZipFileByFilename(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
-        if (originalFilename != null) {
-
+        if (originalFilename != null && !file.isEmpty()) {
             return originalFilename.toLowerCase().endsWith(".zip");
         }
         return false;

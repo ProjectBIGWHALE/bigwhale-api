@@ -1,6 +1,6 @@
 package com.whale.web.security.cryptograph.controller;
 
-import com.whale.web.exceptions.domain.FileIsEmptyException;
+import com.whale.web.exceptions.domain.FileNotValidException;
 import com.whale.web.exceptions.domain.WhaleCheckedException;
 import com.whale.web.security.cryptograph.model.EncryptModel;
 import com.whale.web.security.cryptograph.service.EncryptService;
@@ -11,16 +11,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.*;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -38,7 +34,7 @@ public class EncryptController {
     @Operation(summary = "Cryptograph Archive", description = "Convert Archive for a cryptograph or decrypted version", method = "POST")
     public ResponseEntity<Object> cryptograph(@RequestPart("file") MultipartFile file, 
         @Parameter(description = "Insert a password for decrypt and encrypt") @RequestParam("key") String key, 
-        @Parameter(description = "True for encrypt and False for decrypt") @RequestParam("action") Boolean action) throws FileIsEmptyException, WhaleCheckedException {
+        @Parameter(description = "True for encrypt and False for decrypt") @RequestParam("action") Boolean action) throws FileNotValidException, WhaleCheckedException {
             EncryptModel encryptedFile = encryptService.choiceEncryptService(action, key, file);
 
             return ResponseEntity.ok()

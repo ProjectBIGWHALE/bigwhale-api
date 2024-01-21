@@ -1,7 +1,8 @@
 package com.whale.web.exceptions;
 
-import java.io.IOException;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import com.whale.web.exceptions.domain.*;
 import com.whale.web.exceptions.errors.ErrorResponse;
 import com.whale.web.exceptions.errors.StandardError;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -28,30 +30,31 @@ public class RestExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(RestExceptionHandler.class);
     private static final String BAD_REQUEST = "BAD REQUEST";
     private static final String FIELDS_ARE_BLANK = "Someone Fields are is blank";
-    private static final String UNPROCESSABLE_ENTITY = "UNPROCESSABLE ENTITY";
+
+    private static final String INTERNAL_SERVER_ERROR = "INTERNAL SERVER ERROR";
 
     @ExceptionHandler(WhaleRunTimeException.class)
     public ResponseEntity<StandardError> whaleRunTimeException(WhaleRunTimeException e, HttpServletRequest http){
-        StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
+        StandardError error = new StandardError(formattedInstant, HttpStatus.BAD_REQUEST.value(),
                 BAD_REQUEST, e.getMessage(), http.getRequestURI());
-        logger(e.toString(), e.getMessage());
+        logger(e.getLocalizedMessage(), e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(ImageIsNullException.class)
     public ResponseEntity<StandardError> imageIsNullException(ImageIsNullException e, HttpServletRequest http){
-        StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
-                "Image cannot be null", e.getMessage(), http.getRequestURI());
+        StandardError error = new StandardError(formattedInstant, HttpStatus.BAD_REQUEST.value(),
+                BAD_REQUEST, e.getMessage(), http.getRequestURI());
 
         logger(e.getLocalizedMessage(), e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
-    @ExceptionHandler(FileIsEmptyException.class)
-    public ResponseEntity<StandardError> fileIsEmptyException(FileIsEmptyException e, HttpServletRequest http) {
+    @ExceptionHandler(FileNotValidException.class)
+    public ResponseEntity<StandardError> fileIsEmptyException(FileNotValidException e, HttpServletRequest http) {
 
-        StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
-                "File cannot be empty", e.getMessage(), http.getRequestURI());
+        StandardError error = new StandardError(formattedInstant, HttpStatus.BAD_REQUEST.value(),
+                BAD_REQUEST, e.getMessage(), http.getRequestURI());
 
         logger(e.getLocalizedMessage(), e.getMessage());
         return ResponseEntity.badRequest().body(error);
@@ -67,7 +70,7 @@ public class RestExceptionHandler {
             errorResponselist.add(new ErrorResponse(error.getField(), error.getDefaultMessage()))
         );
 
-        StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
+        StandardError error = new StandardError(formattedInstant, HttpStatus.BAD_REQUEST.value(),
                 FIELDS_ARE_BLANK, e.getMessage(), http.getRequestURI(), errorResponselist);
 
         logger(e.getLocalizedMessage(), e.getMessage());
@@ -78,7 +81,7 @@ public class RestExceptionHandler {
     public ResponseEntity<StandardError> missingServletRequestPartException(MissingServletRequestPartException e,
                                                                                HttpServletRequest http) {
 
-        StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
+        StandardError error = new StandardError(formattedInstant, HttpStatus.BAD_REQUEST.value(),
                 FIELDS_ARE_BLANK, e.getBody().getDetail(), http.getRequestURI());
 
         logger(e.getLocalizedMessage(), e.getMessage());
@@ -89,7 +92,7 @@ public class RestExceptionHandler {
     public ResponseEntity<StandardError> missingServletRequestParameterException(MissingServletRequestParameterException e,
                                                                             HttpServletRequest http) {
 
-        StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
+        StandardError error = new StandardError(formattedInstant, HttpStatus.BAD_REQUEST.value(),
                 FIELDS_ARE_BLANK, e.getBody().getDetail(), http.getRequestURI());
 
         logger(e.getLocalizedMessage(), e.getMessage());
@@ -99,7 +102,7 @@ public class RestExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<StandardError> illegalArgumentException(IllegalArgumentException e, HttpServletRequest http) {
 
-        StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
+        StandardError error = new StandardError(formattedInstant, HttpStatus.BAD_REQUEST.value(),
                 FIELDS_ARE_BLANK, e.getMessage(), http.getRequestURI());
 
         logger(e.getLocalizedMessage(), e.getMessage());
@@ -108,7 +111,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public ResponseEntity<StandardError> httpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException e, HttpServletRequest http){
-        StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
+        StandardError error = new StandardError(formattedInstant, HttpStatus.BAD_REQUEST.value(),
                 BAD_REQUEST, e.getMessage(), http.getRequestURI());
 
         logger(e.getLocalizedMessage(), e.getMessage());
@@ -117,7 +120,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<StandardError> httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e, HttpServletRequest http){
-        StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
+        StandardError error = new StandardError(formattedInstant, HttpStatus.BAD_REQUEST.value(),
                 BAD_REQUEST, e.getMessage(), http.getRequestURI());
 
         logger(e.getLocalizedMessage(), e.getMessage());
@@ -126,7 +129,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(WhaleUnauthorizedException.class)
     public ResponseEntity<StandardError> whaleUnauthorizedException(WhaleUnauthorizedException e, HttpServletRequest http){
-        StandardError error = new StandardError(Instant.now(), HttpStatus.UNAUTHORIZED.value(),
+        StandardError error = new StandardError(formattedInstant, HttpStatus.UNAUTHORIZED.value(),
                 "Invalid Password", e.getMessage(), http.getRequestURI());
 
         logger(e.getLocalizedMessage(), e.getMessage());
@@ -135,17 +138,17 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(WhaleTransformerException.class)
     public ResponseEntity<StandardError> whaleTransformerException(WhaleTransformerException e, HttpServletRequest http){
-        StandardError error = new StandardError(Instant.now(), HttpStatus.BAD_REQUEST.value(),
-                BAD_REQUEST, e.getMessage(), http.getRequestURI());
+        StandardError error = new StandardError(formattedInstant, HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                INTERNAL_SERVER_ERROR, e.getMessage(), http.getRequestURI());
 
         logger(e.getLocalizedMessage(), e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
     @ExceptionHandler(WhaleCheckedException.class)
     public ResponseEntity<StandardError> whaleCheckedException(WhaleCheckedException e, HttpServletRequest http){
-        StandardError error = new StandardError(Instant.now(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Server error", e.getMessage(), http.getRequestURI());
+        StandardError error = new StandardError(formattedInstant, HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                INTERNAL_SERVER_ERROR, e.getMessage(), http.getRequestURI());
 
         logger(e.getLocalizedMessage(), e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
@@ -153,8 +156,17 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(WhaleIOException.class)
     public ResponseEntity<StandardError> whaleIOException(WhaleIOException e, HttpServletRequest http){
-        StandardError error = new StandardError(Instant.now(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
+        StandardError error = new StandardError(formattedInstant, HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "An error occurred in the data input/output processing.", e.getMessage(), http.getRequestURI());
+
+        logger(e.getLocalizedMessage(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
+    @ExceptionHandler(FileSizeLimitExceededException.class)
+    public ResponseEntity<StandardError> fileSizeLimitExceededException(FileSizeLimitExceededException e, HttpServletRequest http){
+        StandardError error = new StandardError(formattedInstant, HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                INTERNAL_SERVER_ERROR, e.getMessage(), http.getRequestURI());
 
         logger(e.getLocalizedMessage(), e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
@@ -164,4 +176,8 @@ public class RestExceptionHandler {
     private void logger(String classException, String msg){
         logger.error(classException,": ",msg);
     }
+
+    DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+    String formattedInstant = Instant.now().atZone(ZoneId.systemDefault()).format(formatter);
+
 }

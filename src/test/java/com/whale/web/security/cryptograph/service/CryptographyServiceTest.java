@@ -29,7 +29,7 @@ class CryptographyServiceTest {
 
     @Test
     @Order(1)
-    void testChoiceEncryptServiceWithValidFileAndKey() throws FileIsEmptyException, WhaleCheckedException {
+    void testChoiceEncryptServiceWithValidFileAndKey() throws FileNotValidException, WhaleCheckedException {
         Boolean action = true;
         String key = "mySecretKey";
         MockMultipartFile file = new MockMultipartFile("file",
@@ -52,7 +52,7 @@ class CryptographyServiceTest {
                 "text/plain",
                 new byte[0]);
 
-        FileIsEmptyException exception = assertThrows(FileIsEmptyException.class, () -> {
+        FileNotValidException exception = assertThrows(FileNotValidException.class, () -> {
             encryptService.choiceEncryptService(action, key, emptyFile);
         });
         assertEquals("An invalid file was sent", exception.getMessage());

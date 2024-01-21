@@ -12,7 +12,7 @@ public class UploadImage {
     public MultipartFile uploadImage(MultipartFile file) throws ImageIsNullException {
 
         if(file.isEmpty()) {
-            throw new ImageIsNullException("Image cannot be null");
+            throw new ImageIsNullException("Image cannot be null or empty");
         }
 
         try{
@@ -20,7 +20,7 @@ public class UploadImage {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
             return new CustomMultipartFile(file.getOriginalFilename(), file.getContentType(), inputStream);
         }catch (IOException ex){
-            throw new ImageIsNullException(ex.getMessage());
+            throw new ImageIsNullException("Error occurred while uploading the image: " + ex.getMessage());
         }
     }
 }

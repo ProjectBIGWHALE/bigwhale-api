@@ -1,6 +1,6 @@
 package com.whale.web.design.altercolor.service;
 
-import com.whale.web.exceptions.domain.ImageIsNullException;
+import com.whale.web.exceptions.domain.WhaleInvalidImageException;
 import com.whale.web.exceptions.domain.WhaleCheckedException;
 import com.whale.web.utils.UploadImage;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class AlterColorService {
         this.uploadImage = uploadImage;
     }
 
-    public byte[] alterColor(MultipartFile imageForm, String colorOfImage, String replacementColor, double marginValue) throws WhaleCheckedException, ImageIsNullException {
+    public byte[] alterColor(MultipartFile imageForm, String colorOfImage, String replacementColor, double marginValue) throws WhaleCheckedException, WhaleInvalidImageException {
         try {
             MultipartFile upload = uploadImage.uploadImage(imageForm);
             BufferedImage img = ImageIO.read(upload.getInputStream());
@@ -39,8 +39,8 @@ public class AlterColorService {
                 ImageIO.write(newImg, "png", bos);
                 return bos.toByteArray();
             }
-        }catch (ImageIsNullException iie) {
-            throw new ImageIsNullException(iie.getMessage());
+        }catch (WhaleInvalidImageException iie) {
+            throw new WhaleInvalidImageException(iie.getMessage());
         }catch (IOException ioe) {
             throw new WhaleCheckedException("A failure occurred in the color change of the image: " + ioe.getMessage());
         }

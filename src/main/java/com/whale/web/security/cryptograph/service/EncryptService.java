@@ -1,6 +1,6 @@
 package com.whale.web.security.cryptograph.service;
 
-import com.whale.web.exceptions.domain.FileNotValidException;
+import com.whale.web.exceptions.domain.WhaleInvalidFileException;
 import com.whale.web.exceptions.domain.WhaleCheckedException;
 import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import com.whale.web.exceptions.domain.WhaleUnauthorizedException;
@@ -26,8 +26,8 @@ public class EncryptService {
 
 	private static final String CIPHER_INSTANCE = "AES/CBC/PKCS5Padding";
 
-	public EncryptModel choiceEncryptService(Boolean action, String key, MultipartFile file) throws FileNotValidException, WhaleCheckedException {
-		if (file.isEmpty()) throw new FileNotValidException("An invalid file was sent");
+	public EncryptModel choiceEncryptService(Boolean action, String key, MultipartFile file) throws WhaleInvalidFileException, WhaleCheckedException {
+		if (file.isEmpty()) throw new WhaleInvalidFileException("An invalid file was sent");
 		if (key.isBlank()) throw new WhaleRunTimeException("The key field is blank");
 
 		String fileName;

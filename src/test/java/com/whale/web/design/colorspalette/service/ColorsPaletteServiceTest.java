@@ -1,6 +1,6 @@
 package com.whale.web.design.colorspalette.service;
 
-import com.whale.web.exceptions.domain.ImageIsNullException;
+import com.whale.web.exceptions.domain.WhaleInvalidImageException;
 import com.whale.web.exceptions.domain.WhaleCheckedException;
 import com.whale.web.utils.ImageServiceUtilTest;
 import org.junit.jupiter.api.*;
@@ -45,7 +45,7 @@ class ColorsPaletteServiceTest {
     @Order(2)
     void testColorPaletteWithNullImage() {
         MockMultipartFile nullImage = ImageServiceUtilTest.createTestNullImage();
-        ImageIsNullException exception = assertThrows(ImageIsNullException.class, () -> {
+        WhaleInvalidImageException exception = assertThrows(WhaleInvalidImageException.class, () -> {
             createColorsPaletteService.createColorPalette(nullImage);
         });
         String expectedMessage = "This file is not a valid image";

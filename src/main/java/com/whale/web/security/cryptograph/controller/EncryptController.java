@@ -1,6 +1,6 @@
 package com.whale.web.security.cryptograph.controller;
 
-import com.whale.web.exceptions.domain.FileNotValidException;
+import com.whale.web.exceptions.domain.WhaleInvalidFileException;
 import com.whale.web.exceptions.domain.WhaleCheckedException;
 import com.whale.web.security.cryptograph.model.EncryptModel;
 import com.whale.web.security.cryptograph.service.EncryptService;
@@ -34,7 +34,7 @@ public class EncryptController {
     @Operation(summary = "Cryptograph Archive", description = "Convert Archive for a cryptograph or decrypted version", method = "POST")
     public ResponseEntity<Object> cryptograph(@RequestPart("file") MultipartFile file, 
         @Parameter(description = "Insert a password for decrypt and encrypt") @RequestParam("key") String key, 
-        @Parameter(description = "True for encrypt and False for decrypt") @RequestParam("action") Boolean action) throws FileNotValidException, WhaleCheckedException {
+        @Parameter(description = "True for encrypt and False for decrypt") @RequestParam("action") Boolean action) throws WhaleInvalidFileException, WhaleCheckedException {
             EncryptModel encryptedFile = encryptService.choiceEncryptService(action, key, file);
 
             return ResponseEntity.ok()

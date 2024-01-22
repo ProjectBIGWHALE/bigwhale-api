@@ -1,6 +1,6 @@
 package com.whale.web.utils;
 
-import com.whale.web.exceptions.domain.FileNotValidException;
+import com.whale.web.exceptions.domain.WhaleInvalidFileException;
 import com.whale.web.exceptions.domain.WhaleCheckedException;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
@@ -12,13 +12,13 @@ public class UploadFiles {
     private UploadFiles() {
         throw new IllegalStateException("UploadFiles");
     }
-    public static List<MultipartFile> fileUploadAndValidation(List<MultipartFile> files) throws FileNotValidException, WhaleCheckedException {
+    public static List<MultipartFile> fileUploadAndValidation(List<MultipartFile> files) throws WhaleInvalidFileException, WhaleCheckedException {
 
         List<MultipartFile> uploadedFiles = new ArrayList<>();
 
         for (MultipartFile file : files) {
             if (file.isEmpty()) {
-                throw new FileNotValidException("Uploaded file is null or empty.");
+                throw new WhaleInvalidFileException("Uploaded file is null or empty.");
             }
 
             try {

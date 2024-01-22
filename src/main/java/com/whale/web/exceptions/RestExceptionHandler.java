@@ -11,6 +11,7 @@ import com.whale.web.exceptions.errors.ErrorResponse;
 import com.whale.web.exceptions.errors.StandardError;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
+import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -41,8 +42,8 @@ public class RestExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
-    @ExceptionHandler(ImageIsNullException.class)
-    public ResponseEntity<StandardError> imageIsNullException(ImageIsNullException e, HttpServletRequest http){
+    @ExceptionHandler(WhaleInvalidImageException.class)
+    public ResponseEntity<StandardError> imageIsNullException(WhaleInvalidImageException e, HttpServletRequest http){
         StandardError error = new StandardError(formattedInstant, HttpStatus.BAD_REQUEST.value(),
                 BAD_REQUEST, e.getMessage(), http.getRequestURI());
 
@@ -50,8 +51,8 @@ public class RestExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
-    @ExceptionHandler(FileNotValidException.class)
-    public ResponseEntity<StandardError> fileIsEmptyException(FileNotValidException e, HttpServletRequest http) {
+    @ExceptionHandler(WhaleInvalidFileException.class)
+    public ResponseEntity<StandardError> fileIsEmptyException(WhaleInvalidFileException e, HttpServletRequest http) {
 
         StandardError error = new StandardError(formattedInstant, HttpStatus.BAD_REQUEST.value(),
                 BAD_REQUEST, e.getMessage(), http.getRequestURI());
@@ -163,18 +164,34 @@ public class RestExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
+    @ExceptionHandler(SizeLimitExceededException.class)
+    public ResponseEntity<StandardError> sizeLimitExceededException(SizeLimitExceededException e, HttpServletRequest http){
+        String message = "Maximum upload size exceeded. Actual Size: " + toMegabytes(e.getActualSize()) + ". " + "Permitted Size: " + toMegabytes(e.getPermittedSize());
+        StandardError error = new StandardError(formattedInstant, HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                INTERNAL_SERVER_ERROR, message, http.getRequestURI());
+
+        logger(e.getLocalizedMessage(), message);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
     @ExceptionHandler(FileSizeLimitExceededException.class)
     public ResponseEntity<StandardError> fileSizeLimitExceededException(FileSizeLimitExceededException e, HttpServletRequest http){
+        String message = "Maximum upload size exceeded. Actual Size: " + toMegabytes(e.getActualSize()) + ". " + "Permitted Size: " + toMegabytes(e.getPermittedSize());
         StandardError error = new StandardError(formattedInstant, HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                INTERNAL_SERVER_ERROR, e.getMessage(), http.getRequestURI());
+                INTERNAL_SERVER_ERROR, message, http.getRequestURI());
 
-        logger(e.getLocalizedMessage(), e.getMessage());
+        logger(e.getLocalizedMessage(), message);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
 
     private void logger(String classException, String msg){
         logger.error(classException,": ",msg);
+    }
+
+    private String toMegabytes(long e) {
+        double megabytes = (double) e / (1024 * 1024);
+        return String.format("%.2f MB", megabytes);
     }
 
     DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;

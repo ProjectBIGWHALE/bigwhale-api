@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.NumberFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
@@ -23,4 +22,8 @@ public class AlterColorForm {
     @Schema(description =  "Margin", example = "3.0")
     @NotNull(message = "Margin field is required")
     private Double margin;
+
+    @Schema(description = "Image", example = "image.png")
+    @NotNull(message = "Image field is required")
+    private MultipartFile image;
 }

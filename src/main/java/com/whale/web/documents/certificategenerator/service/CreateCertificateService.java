@@ -35,7 +35,6 @@ public class CreateCertificateService {
     public byte[] createCertificates(CertificateRecordDto certificateRecordDto, List<String> names) throws WhaleCheckedException, WhaleIOException {
         var certificate = new Certificate();
         BeanUtils.copyProperties(certificateRecordDto, certificate);
-        validate(certificate);
         String template = selectPatchCertificateModel(certificate.getCertificateModelId());
         List<String> listCertificate = createCerificateService.cretateListCertificate(certificate, names, template);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -64,22 +63,5 @@ public class CreateCertificateService {
             case 2 -> certificatePath + "certificate2.svg";
             default -> throw new IllegalArgumentException("Invalid Patch for model of certificate");
         };
-    }
-
-    private void validate(Certificate certificate) throws WhaleCheckedException {
-        Class<Certificate> certificateClass = Certificate.class;
-        Field[] fields = certificateClass.getDeclaredFields();
-
-        try {
-            for (Field field : fields) {
-                field.setAccessible(true);
-                Object objet = field.get(certificate);
-                if (objet == null) {
-                    throw new WhaleRunTimeException("Field: " + field.getName() + " is null");
-                }
-            }
-        } catch (Exception e) {
-            throw new WhaleCheckedException(e.getMessage());
-        }
     }
 }

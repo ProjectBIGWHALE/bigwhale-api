@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.whale.web.exceptions.domain.*;
 import com.whale.web.exceptions.errors.ErrorResponse;
+import com.whale.web.exceptions.errors.FieldErrors;
 import com.whale.web.exceptions.errors.StandardError;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
@@ -71,7 +72,7 @@ public class RestExceptionHandler {
             errorResponselist.add(new ErrorResponse(error.getField(), error.getDefaultMessage()))
         );
 
-        StandardError error = new StandardError(formattedInstant, HttpStatus.BAD_REQUEST.value(),
+        FieldErrors error = new FieldErrors(formattedInstant, HttpStatus.BAD_REQUEST.value(),
                 FIELDS_ARE_BLANK, e.getMessage(), http.getRequestURI(), errorResponselist);
 
         logger(e.getLocalizedMessage(), e.getMessage());

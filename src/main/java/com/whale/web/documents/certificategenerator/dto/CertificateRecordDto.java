@@ -8,35 +8,35 @@ import jakarta.validation.constraints.NotNull;
 
 public record CertificateRecordDto(
         @Schema(description = "Certificate Type Enum", example = "COURCE")
-        @NotNull(message = "No CertificateTypeEnum was provided")
+        @NotNull(message = "Select an available template")
         CertificateTypeEnum certificateTypeEnum,
 
         @Schema(description =  "Even Name", example = "ABC dos DEVs")
-        @NotBlank(message = "No eventName was provided")
+        @NotBlank(message = "EventName field is required")
         String eventName,
 
         @Schema(description =  "Speaker Name", example = "Ronnyscley")
-        @NotBlank(message = "No speakerName was provided")
+        @NotBlank(message = "SpeakerName field is required\"")
         String speakerName,
 
         @Schema(description =  "Speaker Role", example = "CTO")
-        @NotBlank(message = "No speakerRole was provided")
+        @NotBlank(message = "SpeakerRole field is required\"")
         String speakerRole,
 
         @Schema(description =  "Event Workload", example = "8")
-        @NotBlank(message = "No eventWorkLoad was provided")
+        @NotBlank(message = "EventWorkLoad field is required\"")
         String eventWorkLoad,
 
         @Schema(description =  "Event Date", example = "2023-06-03")
-        @NotBlank(message = "No eventDate was provided")
+        @NotBlank(message = "EventDate field is required")
         String eventDate,
 
         @Schema(description =  "Even Locale",example = "Recife - PE")
-        @NotBlank(message = "No eventLocale was provided")
+        @NotBlank(message = "EventLocale field is required")
         String eventLocale,
 
         @Schema(description =  "Certificate Model ID",example = "1")
-        @NotNull(message = "No certificateModelId was provided")
+        @NotNull(message = "CertificateModelId field is required")
         Long certificateModelId
 ) {
 }

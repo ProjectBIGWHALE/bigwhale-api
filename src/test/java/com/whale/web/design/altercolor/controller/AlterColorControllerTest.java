@@ -78,7 +78,7 @@ class AlterColorControllerTest {
         String error = JsonServiceUtilTest.getJsonResponse(result).get("error").asText();
 
         assertEquals("Someone Fields are is blank", error);
-        assertEquals("[{\"field\":\"margin\",\"message\":\"No 'margin' was provided\"}]", listFieldErrors.toString());
+        assertEquals("[{\"field\":\"margin\",\"message\":\"Margin field is required\"}]", listFieldErrors.toString());
 
     }
 

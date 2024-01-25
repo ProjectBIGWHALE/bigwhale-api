@@ -4,16 +4,18 @@ import java.io.IOException;
 
 import com.whale.web.design.altercolor.model.AlterColorForm;
 import com.whale.web.exceptions.domain.WhaleCheckedException;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.whale.web.design.altercolor.service.AlterColorService;
@@ -37,11 +39,15 @@ public class AlterColorController {
 
     @PostMapping(value = "/alter-color", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Change a Color of a image", description = "Change pixels of a specific color", method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "400", description = "Invalid input", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = {@Content(schema = @Schema())})
+    })
     public ResponseEntity<byte[]> alterColor(
-            @Parameter(description = "Submit a png image here") @RequestPart MultipartFile image,
-            @Valid AlterColorForm form) throws IOException, WhaleCheckedException {
+            @Parameter(description = "Submit an image here") @RequestPart MultipartFile image,
+            @Valid @ModelAttribute AlterColorForm form) throws IOException, WhaleCheckedException {
         byte[] processedImage = alterColorService.alterColor(image, form.getColorOfImage(), form.getColorForAlteration(), form.getMargin());
-        log.info("Image color changed successfully");
         log.info("Image color changed successfully");
 
         return ResponseEntity.ok()

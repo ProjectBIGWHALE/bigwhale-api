@@ -1,20 +1,26 @@
 package com.whale.web.design.altercolor.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.NumberFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
 public class AlterColorForm {
 
-    private MultipartFile image;
-    @NotBlank(message = "No 'colorOfImage' was provided")
+    @Schema(description =  "Color of Image", example = "#000000")
+    @NotBlank(message = "ColorOfImage' field is required")
     private String colorOfImage;
-    @NotBlank(message = "No 'colorForAlteration' was provided")
+
+    @Schema(description =  "Color for Alteration", example = "#FF0000")
+    @NotBlank(message = "ColorForAlteration' field is required")
     private String colorForAlteration;
-    @NotNull(message = "No 'margin' was provided")
+
+    @Schema(description =  "Margin", example = "3.0")
+    @NotNull(message = "Margin field is required")
     private Double margin;
 }

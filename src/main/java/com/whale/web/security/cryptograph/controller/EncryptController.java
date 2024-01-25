@@ -7,6 +7,10 @@ import com.whale.web.security.cryptograph.service.EncryptService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,6 +36,12 @@ public class EncryptController {
 
     @PostMapping(value = "/cryptograph", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Cryptograph Archive", description = "Convert Archive for a cryptograph or decrypted version", method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "400", description = "Invalid input", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "401", description = "Invalid key", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = {@Content(schema = @Schema())})
+    })
     public ResponseEntity<Object> cryptograph(@RequestPart("file") MultipartFile file, 
         @Parameter(description = "Insert a password for decrypt and encrypt") @RequestParam("key") String key, 
         @Parameter(description = "True for encrypt and False for decrypt") @RequestParam("action") Boolean action) throws WhaleInvalidFileException, WhaleCheckedException {

@@ -10,7 +10,9 @@ import com.whale.web.documents.qrcodegenerator.service.QRCodeEmailService;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeLinkService;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeWhatsappService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -43,9 +45,9 @@ public class QRCodeGeneratorController {
     @PostMapping(value = "/qrcodegenerator/link", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "QRCOde Generator for link", description = "Generates QRCode for Link in the chosen color", method = "POST")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Qrcode generated successfully", content = {@Content(mediaType = "image/png")}),
-            @ApiResponse(responseCode = "400", description = "Error in validating form fields", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "500", description = "Error generating qrcode", content = {@Content(mediaType = MediaType.TEXT_PLAIN_VALUE)})
+            @ApiResponse(responseCode = "200", description = "OK", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "400", description = "INVALID INPUT", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = {@Content(schema = @Schema())})
     })
     public ResponseEntity<Object> qrCodeGeneratorLink(@RequestBody @Valid QRCodeLinkRecordDto qrCodeLinkRecordDto) {
         var qrCodeLinkModel = new QRCodeLinkModel();
@@ -62,11 +64,11 @@ public class QRCodeGeneratorController {
     @PostMapping(value = "/qrcodegenerator/email", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "QRCOde Generator for email", description = "Generates QRCode for Email in the chosen color", method = "POST")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Qrcode generated successfully", content = {@Content(mediaType = "image/png")}),
-            @ApiResponse(responseCode = "400", description = "Error in validating form fields", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "500", description = "Error generating qrcode", content = {@Content(mediaType = MediaType.TEXT_PLAIN_VALUE)})
+            @ApiResponse(responseCode = "200", description = "OK", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "400", description = "INVALID INPUT", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = {@Content(schema = @Schema())}),
     })
-    public ResponseEntity<Object> qrCodeGeneratorEmail(@RequestBody @Valid QRCodeEmailRecordDto qrCodeEmailRecordDto) {
+    public ResponseEntity<Object> qrCodeGeneratorEmail(@Valid @RequestBody QRCodeEmailRecordDto qrCodeEmailRecordDto) {
             var qrCodeEmailModel = new QRCodeEmailModel();
             BeanUtils.copyProperties(qrCodeEmailRecordDto, qrCodeEmailModel);
             byte[] bytes = qrCodeEmailService.generateEmailLinkQRCode(qrCodeEmailModel);
@@ -81,11 +83,12 @@ public class QRCodeGeneratorController {
     @PostMapping(value = "/qrcodegenerator/whatsapp", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "QRCOde Generator for whatsapp", description = "Generates QRCode for WhatsApp in the chosen color", method = "POST")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Qrcode generated successfully", content = {@Content(mediaType = "image/png")}),
-            @ApiResponse(responseCode = "400", description = "Error in validating form fields", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "500", description = "Error generating qrcode", content = {@Content(mediaType = MediaType.TEXT_PLAIN_VALUE)})
+            @ApiResponse(responseCode = "200", description = "OK", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "400", description = "INVALID INPUT", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = {@Content(schema = @Schema())}),
     })
-    public ResponseEntity<Object> qrCodeGeneratorWhatsapp(@RequestBody @Valid QRCodeWhatsappRecordDto qrCodeWhatsappRecordDto) {
+    public ResponseEntity<Object> qrCodeGeneratorWhatsapp(
+            @Valid @RequestBody QRCodeWhatsappRecordDto qrCodeWhatsappRecordDto) {
             var qrCodeWhatsappModel = new QRCodeWhatsappModel();
             BeanUtils.copyProperties(qrCodeWhatsappRecordDto, qrCodeWhatsappModel);
             byte[] bytes = qrCodeWhatsappService.generateWhatsAppLinkQRCode(qrCodeWhatsappModel);

@@ -21,10 +21,7 @@ import org.springframework.http.HttpHeaders;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -47,14 +44,13 @@ public class CertificateGenerateController {
     @PostMapping(value = "/certificate-generator", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Certificate Generator", description = "Generates certificates with a chosen layout", method = "POST")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Certificate generated successfully",
-                    content = {@Content(mediaType = "application/octet-stream")}),
-            @ApiResponse(responseCode = "400", description = "Invalid request data", content = {@Content(schema = @Schema())}),
-            @ApiResponse(responseCode = "500", description = "Error generating qrcode", content = {@Content(schema = @Schema())})
+            @ApiResponse(responseCode = "200", description = "OK", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "400", description = "Invalid input", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = {@Content(schema = @Schema())})
     })
     public ResponseEntity<Object> certificateGenerator(
-            @Valid CertificateRecordDto certificateRecordDto,
-            @Parameter(description = "Submit a csv file here") @RequestPart MultipartFile csvFileDto) throws WhaleCheckedException, WhaleIOException {
+            @Valid @ModelAttribute CertificateRecordDto certificateRecordDto,
+            @Parameter(description = "Submit a csv file here") @RequestParam("csvFileDto") MultipartFile csvFileDto) throws WhaleCheckedException, WhaleIOException {
         List<String> names = processWorksheetService.savingNamesInAList(csvFileDto);
         byte[] bytes = createCertificateService.createCertificates(certificateRecordDto, names);
 

@@ -2,7 +2,7 @@ package com.whale.web.documents.certificategenerator.controller;
 
 import java.util.List;
 
-import com.whale.web.documents.certificategenerator.dto.CertificateRecordDto;
+import com.whale.web.documents.certificategenerator.dto.CertificateDto;
 import com.whale.web.documents.certificategenerator.service.CreateCertificateService;
 import com.whale.web.documents.certificategenerator.service.ProcessWorksheetService;
 import com.whale.web.exceptions.domain.WhaleCheckedException;
@@ -53,7 +53,7 @@ public class CertificateGenerateController {
             @ApiResponse(responseCode = "500", description = "Error generating qrcode", content = {@Content(schema = @Schema())})
     })
     public ResponseEntity<Object> certificateGenerator(
-            @Valid CertificateRecordDto certificateRecordDto,
+            @Valid CertificateDto certificateRecordDto,
             @Parameter(description = "Submit a csv file here") @RequestPart MultipartFile csvFileDto) throws WhaleCheckedException, WhaleIOException {
         List<String> names = processWorksheetService.savingNamesInAList(csvFileDto);
         byte[] bytes = createCertificateService.createCertificates(certificateRecordDto, names);

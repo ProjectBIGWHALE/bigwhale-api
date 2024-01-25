@@ -187,12 +187,11 @@ class DocumentsControllerTest {
     void generateCertificateAndReturnStatusCode200() throws Exception {
 
         String csvContent = "col1,col2,col3\nvalue1,value2,value3";
-/*        MockMultipartFile csvFileDto = new MockMultipartFile(
+        MockMultipartFile csvFileDto = new MockMultipartFile(
                 "csvFileDto",
                 "worksheet.csv",
                 MediaType.TEXT_PLAIN_VALUE,
-                csvContent.getBytes());*/
-        MockMultipartFile csvFileDto = createTestImage("jpeg", "csvFileDto");
+                csvContent.getBytes());
 
         var certificateRecordDto = new CertificateRecordDto(
                 CertificateTypeEnum.COURCE,

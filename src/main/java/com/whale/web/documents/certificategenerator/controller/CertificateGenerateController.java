@@ -3,6 +3,7 @@ package com.whale.web.documents.certificategenerator.controller;
 import java.util.List;
 
 import com.whale.web.documents.certificategenerator.dto.CertificateRecordDto;
+import com.whale.web.documents.certificategenerator.model.Certificate;
 import com.whale.web.documents.certificategenerator.service.CreateCertificateService;
 import com.whale.web.documents.certificategenerator.service.ProcessWorksheetService;
 import com.whale.web.exceptions.domain.WhaleCheckedException;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 
 import org.springframework.http.MediaType;
@@ -49,10 +51,11 @@ public class CertificateGenerateController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = {@Content(schema = @Schema())})
     })
     public ResponseEntity<Object> certificateGenerator(
-            @Valid @ModelAttribute CertificateRecordDto certificateRecordDto,
-            @Parameter(description = "Submit a csv file here") @RequestParam("csvFileDto") MultipartFile csvFileDto) throws WhaleCheckedException, WhaleIOException {
-        List<String> names = processWorksheetService.savingNamesInAList(csvFileDto);
-        byte[] bytes = createCertificateService.createCertificates(certificateRecordDto, names);
+            @Valid @ModelAttribute CertificateRecordDto certificateRecordDto) throws WhaleCheckedException, WhaleIOException {
+        Certificate certificate = new Certificate();
+        BeanUtils.copyProperties(certificateRecordDto, certificate);
+        List<String> names = processWorksheetService.savingNamesInAList(certificate.getCsvFile());
+        byte[] bytes = createCertificateService.createCertificates(certificate, names);
 
         log.info("Certificate generated successfully");
         return ResponseEntity.ok()

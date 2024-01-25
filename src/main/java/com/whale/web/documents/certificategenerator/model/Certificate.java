@@ -4,6 +4,7 @@ import com.whale.web.documents.certificategenerator.enums.CertificateTypeEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
@@ -18,4 +19,5 @@ public class Certificate {
     private String eventDate;
     private String eventLocale;
     private Long certificateModelId;
+    private MultipartFile csvFile;
 }

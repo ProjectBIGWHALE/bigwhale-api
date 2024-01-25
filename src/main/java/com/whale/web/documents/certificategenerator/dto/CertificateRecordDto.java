@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.web.multipart.MultipartFile;
 
 public record CertificateRecordDto(
         @Schema(description = "Certificate Type Enum", example = "COURCE")
@@ -37,6 +38,10 @@ public record CertificateRecordDto(
 
         @Schema(description =  "Certificate Model ID",example = "1")
         @NotNull(message = "CertificateModelId field is required")
-        Long certificateModelId
+        Long certificateModelId,
+
+        @Schema(description = "CSV File", example = "file")
+        @NotNull(message = "CSVFile field is required")
+        MultipartFile csvFile
 ) {
 }

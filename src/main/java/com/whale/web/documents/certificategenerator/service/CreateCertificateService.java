@@ -1,10 +1,9 @@
 package com.whale.web.documents.certificategenerator.service;
 
-import com.whale.web.documents.certificategenerator.dto.CertificateRecordDto;
+import com.whale.web.documents.certificategenerator.dto.CertificateDto;
 import com.whale.web.documents.certificategenerator.model.Certificate;
 import com.whale.web.exceptions.domain.WhaleCheckedException;
 import com.whale.web.exceptions.domain.WhaleIOException;
-import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,10 +31,9 @@ public class CreateCertificateService {
         this.random = random;
     }
 
-    public byte[] createCertificates(CertificateRecordDto certificateRecordDto, List<String> names) throws WhaleCheckedException, WhaleIOException {
+    public byte[] createCertificates(CertificateDto certificateRecordDto, List<String> names) throws WhaleCheckedException, WhaleIOException {
         var certificate = new Certificate();
         BeanUtils.copyProperties(certificateRecordDto, certificate);
-        validate(certificate);
         String template = selectPatchCertificateModel(certificate.getCertificateModelId());
         List<String> listCertificate = createCerificateService.cretateListCertificate(certificate, names, template);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -64,22 +62,5 @@ public class CreateCertificateService {
             case 2 -> certificatePath + "certificate2.svg";
             default -> throw new IllegalArgumentException("Invalid Patch for model of certificate");
         };
-    }
-
-    private void validate(Certificate certificate) throws WhaleCheckedException {
-        Class<Certificate> certificateClass = Certificate.class;
-        Field[] fields = certificateClass.getDeclaredFields();
-
-        try {
-            for (Field field : fields) {
-                field.setAccessible(true);
-                Object objectField = field.get(certificate);
-                if (objectField.toString().isBlank()) {
-                    throw new WhaleRunTimeException(field.getName() + " field is required");
-                }
-            }
-        } catch (IllegalAccessException e) {
-            throw new WhaleCheckedException(e.getMessage());
-        }
     }
 }

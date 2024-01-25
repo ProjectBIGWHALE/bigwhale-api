@@ -1,6 +1,5 @@
 package com.whale.web.documents.certificategenerator.service;
 
-import com.whale.web.documents.certificategenerator.dto.CertificateDto;
 import com.whale.web.documents.certificategenerator.model.Certificate;
 import com.whale.web.exceptions.domain.WhaleCheckedException;
 import com.whale.web.exceptions.domain.WhaleIOException;
@@ -10,12 +9,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Random;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
 @Service
@@ -31,7 +28,7 @@ public class CreateCertificateService {
         this.random = random;
     }
 
-    public byte[] createCertificates(CertificateDto certificateRecordDto, List<String> names) throws WhaleCheckedException, WhaleIOException {
+    public byte[] createCertificates(Certificate certificateRecordDto, List<String> names) throws WhaleCheckedException, WhaleIOException {
         var certificate = new Certificate();
         BeanUtils.copyProperties(certificateRecordDto, certificate);
         String template = selectPatchCertificateModel(certificate.getCertificateModelId());

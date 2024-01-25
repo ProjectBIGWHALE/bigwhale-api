@@ -1,7 +1,7 @@
 package com.whale.web.documents;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.whale.web.documents.certificategenerator.dto.CertificateDto;
+import com.whale.web.documents.certificategenerator.dto.CertificateRecordDto;
 import com.whale.web.documents.certificategenerator.enums.CertificateTypeEnum;
 import com.whale.web.documents.compactconverter.service.CompactConverterService;
 import com.whale.web.documents.zipfilecompressor.service.ZipFileCompressorService;
@@ -193,7 +193,7 @@ class DocumentsControllerTest {
                 MediaType.TEXT_PLAIN_VALUE,
                 csvContent.getBytes());
 
-        CertificateDto certificateRecordDto = new CertificateDto(
+        CertificateRecordDto certificateRecordDto = new CertificateRecordDto(
                 CertificateTypeEnum.COURCE,
                 "ABC dos DEVS",
                 "Ronnyscley",
@@ -201,12 +201,12 @@ class DocumentsControllerTest {
                 "20",
                 "2023-09-12",
                 "São Paulo",
-                1L
+                1L,
+                csvFileDto
         );
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/certificate-generator")
-                        .file(csvFileDto)
-                        .flashAttr("certificateDto", certificateRecordDto)
+                        .flashAttr("certificateRecordDto", certificateRecordDto)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE))
@@ -223,7 +223,7 @@ class DocumentsControllerTest {
                 MediaType.TEXT_PLAIN_VALUE,
                 csvContent.getBytes());
 
-        CertificateDto certificateDto = new CertificateDto(
+        CertificateRecordDto certificateRecordDto = new CertificateRecordDto(
                 CertificateTypeEnum.COURCE,
                 "ABC dos DEVS",
                 "Ronnyscley",
@@ -231,13 +231,14 @@ class DocumentsControllerTest {
                 "20",
                 "2023-09-12",
                 "São Paulo",
-                1L
+                1L,
+                csvFileDto
         );
 
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/certificate-generator")
                         .file(csvFileDto)
-                        .flashAttr("certificateDto", certificateDto)
+                        .flashAttr("certificateRecordDto", certificateRecordDto)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isBadRequest());
     }

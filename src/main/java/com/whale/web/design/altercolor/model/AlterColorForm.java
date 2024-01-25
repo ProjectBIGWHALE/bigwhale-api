@@ -23,4 +23,8 @@ public class AlterColorForm {
     @Schema(description =  "Margin", example = "3.0")
     @NotNull(message = "Margin field is required")
     private Double margin;
+
+    @Schema(description = "Image", example = "image.png")
+    @NotNull(message = "Image field is required")
+    private MultipartFile image;
 }

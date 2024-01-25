@@ -8,19 +8,19 @@ public record QRCodeEmailRecordDto(
 
         @Schema(description = "Email", example = "rh_tecnologia@gmail.com")
         @NotBlank(message = "No email was provided")
-        @Email(message = "The email provided is invalid")
+        @Email(message = "The email address provided is invalid")
         String email,
 
         @Schema(description = "Title Email", example = "Vaga Dev Junio")
-        @NotBlank(message = "No title was provided for the email")
+        @NotBlank(message = "Title field is required")
         String titleEmail,
 
         @Schema(description = "Text Email", example = "Desejo me candidatar a esta vaga.")
-        @NotBlank(message = "No text was provided for the email")
+        @NotBlank(message = "Text email field is required")
         String textEmail,
 
         @Schema(description = "Pixel Color", example = "blue")
-        @NotBlank(message = "No color was provided for the QRCode")
+        @NotBlank(message = "Must be enter a color. Please advise the color by name, hexadecimal or rgb")
         String pixelColor) {
 
 }

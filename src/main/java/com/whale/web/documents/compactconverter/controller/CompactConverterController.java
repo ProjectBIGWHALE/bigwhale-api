@@ -41,9 +41,9 @@ public class CompactConverterController {
     @PostMapping(value = "/compact-converter", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Compact Converter", description = "Convert ZIP to other compression formats", method = "POST")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Compression performed successfully", content = {@Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)}),
-            @ApiResponse(responseCode = "400", description = "Error in validating form fields", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "500", description = "Error compressing file", content = {@Content(schema = @Schema())})
+            @ApiResponse(responseCode = "200", description = "OK", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "400", description = "INVALID ZIP FILE", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = {@Content(schema = @Schema())}),
     })
     public ResponseEntity<Object> compactConverter(
             @Parameter(description = "Submit one or more zips file here") @RequestPart("files") List<MultipartFile> files,

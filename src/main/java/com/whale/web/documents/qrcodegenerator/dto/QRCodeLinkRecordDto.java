@@ -13,7 +13,7 @@ public record QRCodeLinkRecordDto(
         String link,
 
         @Schema(description = "Pixel Color", example = "green")
-        @NotBlank(message = "No color was provided for the QRCode")
+        @NotBlank(message = "Must be enter a color. Please advise the color by name, hexadecimal or rgb")
         String pixelColor) {
 
 }

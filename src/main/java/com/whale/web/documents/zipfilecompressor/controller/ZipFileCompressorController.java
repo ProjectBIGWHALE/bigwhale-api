@@ -6,6 +6,7 @@ import com.whale.web.utils.UploadFiles;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,9 +37,9 @@ public class ZipFileCompressorController {
     @PostMapping(value = "/file-compressor", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "File Compressor", description = "Compresses one or more files.", method = "POST")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Compression performed successfully", content = {@Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)}),
-            @ApiResponse(responseCode = "400", description = "Error in validating form fields", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "500", description = "Error compressing file", content = {@Content(mediaType = MediaType.TEXT_PLAIN_VALUE)})
+            @ApiResponse(responseCode = "200", description = "Compression performed successfully", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "400", description = "Error in validating form fields", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "500", description = "Error compressing file", content = {@Content(schema = @Schema())})
     })
     public ResponseEntity<Object> fileCompressor(
             @Parameter(description = "Submit one or more files here.") @RequestPart List<MultipartFile> file) throws IOException, WhaleCheckedException {

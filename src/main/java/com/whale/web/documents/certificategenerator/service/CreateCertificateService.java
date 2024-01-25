@@ -73,12 +73,12 @@ public class CreateCertificateService {
         try {
             for (Field field : fields) {
                 field.setAccessible(true);
-                Object objet = field.get(certificate);
-                if (objet == null) {
-                    throw new WhaleRunTimeException("Field: " + field.getName() + " is null");
+                Object objectField = field.get(certificate);
+                if (objectField.toString().isBlank()) {
+                    throw new WhaleRunTimeException(field.getName() + " field is required");
                 }
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException e) {
             throw new WhaleCheckedException(e.getMessage());
         }
     }

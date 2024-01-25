@@ -45,9 +45,9 @@ public class AlterColorController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = {@Content(schema = @Schema())})
     })
     public ResponseEntity<byte[]> alterColor(
-            /*@Parameter(description = "Submit an image here") @RequestPart(name = "image") MultipartFile image,*/
-            /*@Parameter(description = "Form data") @RequestPart(name = "form")*/ @Valid @ModelAttribute AlterColorForm form) throws IOException, WhaleCheckedException {
+        @Valid @ModelAttribute AlterColorForm form) throws IOException, WhaleCheckedException {
         byte[] processedImage = alterColorService.alterColor(form.getImage(), form.getColorOfImage(), form.getColorForAlteration(), form.getMargin());
+
         log.info("Image color changed successfully");
 
         return ResponseEntity.ok()

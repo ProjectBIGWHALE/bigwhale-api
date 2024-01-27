@@ -47,7 +47,7 @@ class AlterColorControllerTest {
     @Test
     @Order(2)
     void sendNullImageAndReturnStatus400() throws Exception {
-        MockMultipartFile nullImage = ImageServiceUtilTest.createTestNullImage();
+        MockMultipartFile nullImage = ImageServiceUtilTest.createTestEmptyImage("image");
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart(alterColorUri)
                         .file(nullImage)
                         .param("colorForAlteration", "#FF0000")

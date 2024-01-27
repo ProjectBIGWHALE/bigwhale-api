@@ -93,7 +93,7 @@ class QRCodeGeneratorControllerTest {
 
         var requestDto = new QRCodeEmailRecordDto(
                 "",
-                null,
+                "Teste",
                 "Este é um email de Teste",
                 "blue");
 
@@ -107,8 +107,7 @@ class QRCodeGeneratorControllerTest {
         assertEquals("Someone Fields are is blank", error);
         JsonNode listFieldErrors = JsonServiceUtilTest.getJsonResponse(result).get("listFieldErrors");
         assertEquals(
-                "[{\"field\":\"titleEmail\",\"message\":\"Title field is required\"},"
-                        + "{\"field\":\"email\",\"message\":\"No email was provided\"}]",
+                "[{\"field\":\"email\",\"message\":\"No email was provided\"}]",
                 listFieldErrors.toString());
     }
 

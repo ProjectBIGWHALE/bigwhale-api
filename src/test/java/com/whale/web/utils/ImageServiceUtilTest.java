@@ -33,9 +33,9 @@ public class ImageServiceUtilTest {
 
     }
 
-    public static MockMultipartFile createTestNullImage(){
+    public static MockMultipartFile createTestEmptyImage(String name){
         return new MockMultipartFile(
-                "image",
+                name,
                 "white_image.png",
                 MediaType.IMAGE_PNG_VALUE,
                 new byte[0]

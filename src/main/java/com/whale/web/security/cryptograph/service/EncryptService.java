@@ -27,7 +27,7 @@ public class EncryptService {
 	private static final String CIPHER_INSTANCE = "AES/CBC/PKCS5Padding";
 
 	public EncryptModel choiceEncryptService(Boolean action, String key, MultipartFile file) throws WhaleInvalidFileException, WhaleCheckedException {
-		if (file.isEmpty()) throw new WhaleInvalidFileException("An invalid file was sent");
+		if (file.isEmpty()) throw new WhaleInvalidFileException("The uploaded file is invalid");
 		if (key.isBlank()) throw new WhaleRunTimeException("The key field is blank");
 
 		String fileName;

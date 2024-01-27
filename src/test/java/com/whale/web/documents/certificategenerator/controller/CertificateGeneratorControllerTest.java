@@ -36,14 +36,9 @@ class CertificateGeneratorControllerTest {
 
     @Test
     void generateCertificateAndReturnStatusCode200() throws Exception {
-
-        MockMultipartFile csvFileDto = new MockMultipartFile(
-                "csvFileDto",
-                "worksheet.csv",
-                MediaType.TEXT_PLAIN_VALUE,
-                CSV_CONTENT.getBytes());
-
-        // Tests certificate generation with all available certificate templates
+        /*Tests certificate generation with all available certificate templates.
+        At the moment there are two models available*/
+        MockMultipartFile csvFileDto = createCSVFile();
         for (long i = 1; i < 3; i++) {
             CertificateRecordDto certificateRecordDto = new CertificateRecordDto(
                     CertificateTypeEnum.COURCE,
@@ -68,12 +63,7 @@ class CertificateGeneratorControllerTest {
 
     @Test
     void returnStatusCode400WhenFormContainsEmptyorNullField() throws Exception {
-        MockMultipartFile csvFileDto = new MockMultipartFile(
-                "csvFileDto",
-                "worksheet.csv",
-                MediaType.TEXT_PLAIN_VALUE,
-                CSV_CONTENT.getBytes());
-
+        MockMultipartFile csvFileDto = createCSVFile();
         CertificateRecordDto certificateRecordDto = new CertificateRecordDto(
                 CertificateTypeEnum.COURCE,
                 "ABC dos DEVS",
@@ -122,7 +112,39 @@ class CertificateGeneratorControllerTest {
 
         JsonNode jsonMessage = JsonServiceUtilTest.getJsonResponse(result).get("message");
         assertEquals("The file with of names cannot be different as csv.", jsonMessage.asText());
+    }
 
+    @Test
+    void chooseInvalidPatchForCertificateTemplate() throws Exception {
+        MockMultipartFile csvFileDto = createCSVFile();
+        CertificateRecordDto certificateRecordDto = new CertificateRecordDto(
+                CertificateTypeEnum.COURCE,
+                "ABC dos DEVS",
+                "Ronnyscley",
+                "CTO",
+                "20",
+                "2023-09-12",
+                "São Paulo",
+                10L,
+                csvFileDto
+        );
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/certificate-generator")
+                        .flashAttr("certificateRecordDto", certificateRecordDto)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        JsonNode jsonMessage = JsonServiceUtilTest.getJsonResponse(result).get("message");
+        assertEquals("Invalid Patch for model of certificate", jsonMessage.asText());
+    }
+
+    private static MockMultipartFile createCSVFile() {
+        return new MockMultipartFile(
+                "csvFileDto",
+                "worksheet.csv",
+                MediaType.TEXT_PLAIN_VALUE,
+                CSV_CONTENT.getBytes());
     }
 
 

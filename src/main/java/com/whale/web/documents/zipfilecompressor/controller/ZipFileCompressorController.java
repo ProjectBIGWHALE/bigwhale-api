@@ -42,9 +42,8 @@ public class ZipFileCompressorController {
             @ApiResponse(responseCode = "500", description = "Error compressing file", content = {@Content(schema = @Schema())})
     })
     public ResponseEntity<Object> fileCompressor(
-            @Parameter(description = "Submit one or more files here.") @RequestPart List<MultipartFile> file) throws IOException, WhaleCheckedException {
-            List<MultipartFile> uploads = UploadFiles.fileUploadAndValidation(file);
-            byte[] bytes = zipFileCompressorService.compressFiles(uploads);
+            @Parameter(description = "Submit one or more files here.") @RequestPart List<MultipartFile> file) throws Exception {
+            byte[] bytes = zipFileCompressorService.compressFiles(file);
             log.info("File compressed successfully");
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)

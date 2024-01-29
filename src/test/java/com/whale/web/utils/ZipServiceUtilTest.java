@@ -1,10 +1,9 @@
 package com.whale.web.utils;
 
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -25,6 +24,19 @@ public class ZipServiceUtilTest {
             return new MockMultipartFile("files", "zip-test.zip", "application/zip", bais);
         }
     }
+
+    public static MockMultipartFile createEmptyZipFile() {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ZipOutputStream zos = new ZipOutputStream(baos);
+            zos.close();
+            return new MockMultipartFile("files", "empty.zip", "application/zip", baos.toByteArray());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
 
 }

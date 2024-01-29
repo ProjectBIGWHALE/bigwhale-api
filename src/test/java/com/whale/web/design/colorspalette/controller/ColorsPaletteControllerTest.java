@@ -39,7 +39,7 @@ class ColorsPaletteControllerTest {
     @Test
     @Order(2)
     void shouldReturnAExceptionStatusCode500() throws Exception {
-        MockMultipartFile file = ImageServiceUtilTest.createTestNullImage();
+        MockMultipartFile file = ImageServiceUtilTest.createTestEmptyImage("image");
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart(colorsPaletteUri)
                         .file(file))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())

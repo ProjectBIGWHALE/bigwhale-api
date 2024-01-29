@@ -2,7 +2,10 @@ package com.whale.web.security.cryptograph.controller;
 
 import java.net.URI;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.whale.web.security.cryptograph.model.EncryptModel;
+import com.whale.web.utils.ImageServiceUtilTest;
+import com.whale.web.utils.JsonServiceUtilTest;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +14,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.whale.web.security.cryptograph.service.EncryptService;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @AutoConfigureMockMvc
@@ -30,14 +36,13 @@ class CryptographyControllerTest {
     @Test
     @Order(1)
     void shouldReturnEncryptedFile() throws Exception {
-        URI uri = new URI("http://localhost:8080/api/v1/security/cryptograph");
         boolean action = true;
         String key = "TEST";
 
         MockMultipartFile file = new MockMultipartFile("file", "test.txt",
                 MediaType.TEXT_PLAIN_VALUE, "Test content".getBytes());
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart(uri)
+        mockMvc.perform(MockMvcRequestBuilders.multipart(CRYPTOGRAPH_URI)
                         .file(file)
                         .param("key", key)
                         .param("action", String.valueOf(action)))
@@ -53,7 +58,6 @@ class CryptographyControllerTest {
     @Test
     @Order(2)
     void shouldReturnDecryptedFile() throws Exception {
-        URI uri = new URI("http://localhost:8080/api/v1/security/cryptograph");
         boolean action = false;
         String key = "TEST";
 
@@ -63,7 +67,7 @@ class CryptographyControllerTest {
         EncryptModel encryptedContent = encryptService.choiceEncryptService(true, key, file);
         MockMultipartFile encryptedFile = new MockMultipartFile("file", "test.txt", MediaType.TEXT_PLAIN_VALUE, encryptedContent.getFile());
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart(uri)
+        mockMvc.perform(MockMvcRequestBuilders.multipart(CRYPTOGRAPH_URI)
                         .file(encryptedFile)
                         .param("key", key)
                         .param("action", String.valueOf(action)))
@@ -78,20 +82,47 @@ class CryptographyControllerTest {
     @Test
     @Order(3)
     void shouldReturnStatus401ForWrongKey() throws Exception {
-        URI uri = new URI("http://localhost:8080/api/v1/security/cryptograph");
         boolean action = false;
         String key = "TEST";
 
-        MockMultipartFile file = new MockMultipartFile("file", "test.txt",
+        var file = new MockMultipartFile("file", "test.txt",
                 MediaType.TEXT_PLAIN_VALUE, "Test content".getBytes());
 
-        EncryptModel encryptedContent = encryptService.choiceEncryptService(true, key, file);
-        MockMultipartFile encryptedFile = new MockMultipartFile("file", "test.txt", MediaType.TEXT_PLAIN_VALUE, encryptedContent.getFile());
+        var encryptedContent = encryptService.choiceEncryptService(true, key, file);
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart(uri)
+        var encryptedFile = new MockMultipartFile("file", "test.txt",
+                MediaType.TEXT_PLAIN_VALUE, encryptedContent.getFile());
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart(CRYPTOGRAPH_URI)
                         .file(encryptedFile)
                         .param("key", "WRONG_KEY")
                         .param("action", String.valueOf(action)))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                .andReturn();
+
+        String error = JsonServiceUtilTest.getJsonResponse(result).get("error").asText();
+        assertEquals("INVALID PASSWORD", error);
     }
+
+    @Test
+    void doNotAllowEncryptingAnEncryptedFileAndReturnStatusCode400() throws Exception {
+        var file = new MockMultipartFile("file", "test.txt",
+                MediaType.TEXT_PLAIN_VALUE, "Test content".getBytes());
+
+        var encryptedContent = encryptService.choiceEncryptService(true, "password", file);
+        var encryptedFile = new MockMultipartFile("file", "test.txt.encrypted",
+                MediaType.TEXT_PLAIN_VALUE, encryptedContent.getFile());
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart(CRYPTOGRAPH_URI)
+                        .file(encryptedFile)
+                        .param("key", "password")
+                        .param("action", String.valueOf(true)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+
+        String error = JsonServiceUtilTest.getJsonResponse(result).get("message").asText();
+        assertEquals("The uploaded file is already encrypted", error);
+    }
+
+    private static final String CRYPTOGRAPH_URI = "http://localhost:8080/api/v1/security/cryptograph";
 }

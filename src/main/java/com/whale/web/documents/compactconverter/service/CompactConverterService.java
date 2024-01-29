@@ -21,7 +21,7 @@ public class CompactConverterService {
         this.convertToTarGz = convertToTarGz;
     }
 
-    public List<byte[]> converterFile(List<MultipartFile> files, String outputFormat) {
+    public List<byte[]> converterFile(List<MultipartFile> files, String outputFormat) throws WhaleRunTimeException {
         if (!areAllFilesZip(files)) {
             throw new WhaleRunTimeException("Upload file not a valid zip file");
         } else {
@@ -30,7 +30,7 @@ public class CompactConverterService {
                 case "tar.gz" -> convertToTarGz.convertToTarGz(files);
                 case "7z" -> converterTo7z.convertTo7z(files);
                 case "tar" -> convertToTar.convertToTar(files);
-                default -> throw new WhaleRunTimeException("The format provided is not accepted");
+                default -> throw new WhaleRunTimeException("Invalid format for conversion. Supported formats: 'zip', 'tar.gz', '7z' or 'tar'");
             };
         }
     }

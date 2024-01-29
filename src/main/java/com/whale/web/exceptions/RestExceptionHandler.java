@@ -32,7 +32,7 @@ public class RestExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(RestExceptionHandler.class);
     private static final String BAD_REQUEST = "BAD REQUEST";
     private static final String FIELDS_ARE_BLANK = "Someone Fields are is blank";
-
+    private static final String ILLEGAL_ARGUMENT = "INVALID ARGUMENT";
     private static final String INTERNAL_SERVER_ERROR = "INTERNAL SERVER ERROR";
 
     @ExceptionHandler(WhaleRunTimeException.class)
@@ -84,7 +84,7 @@ public class RestExceptionHandler {
                                                                                HttpServletRequest http) {
 
         StandardError error = new StandardError(formattedInstant, HttpStatus.BAD_REQUEST.value(),
-                FIELDS_ARE_BLANK, e.getBody().getDetail(), http.getRequestURI());
+                "A PART OF THE REQUEST IS MISSING", e.getMessage(), http.getRequestURI());
 
         logger(e.getLocalizedMessage(), e.getMessage());
         return ResponseEntity.badRequest().body(error);
@@ -105,7 +105,7 @@ public class RestExceptionHandler {
     public ResponseEntity<StandardError> illegalArgumentException(IllegalArgumentException e, HttpServletRequest http) {
 
         StandardError error = new StandardError(formattedInstant, HttpStatus.BAD_REQUEST.value(),
-                FIELDS_ARE_BLANK, e.getMessage(), http.getRequestURI());
+                ILLEGAL_ARGUMENT, e.getMessage(), http.getRequestURI());
 
         logger(e.getLocalizedMessage(), e.getMessage());
         return ResponseEntity.badRequest().body(error);
@@ -132,7 +132,7 @@ public class RestExceptionHandler {
     @ExceptionHandler(WhaleUnauthorizedException.class)
     public ResponseEntity<StandardError> whaleUnauthorizedException(WhaleUnauthorizedException e, HttpServletRequest http){
         StandardError error = new StandardError(formattedInstant, HttpStatus.UNAUTHORIZED.value(),
-                "Invalid Password", e.getMessage(), http.getRequestURI());
+                "INVALID PASSWORD", e.getMessage(), http.getRequestURI());
 
         logger(e.getLocalizedMessage(), e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);

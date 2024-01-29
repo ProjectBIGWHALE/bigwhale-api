@@ -7,7 +7,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
 import com.whale.web.documents.qrcodegenerator.model.QRCodeLinkModel;
-import com.whale.web.exceptions.domain.WhaleRunTimeException;
+import com.whale.web.exceptions.domain.WhaleCheckedException;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -21,7 +21,7 @@ import java.util.Map;
 @Service
 public class QRCodeLinkService {
 
-    public byte[] generateQRCode(QRCodeLinkModel qrCodeLinkRecordModel) {
+    public byte[] generateQRCode(QRCodeLinkModel qrCodeLinkRecordModel) throws WhaleCheckedException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
@@ -48,7 +48,7 @@ public class QRCodeLinkService {
 
             return imageBytes;
         } catch (WriterException | IOException e) {
-            throw new WhaleRunTimeException("An error occurred when trying to generate the qrcode: "+e.getMessage());
+            throw new WhaleCheckedException("An error occurred when trying to generate the qrcode: "+e.getMessage());
         }
     }
 

@@ -12,7 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class ImageServiceUtilTest {
-    public static MockMultipartFile createTestImage(String inputFormat, String name) throws WhaleCheckedException {
+    public static MockMultipartFile createTestImage(String inputFormat, String name) throws WhaleIOException {
         try {
             BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
             Graphics2D graphics = image.createGraphics();
@@ -25,11 +25,11 @@ public class ImageServiceUtilTest {
             return new MockMultipartFile(
                     name,
                     "test-image." + inputFormat,
-                    MediaType.IMAGE_PNG_VALUE,
+                    inputFormat,
                     baos.toByteArray()
             );
         } catch (IOException ioe) {
-            throw new WhaleCheckedException("Failed to create test image");
+            throw new WhaleIOException("Failed to create test image");
         }
 
     }

@@ -25,7 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @RestController
 @RequestMapping("api/v1/security")
-@Tag(name = "API for cryptograph and decryptograph files")
+@Tag(name = "Security Services", description = "Get access to services to improve the security of your files")
 public class EncryptController {
 
     private final EncryptService encryptService;
@@ -35,7 +35,7 @@ public class EncryptController {
     }
 
     @PostMapping(value = "/cryptograph", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Cryptograph Archive", description = "Convert Archive for a cryptograph or decrypted version", method = "POST")
+    @Operation(summary = "Encrypt files", description = "Securely encrypt your files quickly and easily", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "400", description = "Invalid input", content = {@Content(schema = @Schema())}),

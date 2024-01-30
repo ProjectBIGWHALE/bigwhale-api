@@ -1,10 +1,8 @@
-package com.whale.web.documents.zipfilecompressor.controller;
+package com.whale.web.documents.zipfilegenerator.controller;
 
-import com.whale.web.documents.zipfilecompressor.service.ZipFileCompressorService;
-import com.whale.web.exceptions.domain.WhaleCheckedException;
+import com.whale.web.documents.zipfilegenerator.service.ZipFileGeneratorService;
 import com.whale.web.exceptions.domain.WhaleIOException;
 import com.whale.web.exceptions.domain.WhaleInvalidFileException;
-import com.whale.web.utils.UploadFiles;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,24 +18,23 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping(value = "api/v1/documents")
-@Tag(name = "API for documents resource palette")
-public class ZipFileCompressorController {
+@Tag(name = "Documents Services")
+public class ZipFileGeneratorController {
 
     private static final String ATTACHMENT_FILENAME = "attachment; filename=";
-    private final ZipFileCompressorService zipFileCompressorService;
+    private final ZipFileGeneratorService zipFileGeneratorService;
 
-    public ZipFileCompressorController(ZipFileCompressorService zipFileCompressorService) {
-        this.zipFileCompressorService = zipFileCompressorService;
+    public ZipFileGeneratorController(ZipFileGeneratorService zipFileGeneratorService) {
+        this.zipFileGeneratorService = zipFileGeneratorService;
     }
 
-    @PostMapping(value = "/file-compressor", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "File Compressor", description = "Compresses one or more files.", method = "POST")
+    @PostMapping(value = "/zip-file-generator", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Create ZIP File", description = "Compress one or more files in a zip folder.", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Compression performed successfully", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "400", description = "Error in validating form fields", content = {@Content(schema = @Schema())}),
@@ -45,7 +42,7 @@ public class ZipFileCompressorController {
     })
     public ResponseEntity<Object> fileCompressor(
             @Parameter(description = "Submit one or more files here.") @RequestPart List<MultipartFile> file) throws WhaleInvalidFileException, WhaleIOException {
-            byte[] bytes = zipFileCompressorService.compressFiles(file);
+            byte[] bytes = zipFileGeneratorService.compressFiles(file);
             log.info("File compressed successfully");
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)

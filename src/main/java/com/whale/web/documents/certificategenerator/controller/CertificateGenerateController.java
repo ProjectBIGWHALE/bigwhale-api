@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping(value = "api/v1/documents")
-@Tag(name = "API for documents resource palette")
+@Tag(name = "Documents Services", description = "Tools for document editing, conversion, compression, and more ")
 public class CertificateGenerateController {
 
     private static final String ATTACHMENT_FILENAME = "attachment; filename=";
@@ -42,7 +42,7 @@ public class CertificateGenerateController {
         this.createCertificateService = createCertificateService;
     }
     @PostMapping(value = "/certificate-generator", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Certificate Generator", description = "Generates certificates with a chosen layout", method = "POST")
+    @Operation(summary = "Generate Certificate", description = "Create and edit a certificate with a chosen template ", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "400", description = "Invalid input", content = {@Content(schema = @Schema())}),

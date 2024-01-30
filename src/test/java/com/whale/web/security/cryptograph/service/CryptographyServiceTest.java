@@ -55,7 +55,7 @@ class CryptographyServiceTest {
         WhaleInvalidFileException exception = assertThrows(WhaleInvalidFileException.class, () -> {
             encryptService.choiceEncryptService(action, key, emptyFile);
         });
-        assertEquals("An invalid file was sent", exception.getMessage());
+        assertEquals("The uploaded file is invalid", exception.getMessage());
     }
 
     @Test

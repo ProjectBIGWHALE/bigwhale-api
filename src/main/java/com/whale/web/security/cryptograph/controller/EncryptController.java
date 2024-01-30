@@ -42,12 +42,14 @@ public class EncryptController {
             @ApiResponse(responseCode = "401", description = "Invalid key", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = {@Content(schema = @Schema())})
     })
-    public ResponseEntity<Object> cryptograph(@RequestPart("file") MultipartFile file, 
-        @Parameter(description = "Insert a password for decrypt and encrypt") @RequestParam("key") String key, 
-        @Parameter(description = "True for encrypt and False for decrypt") @RequestParam("action") Boolean action) throws WhaleInvalidFileException, WhaleCheckedException {
-            EncryptModel encryptedFile = encryptService.choiceEncryptService(action, key, file);
+    public ResponseEntity<Object> cryptograph(
+            @RequestPart("file") MultipartFile file,
+            @Parameter(description = "Insert a password for decrypt and encrypt") @RequestParam("key") String key,
+            @Parameter(description = "True for encrypt and False for decrypt") @RequestParam("action") Boolean action)
+            throws WhaleInvalidFileException, WhaleCheckedException {
+        EncryptModel encryptedFile = encryptService.choiceEncryptService(action, key, file);
 
-            return ResponseEntity.ok()
+        return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + encryptedFile.getFileName())
                 .header(CacheControl.noCache().toString())

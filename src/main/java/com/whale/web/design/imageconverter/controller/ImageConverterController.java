@@ -1,6 +1,6 @@
-package com.whale.web.documents.imageconverter.controller;
+package com.whale.web.design.imageconverter.controller;
 
-import com.whale.web.documents.imageconverter.service.ImageConverterService;
+import com.whale.web.design.imageconverter.service.ImageConverterService;
 import com.whale.web.exceptions.domain.WhaleCheckedException;
 import com.whale.web.exceptions.domain.WhaleIOException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,8 +23,8 @@ import java.util.Objects;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "api/v1/documents")
-@Tag(name = "API for documents resource palette")
+@RequestMapping(value = "api/v1/design")
+@Tag(name = "Designer Services")
 public class ImageConverterController {
 
     private final ImageConverterService imageConverterService;
@@ -36,7 +36,7 @@ public class ImageConverterController {
     private static final String ATTACHMENT_FILENAME = "attachment; filename=";
 
     @PostMapping(value = "/image-converter", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Image Converter", description = "Convert an image to another format", method = "POST")
+    @Operation(summary = "Image Converter", description = "Convert your image into different formats", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "400", description = "INVALID IMAGE", content = {@Content(schema = @Schema())}),

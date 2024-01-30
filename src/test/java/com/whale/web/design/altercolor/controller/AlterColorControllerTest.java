@@ -47,7 +47,7 @@ class AlterColorControllerTest {
     @Test
     @Order(2)
     void sendNullImageAndReturnStatus400() throws Exception {
-        MockMultipartFile nullImage = ImageServiceUtilTest.createTestNullImage();
+        MockMultipartFile nullImage = ImageServiceUtilTest.createTestEmptyImage("image");
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart(alterColorUri)
                         .file(nullImage)
                         .param("colorForAlteration", "#FF0000")
@@ -83,5 +83,20 @@ class AlterColorControllerTest {
     }
 
 
+    @Test
+    void sendInvalidFormatImageAndReturnStatusCode400_AlterColor() throws Exception {
+        MockMultipartFile file = ImageServiceUtilTest.createTestImage("tiff", "image");
 
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart(alterColorUri)
+                        .file(file)
+                        .param("colorForAlteration", "#FF0000")
+                        .param("colorOfImage", "#FF0000")
+                        .param("margin", "3.0"))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+
+        String error = JsonServiceUtilTest.getJsonResponse(result).get("message").asText();
+        assertEquals("Please choose a valid image format: bmp, jpg, jpeg, png or gif file.", error);
+
+    }
 }

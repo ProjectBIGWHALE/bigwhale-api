@@ -44,7 +44,7 @@ class ColorsPaletteServiceTest {
     @Test
     @Order(2)
     void testColorPaletteWithNullImage() {
-        MockMultipartFile nullImage = ImageServiceUtilTest.createTestNullImage();
+        MockMultipartFile nullImage = ImageServiceUtilTest.createTestEmptyImage("image");
         WhaleInvalidImageException exception = assertThrows(WhaleInvalidImageException.class, () -> {
             createColorsPaletteService.createColorPalette(nullImage);
         });

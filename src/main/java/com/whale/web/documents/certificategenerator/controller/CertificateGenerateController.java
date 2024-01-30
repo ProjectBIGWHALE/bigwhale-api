@@ -9,7 +9,6 @@ import com.whale.web.documents.certificategenerator.service.ProcessWorksheetServ
 import com.whale.web.exceptions.domain.WhaleCheckedException;
 import com.whale.web.exceptions.domain.WhaleIOException;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,7 +23,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 
 @Slf4j

@@ -27,14 +27,17 @@ public class EncryptService {
 	private static final String CIPHER_INSTANCE = "AES/CBC/PKCS5Padding";
 
 	public EncryptModel choiceEncryptService(Boolean action, String key, MultipartFile file) throws WhaleInvalidFileException, WhaleCheckedException {
-		if (file.isEmpty()) throw new WhaleInvalidFileException("An invalid file was sent");
+		if (file.isEmpty()) throw new WhaleInvalidFileException("The uploaded file is invalid");
 		if (key.isBlank()) throw new WhaleRunTimeException("The key field is blank");
 
 		String fileName;
 		byte[] newFile;
-		if (Boolean.TRUE.equals(action)) {
+
+		if (Boolean.TRUE.equals(action) && !isEncryptedFile(file)) {
 			fileName = file.getOriginalFilename() + ".encrypted";
 			newFile = encryptFile(file, key);
+		} else if (Boolean.TRUE.equals(action) && isEncryptedFile(file)) {
+			throw new WhaleInvalidFileException("The uploaded file is already encrypted");
 		} else {
 			fileName = StringUtils.stripFilenameExtension(Objects.requireNonNull(file.getOriginalFilename()));
 			newFile = decryptFile(file, key);
@@ -76,7 +79,12 @@ public class EncryptService {
 			throw new WhaleCheckedException("Failed to decrypt the file");
 		}
 
-    }
+	}
+
+
+	private static boolean isEncryptedFile(MultipartFile file) {
+		return Objects.requireNonNull(file.getOriginalFilename()).endsWith(".encrypted");
+	}
 
 
 }

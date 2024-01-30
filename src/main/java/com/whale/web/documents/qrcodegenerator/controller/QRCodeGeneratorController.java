@@ -9,6 +9,7 @@ import com.whale.web.documents.qrcodegenerator.model.QRCodeWhatsappModel;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeEmailService;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeLinkService;
 import com.whale.web.documents.qrcodegenerator.service.QRCodeWhatsappService;
+import com.whale.web.exceptions.domain.WhaleCheckedException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -49,7 +50,7 @@ public class QRCodeGeneratorController {
             @ApiResponse(responseCode = "400", description = "INVALID INPUT", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = {@Content(schema = @Schema())})
     })
-    public ResponseEntity<Object> qrCodeGeneratorLink(@RequestBody @Valid QRCodeLinkRecordDto qrCodeLinkRecordDto) {
+    public ResponseEntity<Object> qrCodeGeneratorLink(@RequestBody @Valid QRCodeLinkRecordDto qrCodeLinkRecordDto) throws WhaleCheckedException {
         var qrCodeLinkModel = new QRCodeLinkModel();
         BeanUtils.copyProperties(qrCodeLinkRecordDto, qrCodeLinkModel);
         byte[] bytes = qrCodeLinkService.generateQRCode(qrCodeLinkModel);
@@ -69,15 +70,15 @@ public class QRCodeGeneratorController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = {@Content(schema = @Schema())}),
     })
     public ResponseEntity<Object> qrCodeGeneratorEmail(@Valid @RequestBody QRCodeEmailRecordDto qrCodeEmailRecordDto) {
-            var qrCodeEmailModel = new QRCodeEmailModel();
-            BeanUtils.copyProperties(qrCodeEmailRecordDto, qrCodeEmailModel);
-            byte[] bytes = qrCodeEmailService.generateEmailLinkQRCode(qrCodeEmailModel);
-            log.info("QRCOde email generated successfully");
-            return ResponseEntity.ok()
-                    .contentType(MediaType.IMAGE_PNG)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "QRCodeEmail.png")
-                    .header(CacheControl.noCache().toString())
-                    .body(bytes);
+        var qrCodeEmailModel = new QRCodeEmailModel();
+        BeanUtils.copyProperties(qrCodeEmailRecordDto, qrCodeEmailModel);
+        byte[] bytes = qrCodeEmailService.generateEmailLinkQRCode(qrCodeEmailModel);
+        log.info("QRCOde email generated successfully");
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "QRCodeEmail.png")
+                .header(CacheControl.noCache().toString())
+                .body(bytes);
     }
 
     @PostMapping(value = "/qrcodegenerator/whatsapp", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -89,15 +90,15 @@ public class QRCodeGeneratorController {
     })
     public ResponseEntity<Object> qrCodeGeneratorWhatsapp(
             @Valid @RequestBody QRCodeWhatsappRecordDto qrCodeWhatsappRecordDto) {
-            var qrCodeWhatsappModel = new QRCodeWhatsappModel();
-            BeanUtils.copyProperties(qrCodeWhatsappRecordDto, qrCodeWhatsappModel);
-            byte[] bytes = qrCodeWhatsappService.generateWhatsAppLinkQRCode(qrCodeWhatsappModel);
-            log.info("QRCOde Whatsapp generated successfully");
-            return ResponseEntity.ok()
-                    .contentType(MediaType.IMAGE_PNG)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "QRCodeWhatsapp.png")
-                    .header(CacheControl.noCache().toString())
-                    .body(bytes);
+        var qrCodeWhatsappModel = new QRCodeWhatsappModel();
+        BeanUtils.copyProperties(qrCodeWhatsappRecordDto, qrCodeWhatsappModel);
+        byte[] bytes = qrCodeWhatsappService.generateWhatsAppLinkQRCode(qrCodeWhatsappModel);
+        log.info("QRCOde Whatsapp generated successfully");
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "QRCodeWhatsapp.png")
+                .header(CacheControl.noCache().toString())
+                .body(bytes);
 
     }
 }

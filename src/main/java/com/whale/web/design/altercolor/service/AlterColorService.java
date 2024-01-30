@@ -2,7 +2,6 @@ package com.whale.web.design.altercolor.service;
 
 import com.whale.web.exceptions.domain.WhaleInvalidImageException;
 import com.whale.web.exceptions.domain.WhaleCheckedException;
-import com.whale.web.utils.UploadImage;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,20 +10,15 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 @Service
 public class AlterColorService {
 
-    private final UploadImage uploadImage;
-
-    public AlterColorService(UploadImage uploadImage) {
-        this.uploadImage = uploadImage;
-    }
-
     public byte[] alterColor(MultipartFile imageForm, String colorOfImage, String replacementColor, double marginValue) throws WhaleCheckedException, WhaleInvalidImageException {
         try {
-            MultipartFile upload = uploadImage.uploadImage(imageForm);
-            BufferedImage img = ImageIO.read(upload.getInputStream());
+            isValidImageFormat(imageForm);
+            BufferedImage img = ImageIO.read(imageForm.getInputStream());
 
             ColorRange colorRange = calculateColorRange(colorOfImage, marginValue);
             Color newColor = getReplacementColor(replacementColor);
@@ -92,8 +86,30 @@ public class AlterColorService {
             int g = color.getGreen();
             int b = color.getBlue();
             return r >= rMin && r <= rMax &&
-                   g >= gMin && g <= gMax &&
-                   b >= bMin && b <= bMax;
+                    g >= gMin && g <= gMax &&
+                    b >= bMin && b <= bMax;
         }
     }
+
+    private void isValidImageFormat(MultipartFile imageFile) throws WhaleInvalidImageException {
+        if (imageFile == null || imageFile.isEmpty()) {
+            throw new WhaleInvalidImageException("Image cannot be null or empty");
+        }
+
+        if (!Arrays.asList("bmp", "jpg", "jpeg", "gif", "png").contains(getFileExtension(imageFile))) {
+            throw new WhaleInvalidImageException("Please choose a valid image format: bmp, jpg, jpeg, png or gif file.");
+        }
+    }
+
+    private String getFileExtension(MultipartFile file) {
+        String fileName = file.getOriginalFilename();
+        if (fileName != null) {
+            int lastIndex = fileName.lastIndexOf('.');
+            if (lastIndex >= 0) {
+                return fileName.substring(lastIndex + 1).toLowerCase();
+            }
+        }
+        return null;
+    }
+
 }

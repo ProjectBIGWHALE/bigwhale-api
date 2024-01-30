@@ -30,7 +30,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("api/v1/design")
 @Tag(name = "API for Design")
 public class AlterColorController {
-    
+
     private final AlterColorService alterColorService;
 
     public AlterColorController(AlterColorService alterColorService) {
@@ -45,7 +45,7 @@ public class AlterColorController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = {@Content(schema = @Schema())})
     })
     public ResponseEntity<byte[]> alterColor(
-        @Valid @ModelAttribute AlterColorForm form) throws IOException, WhaleCheckedException {
+            @Valid @ModelAttribute AlterColorForm form) throws IOException, WhaleCheckedException {
         byte[] processedImage = alterColorService.alterColor(form.getImage(), form.getColorOfImage(), form.getColorForAlteration(), form.getMargin());
 
         log.info("Image color changed successfully");

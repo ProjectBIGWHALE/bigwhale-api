@@ -48,7 +48,7 @@ class ColorsPaletteServiceTest {
         WhaleInvalidImageException exception = assertThrows(WhaleInvalidImageException.class, () -> {
             createColorsPaletteService.createColorPalette(nullImage);
         });
-        String expectedMessage = "This file is not a valid image";
+        String expectedMessage = "Image cannot be null or empty";
         assertEquals(expectedMessage, exception.getMessage());
 
     }

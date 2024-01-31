@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping(value = "api/v1/documents")
-@Tag(name = "API for documents resource palette")
+@Tag(name = "Documents Services")
 public class QRCodeGeneratorController {
 
     private static final String ATTACHMENT_FILENAME = "attachment; filename=";
@@ -44,7 +44,7 @@ public class QRCodeGeneratorController {
     }
 
     @PostMapping(value = "/qrcodegenerator/link", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "QRCOde Generator for link", description = "Generates QRCode for Link in the chosen color", method = "POST")
+    @Operation(summary = "Generate QRCode to link", description = "Generates QRCode for Link in the chosen color", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "400", description = "INVALID INPUT", content = {@Content(schema = @Schema())}),
@@ -63,42 +63,42 @@ public class QRCodeGeneratorController {
     }
 
     @PostMapping(value = "/qrcodegenerator/email", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "QRCOde Generator for email", description = "Generates QRCode for Email in the chosen color", method = "POST")
+    @Operation(summary = "Generate QRCode to email", description = "Generates QRCode for Email in the chosen color", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "400", description = "INVALID INPUT", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = {@Content(schema = @Schema())}),
     })
-    public ResponseEntity<Object> qrCodeGeneratorEmail(@Valid @RequestBody QRCodeEmailRecordDto qrCodeEmailRecordDto) throws Exception {
-            var qrCodeEmailModel = new QRCodeEmailModel();
-            BeanUtils.copyProperties(qrCodeEmailRecordDto, qrCodeEmailModel);
-            byte[] bytes = qrCodeEmailService.generateEmailLinkQRCode(qrCodeEmailModel);
-            log.info("QRCOde email generated successfully");
-            return ResponseEntity.ok()
-                    .contentType(MediaType.IMAGE_PNG)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "QRCodeEmail.png")
-                    .header(CacheControl.noCache().toString())
-                    .body(bytes);
+    public ResponseEntity<Object> qrCodeGeneratorEmail(@Valid @RequestBody QRCodeEmailRecordDto qrCodeEmailRecordDto) throws WhaleCheckedException {
+        var qrCodeEmailModel = new QRCodeEmailModel();
+        BeanUtils.copyProperties(qrCodeEmailRecordDto, qrCodeEmailModel);
+        byte[] bytes = qrCodeEmailService.generateEmailLinkQRCode(qrCodeEmailModel);
+        log.info("QRCOde email generated successfully");
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "QRCodeEmail.png")
+                .header(CacheControl.noCache().toString())
+                .body(bytes);
     }
 
     @PostMapping(value = "/qrcodegenerator/whatsapp", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "QRCOde Generator for whatsapp", description = "Generates QRCode for WhatsApp in the chosen color", method = "POST")
+    @Operation(summary = "Generate QRCode to Whatsapp", description = "Generates QRCode for WhatsApp in the chosen color", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "400", description = "INVALID INPUT", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = {@Content(schema = @Schema())}),
     })
     public ResponseEntity<Object> qrCodeGeneratorWhatsapp(
-            @Valid @RequestBody QRCodeWhatsappRecordDto qrCodeWhatsappRecordDto) throws Exception {
-            var qrCodeWhatsappModel = new QRCodeWhatsappModel();
-            BeanUtils.copyProperties(qrCodeWhatsappRecordDto, qrCodeWhatsappModel);
-            byte[] bytes = qrCodeWhatsappService.generateWhatsAppLinkQRCode(qrCodeWhatsappModel);
-            log.info("QRCOde Whatsapp generated successfully");
-            return ResponseEntity.ok()
-                    .contentType(MediaType.IMAGE_PNG)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "QRCodeWhatsapp.png")
-                    .header(CacheControl.noCache().toString())
-                    .body(bytes);
+            @Valid @RequestBody QRCodeWhatsappRecordDto qrCodeWhatsappRecordDto) throws WhaleCheckedException {
+        var qrCodeWhatsappModel = new QRCodeWhatsappModel();
+        BeanUtils.copyProperties(qrCodeWhatsappRecordDto, qrCodeWhatsappModel);
+        byte[] bytes = qrCodeWhatsappService.generateWhatsAppLinkQRCode(qrCodeWhatsappModel);
+        log.info("QRCOde Whatsapp generated successfully");
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .header(HttpHeaders.CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "QRCodeWhatsapp.png")
+                .header(CacheControl.noCache().toString())
+                .body(bytes);
 
     }
 }

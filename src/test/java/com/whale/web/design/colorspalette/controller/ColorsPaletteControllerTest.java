@@ -49,4 +49,18 @@ class ColorsPaletteControllerTest {
         assertEquals("Image cannot be null or empty", error);
 
     }
+
+
+    @Test
+    void sendInvalidFormatImageAndReturnStatusCode400_ColorsPalette() throws Exception {
+        MockMultipartFile file = ImageServiceUtilTest.createTestImage("tiff", "image");
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart(colorsPaletteUri)
+                        .file(file))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+
+        String error = JsonServiceUtilTest.getJsonResponse(result).get("message").asText();
+        assertEquals("Please choose a valid image format: bmp, jpg, jpeg, png or gif file.", error);
+    }
 }

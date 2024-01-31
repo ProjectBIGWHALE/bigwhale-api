@@ -1,4 +1,4 @@
-package com.whale.web.documents.zipfilecompressor.service;
+package com.whale.web.documents.zipfilegenerator.service;
 
 import com.whale.web.exceptions.domain.WhaleIOException;
 import com.whale.web.exceptions.domain.WhaleInvalidFileException;
@@ -15,7 +15,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 @Service
-public class ZipFileCompressorService {
+public class ZipFileGeneratorService {
 
     public byte[] compressFiles(List<MultipartFile> files) throws WhaleInvalidFileException, WhaleIOException {
 

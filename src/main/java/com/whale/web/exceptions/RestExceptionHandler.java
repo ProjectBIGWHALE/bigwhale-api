@@ -64,12 +64,12 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<StandardError> handleMethodArgumentNotValidException(MethodArgumentNotValidException e,
-                                                                                     HttpServletRequest http) {
+                                                                               HttpServletRequest http) {
         List<FieldError> fieldErrorsList = e.getBindingResult().getFieldErrors();
 
         List<ErrorResponse> errorResponselist = new ArrayList<>();
-        fieldErrorsList.forEach(error -> 
-            errorResponselist.add(new ErrorResponse(error.getField(), error.getDefaultMessage()))
+        fieldErrorsList.forEach(error ->
+                errorResponselist.add(new ErrorResponse(error.getField(), error.getDefaultMessage()))
         );
 
         FieldErrors error = new FieldErrors(formattedInstant, HttpStatus.BAD_REQUEST.value(),
@@ -81,7 +81,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(MissingServletRequestPartException.class)
     public ResponseEntity<StandardError> missingServletRequestPartException(MissingServletRequestPartException e,
-                                                                               HttpServletRequest http) {
+                                                                            HttpServletRequest http) {
 
         StandardError error = new StandardError(formattedInstant, HttpStatus.BAD_REQUEST.value(),
                 "A PART OF THE REQUEST IS MISSING", e.getMessage(), http.getRequestURI());
@@ -92,7 +92,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<StandardError> missingServletRequestParameterException(MissingServletRequestParameterException e,
-                                                                            HttpServletRequest http) {
+                                                                                 HttpServletRequest http) {
 
         StandardError error = new StandardError(formattedInstant, HttpStatus.BAD_REQUEST.value(),
                 FIELDS_ARE_BLANK, e.getBody().getDetail(), http.getRequestURI());

@@ -79,12 +79,14 @@ public class EncryptService {
 			throw new WhaleCheckedException("Failed to decrypt the file");
 		}
 
-    }
+	}
 
 
 	private static boolean isEncryptedFile(MultipartFile file) {
-        return Objects.requireNonNull(file.getOriginalFilename()).endsWith(".encrypted");
-    }
+		return Objects.requireNonNull(file.getOriginalFilename()).endsWith(".encrypted");
+	}
+
+
 
 
 }

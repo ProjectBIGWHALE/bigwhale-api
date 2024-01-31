@@ -8,11 +8,11 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 public record CertificateRecordDto(
-        @Schema(description = "Certificate Type Enum", example = "COURCE")
+        @Schema(description = "Type of Certificate", example = "COURCE")
         @NotNull(message = "Select an available template")
         CertificateTypeEnum certificateTypeEnum,
 
-        @Schema(description =  "Even Name", example = "ABC dos DEVs")
+        @Schema(description =  "Event Name", example = "ABC dos DEVs")
         @NotBlank(message = "EventName field is required")
         String eventName,
 
@@ -36,11 +36,11 @@ public record CertificateRecordDto(
         @NotBlank(message = "EventLocale field is required")
         String eventLocale,
 
-        @Schema(description =  "Certificate Model ID",example = "1")
+        @Schema(description = "Choose a certificate template by ID",example = "1")
         @NotNull(message = "CertificateModelId field is required")
         Long certificateModelId,
 
-        @Schema(description = "CSV File", example = "file")
+        @Schema(description = "Submit a CSV File", example = "file.csv")
         @NotNull(message = "CSVFile field is required")
         MultipartFile csvFile
 ) {

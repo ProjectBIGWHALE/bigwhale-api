@@ -1,4 +1,4 @@
-package com.whale.web.documents.imageconverter.controller;
+package com.whale.web.design.imageconverter.controller;
 
 import com.whale.web.utils.ImageServiceUtilTest;
 import org.junit.jupiter.api.MethodOrderer;
@@ -21,19 +21,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @AutoConfigureMockMvc
 @SpringBootTest
- class ImageConverterControllerTest {
+class ImageConverterControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
 
+    private static final String IMAGE_CONVERTER_URL = "http://localhost:8080/api/v1/design/image-converter";
     @Test
     void testToConvertAndDownloadImageSuccessfully() throws Exception {
 
         MockMultipartFile file = ImageServiceUtilTest.createTestImage("bmp", "image");
         String outputFormat = "png";
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/image-converter")
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart(IMAGE_CONVERTER_URL)
                         .file(file)
                         .param("outputFormat", outputFormat))
                 .andExpect(status().isOk())
@@ -49,7 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
         MockMultipartFile image = ImageServiceUtilTest.createTestImage("gif", "image");
         String outputFormat = "invalid-format";
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/image-converter")
+        mockMvc.perform(MockMvcRequestBuilders.multipart(IMAGE_CONVERTER_URL)
                         .file(image)
                         .param("outputFormat", outputFormat))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -65,7 +66,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 "Este é um arquivo de texto".getBytes()
         );
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/image-converter")
+        mockMvc.perform(MockMvcRequestBuilders.multipart(IMAGE_CONVERTER_URL)
                         .file(image)
                         .param("outputFormat", "png"))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -80,7 +81,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 new byte[0]
         );
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/image-converter")
+        mockMvc.perform(MockMvcRequestBuilders.multipart(IMAGE_CONVERTER_URL)
                         .file(image)
                         .param("outputFormat", "png"))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());

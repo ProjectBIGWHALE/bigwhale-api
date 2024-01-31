@@ -1,6 +1,6 @@
-package com.whale.web.documents.compactconverter.controller;
+package com.whale.web.documents.zipfileconverter.controller;
 
-import com.whale.web.documents.compactconverter.service.CompactConverterService;
+import com.whale.web.documents.zipfileconverter.service.ZipFileConverterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,19 +27,19 @@ import java.util.zip.ZipOutputStream;
 @Slf4j
 @RestController
 @RequestMapping(value = "api/v1/documents")
-@Tag(name = "API for documents resource palette")
-public class CompactConverterController {
+@Tag(name = "Documents Services")
+public class ZipFileConverterController {
 
-    private final CompactConverterService compactConverterService;
+    private final ZipFileConverterService zipFileConverterService;
 
-    public CompactConverterController(CompactConverterService compactConverterService) {
-        this.compactConverterService = compactConverterService;
+    public ZipFileConverterController(ZipFileConverterService zipFileConverterService) {
+        this.zipFileConverterService = zipFileConverterService;
     }
 
     private static final String ATTACHMENT_FILENAME = "attachment; filename=";
 
-    @PostMapping(value = "/compact-converter", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Compact Converter", description = "Convert ZIP to other compression formats", method = "POST")
+    @PostMapping(value = "/zip-file-converter", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Convert ZIP file", description = "Converts ZIP file to other compression format ", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "400", description = "INVALID ZIP FILE", content = {@Content(schema = @Schema())}),
@@ -48,7 +48,7 @@ public class CompactConverterController {
     public ResponseEntity<Object> compactConverter(
             @Parameter(description = "Submit one or more zips file here") @RequestPart("files") List<MultipartFile> files,
             @Parameter(description = "Enter the compression format. Choose a tar, zip, 7z or tar.gz") @RequestParam("outputFormat") String outputFormat) throws IOException {
-        List<byte[]> filesConverted = compactConverterService.converterFile(files, outputFormat);
+        List<byte[]> filesConverted = zipFileConverterService.converterFile(files, outputFormat);
         String convertedFileName = StringUtils.stripFilenameExtension(Objects.requireNonNull(files.get(0).getOriginalFilename()))
                 + "." + outputFormat.toLowerCase();
 

@@ -19,6 +19,7 @@ public class CreateColorsPaletteService {
     private static final int MAX_COLOR_DISTANCE = 70; // Maximum allowed distance between colors
 
     public List<Color> createColorPalette(MultipartFile multipartFile) throws WhaleInvalidImageException, WhaleIOException {
+        isValidImageFormat(multipartFile);
         try {
             BufferedImage image = ImageIO.read(multipartFile.getInputStream());
             int width = image.getWidth();
@@ -67,5 +68,26 @@ public class CreateColorsPaletteService {
         int gDiff = (color1 >> 8 & 0xFF) - (color2 >> 8 & 0xFF);
         int bDiff = (color1 & 0xFF) - (color2 & 0xFF);
         return Math.sqrt((rDiff * rDiff) + (gDiff * gDiff) + (bDiff * bDiff));
+    }
+
+    private void isValidImageFormat(MultipartFile imageFile) throws WhaleInvalidImageException {
+        if (imageFile == null || imageFile.isEmpty()) {
+            throw new WhaleInvalidImageException("Image cannot be null or empty");
+        }
+
+        if (!Arrays.asList("bmp", "jpg", "jpeg", "gif", "png").contains(getFileExtension(imageFile))) {
+            throw new WhaleInvalidImageException("Please choose a valid image format: bmp, jpg, jpeg, png or gif file.");
+        }
+    }
+
+    private String getFileExtension(MultipartFile file) {
+        String fileName = file.getOriginalFilename();
+        if (fileName != null) {
+            int lastIndex = fileName.lastIndexOf('.');
+            if (lastIndex >= 0) {
+                return fileName.substring(lastIndex + 1).toLowerCase();
+            }
+        }
+        return null;
     }
 }

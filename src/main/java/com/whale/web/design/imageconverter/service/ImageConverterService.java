@@ -1,4 +1,4 @@
-package com.whale.web.documents.imageconverter.service;
+package com.whale.web.design.imageconverter.service;
 
 import com.whale.web.exceptions.domain.WhaleIOException;
 import com.whale.web.exceptions.domain.WhaleRunTimeException;

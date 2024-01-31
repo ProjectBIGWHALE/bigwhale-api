@@ -28,9 +28,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Slf4j
 @RestController
 @RequestMapping("api/v1/design")
-@Tag(name = "API for Design")
+@Tag(name = "Designer Services", description = "Tools for image editing")
 public class AlterColorController {
-    
+
     private final AlterColorService alterColorService;
 
     public AlterColorController(AlterColorService alterColorService) {
@@ -38,14 +38,14 @@ public class AlterColorController {
     }
 
     @PostMapping(value = "/alter-color", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Change a Color of a image", description = "Change pixels of a specific color", method = "POST")
+    @Operation(summary = "Alter Color", description = "Easily change the selected color in the image", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "400", description = "Invalid input", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = {@Content(schema = @Schema())})
     })
     public ResponseEntity<byte[]> alterColor(
-        @Valid @ModelAttribute AlterColorForm form) throws IOException, WhaleCheckedException {
+            @Valid @ModelAttribute AlterColorForm form) throws IOException, WhaleCheckedException {
         byte[] processedImage = alterColorService.alterColor(form.getImage(), form.getColorOfImage(), form.getColorForAlteration(), form.getMargin());
 
         log.info("Image color changed successfully");

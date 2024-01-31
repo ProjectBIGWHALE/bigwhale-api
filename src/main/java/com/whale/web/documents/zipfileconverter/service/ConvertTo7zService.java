@@ -1,4 +1,4 @@
-package com.whale.web.documents.compactconverter.service;
+package com.whale.web.documents.zipfileconverter.service;
 
 import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;

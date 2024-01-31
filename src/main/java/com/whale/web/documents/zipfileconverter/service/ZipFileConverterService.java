@@ -1,4 +1,4 @@
-package com.whale.web.documents.compactconverter.service;
+package com.whale.web.documents.zipfileconverter.service;
 
 import com.whale.web.exceptions.domain.WhaleRunTimeException;
 import org.springframework.stereotype.Service;
@@ -7,14 +7,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Service
-public class CompactConverterService {
+public class ZipFileConverterService {
     private final ConvertToZipService convertToZip;
     private final ConvertToTarService convertToTar;
     private final ConvertTo7zService converterTo7z;
     private final ConvertToTarGzService convertToTarGz;
 
-    public CompactConverterService(ConvertToZipService convertToZip, ConvertToTarService convertToTar,
-            ConvertTo7zService converterTo7z, ConvertToTarGzService convertToTarGz) {
+    public ZipFileConverterService(ConvertToZipService convertToZip, ConvertToTarService convertToTar,
+                                   ConvertTo7zService converterTo7z, ConvertToTarGzService convertToTarGz) {
         this.convertToZip = convertToZip;
         this.convertToTar = convertToTar;
         this.converterTo7z = converterTo7z;
@@ -52,5 +52,3 @@ public class CompactConverterService {
         return false;
     }
 }
-
-

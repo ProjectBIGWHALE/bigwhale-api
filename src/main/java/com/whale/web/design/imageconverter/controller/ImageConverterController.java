@@ -1,7 +1,6 @@
-package com.whale.web.documents.imageconverter.controller;
+package com.whale.web.design.imageconverter.controller;
 
-import com.whale.web.documents.imageconverter.service.ImageConverterService;
-import com.whale.web.exceptions.domain.WhaleCheckedException;
+import com.whale.web.design.imageconverter.service.ImageConverterService;
 import com.whale.web.exceptions.domain.WhaleIOException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -23,8 +22,8 @@ import java.util.Objects;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "api/v1/documents")
-@Tag(name = "API for documents resource palette")
+@RequestMapping(value = "api/v1/design")
+@Tag(name = "Designer Services")
 public class ImageConverterController {
 
     private final ImageConverterService imageConverterService;
@@ -36,16 +35,17 @@ public class ImageConverterController {
     private static final String ATTACHMENT_FILENAME = "attachment; filename=";
 
     @PostMapping(value = "/image-converter", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Image Converter", description = "Convert an image to another format", method = "POST")
+    @Operation(summary = "Convert image format", description = "Convert your image into different formats", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "400", description = "INVALID IMAGE", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = {@Content(schema = @Schema())})
     })
     public ResponseEntity<Object> imageConverter(
-            @Parameter(description = "Format the imagem to BMP, JPG, JPEG , GIF, PNG or TIFF") @RequestParam("outputFormat") String outputFormat,
-            @Parameter(description = "Submit an image here. Accepted formats: BMP, JPG, JPEG or GIF file.") @RequestParam("image") MultipartFile image
-    ) throws WhaleCheckedException, WhaleIOException {
+            @Parameter(description = "Submit an image here. Accepted formats: BMP, JPG, JPEG or GIF file.")
+                @RequestParam("image") MultipartFile image,
+            @Parameter(description = "Format to which the uploaded image will be converted: BMP, JPG, JPEG , GIF, PNG or TIFF")
+                @RequestParam("outputFormat") String outputFormat) throws WhaleIOException {
         byte[] bytes = imageConverterService.convertImageFormat(outputFormat, image);
         String originalFileNameWithoutExtension = StringUtils.stripFilenameExtension(Objects.requireNonNull(image.getOriginalFilename()));
         String convertedFileName = originalFileNameWithoutExtension + "." + outputFormat.toLowerCase();

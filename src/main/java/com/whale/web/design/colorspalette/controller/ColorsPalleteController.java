@@ -29,27 +29,26 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping("api/v1/design")
-@Tag(name = "API for Design")
+@Tag(name = "Designer Services")
 public class ColorsPalleteController {
 
-    private final UploadImage uploadImage;
     private final CreateColorsPaletteService createColorsPaletteService;
 
-    public ColorsPalleteController(UploadImage uploadImage, CreateColorsPaletteService createColorsPaletteService) {
-        this.uploadImage = uploadImage;
+    public ColorsPalleteController(CreateColorsPaletteService createColorsPaletteService) {
         this.createColorsPaletteService = createColorsPaletteService;
     }
 
+
     @PostMapping(value = "/colors-palette", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Pallete From a Image", description = "Extract colors pallet from a image", method = "POST")
+    @Operation(summary = "Extract Color Palettee", description = "Upload an image and extract its color palette", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "400", description = "Invalid image", content = {@Content(schema = @Schema())}),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = {@Content(schema = @Schema())})
     })
-    public ResponseEntity<List<Color>> colorsPalette(@RequestPart("image") MultipartFile image) throws WhaleInvalidImageException, WhaleCheckedException, WhaleIOException {
-        MultipartFile upload = uploadImage.uploadImage(image);
-        List<Color> listOfColors = createColorsPaletteService.createColorPalette(upload);
+    public ResponseEntity<List<Color>> colorsPalette(
+            @RequestPart("image") MultipartFile image) throws WhaleInvalidImageException,WhaleIOException {
+        List<Color> listOfColors = createColorsPaletteService.createColorPalette(image);
         log.info("Successfully generated image color palette");
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)

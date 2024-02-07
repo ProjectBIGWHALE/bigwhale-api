@@ -1,8 +1,11 @@
 package com.whale.web.documents.certificategenerator.service;
 
 import com.whale.web.documents.certificategenerator.model.Certificate;
-import com.whale.web.documents.certificategenerator.model.enums.CertificateBasicInfosEnum;
-import com.whale.web.documents.certificategenerator.model.enums.PersonBasicInfosEnum;
+import com.whale.web.documents.certificategenerator.enums.CertificateBasicInfosEnum;
+import com.whale.web.documents.certificategenerator.enums.PersonBasicInfosEnum;
+import com.whale.web.exceptions.domain.WhaleCheckedException;
+import com.whale.web.exceptions.domain.WhaleIOException;
+import com.whale.web.exceptions.domain.WhaleTransformerException;
 import com.whale.web.utils.FormatDataUtil;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -28,7 +31,7 @@ import java.util.List;
 @Service
 public class EditSVGFiles {
 
-    public List<String> cretateListCertificate(Certificate certificate, List<String> names, String certificateTemplate) throws Exception {
+    public List<String> cretateListCertificate(Certificate certificate, List<String> names, String certificateTemplate) throws WhaleCheckedException, WhaleIOException {
         Document patchModel = preparateCertificateWithBasicInfos(certificate, certificateTemplate);
         List<String> listCertificates = new ArrayList<>();
 
@@ -42,7 +45,7 @@ public class EditSVGFiles {
         return listCertificates;
     }
 
-    private String preparateCertificateForPerson(String personName, Document document) throws Exception {
+    private String preparateCertificateForPerson(String personName, Document document){
         List<PersonBasicInfosEnum> basicInfos = Arrays.asList(PersonBasicInfosEnum.values());
 
         NodeList textElements = document.getElementsByTagName("tspan");
@@ -61,8 +64,7 @@ public class EditSVGFiles {
         return convertDocumentToString(document);
     }
 
-    private Document preparateCertificateWithBasicInfos(Certificate certificate, String certificateTemplate)
-            throws ParserConfigurationException, IOException, SAXException, TransformerException {
+    private Document preparateCertificateWithBasicInfos(Certificate certificate, String certificateTemplate) throws WhaleCheckedException, WhaleIOException {
         List<CertificateBasicInfosEnum> basicInfos = Arrays.asList(CertificateBasicInfosEnum.values());
 
         Document document = readSVG(certificateTemplate);
@@ -88,19 +90,30 @@ public class EditSVGFiles {
         return document;
     }
 
-    private Document readSVG(String certificateTemplate) throws ParserConfigurationException, IOException, SAXException {
-        File svgFile = new File(certificateTemplate);
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        return builder.parse(svgFile);
+    private Document readSVG(String certificateTemplate) throws WhaleCheckedException, WhaleIOException {
+        try {
+            File svgFile = new File(certificateTemplate);
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            DocumentBuilder builder = null;
+            builder = factory.newDocumentBuilder();
+            return builder.parse(svgFile);
+        } catch (ParserConfigurationException | SAXException e) {
+            throw new WhaleCheckedException(e.getMessage());
+        } catch (IOException e) {
+            throw new WhaleIOException(e.getMessage());
+        }
     }
 
-    private String convertDocumentToString(Document document) throws TransformerException {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        StringWriter writer = new StringWriter();
-        transformer.transform(new DOMSource(document), new StreamResult(writer));
-        return writer.toString();
+    private String convertDocumentToString(Document document) {
+        try{
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            StringWriter writer = new StringWriter();
+            transformer.transform(new DOMSource(document), new StreamResult(writer));
+            return writer.toString();
+        }catch (TransformerException e){
+            throw new  WhaleTransformerException(e.getMessage());
+        }
     }
 }

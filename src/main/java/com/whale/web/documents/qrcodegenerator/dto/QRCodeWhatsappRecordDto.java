@@ -6,16 +6,16 @@ import jakarta.validation.constraints.NotBlank;
 
 public record QRCodeWhatsappRecordDto(
 
-        @Schema(description = "Phone Number", example = "027999999999")
-        @NotBlank(message = "No phone number was provided.")
+        @Schema(description = "Phone Number", example = "(27)99999-9999")
+        @NotBlank(message = "Phone number field is required")
         String phoneNumber,
 
-        @Schema(description = "Message", example = "Mensagem de teste enviada pelo whatsapp")
-        @NotBlank(message = "No text was provided.")
+        @Schema(description = "Message", example = "Test message sent by whatsapp")
+        @NotBlank(message = "Text field is required")
         String text,
 
         @Schema(description = "Pixel Color", example = "red")
-        @NotBlank(message = "No color was provided for the QRCode")
+        @NotBlank(message = "Must be enter a color. Please advise the color by name, hexadecimal or rgb")
         String pixelColor) {
 
 }

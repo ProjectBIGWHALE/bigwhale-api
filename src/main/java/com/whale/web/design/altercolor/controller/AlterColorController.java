@@ -2,15 +2,20 @@ package com.whale.web.design.altercolor.controller;
 
 import java.io.IOException;
 
+import com.whale.web.design.altercolor.model.AlterColorForm;
+import com.whale.web.exceptions.domain.WhaleCheckedException;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.whale.web.design.altercolor.service.AlterColorService;
@@ -20,35 +25,35 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 
+@Slf4j
 @RestController
-@RequestMapping("api/v1/design/alter-color")
-@Tag(name = "API for Design")
+@RequestMapping("api/v1/design")
+@Tag(name = "Designer Services", description = "Tools for image editing")
 public class AlterColorController {
-    
-    private final AlterColorService alterColorService;    
-    
+
+    private final AlterColorService alterColorService;
+
     public AlterColorController(AlterColorService alterColorService) {
-        this.alterColorService = alterColorService;    }
+        this.alterColorService = alterColorService;
+    }
 
+    @PostMapping(value = "/alter-color", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Alter Color", description = "Easily change the selected color in the image", method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "400", description = "Invalid input", content = {@Content(schema = @Schema())}),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = {@Content(schema = @Schema())})
+    })
+    public ResponseEntity<byte[]> alterColor(
+            @Valid @ModelAttribute AlterColorForm form) throws IOException, WhaleCheckedException {
+        byte[] processedImage = alterColorService.alterColor(form.getImage(), form.getColorOfImage(), form.getColorForAlteration(), form.getMargin());
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Change a Color of a image", description = "Change pixels of a specific color", method = "POST")
-    public ResponseEntity<Object> alterColor(@RequestPart("image") MultipartFile image, 
-        @Parameter(description = "Color in Image for alteration") String colorOfImage, 
-        @Parameter(description = "New Color (or Trasnparency)") String colorForAlteration,
-        Double margin) throws IOException {
+        log.info("Image color changed successfully");
 
-        try {
-            byte[] processedImage = alterColorService.alterColor(image, colorOfImage, colorForAlteration, margin);
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ModifiedImage.png")
-                    .header(CacheControl.noCache().toString())
-                    .body(processedImage);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ModifiedImage.png")
+                .header(CacheControl.noCache().toString())
+                .body(processedImage);
     }
 }

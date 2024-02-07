@@ -2,6 +2,7 @@ package com.whale.web.documents.qrcodegenerator.service;
 
 import com.whale.web.documents.qrcodegenerator.model.QRCodeEmailModel;
 import com.whale.web.documents.qrcodegenerator.model.QRCodeLinkModel;
+import com.whale.web.exceptions.domain.WhaleCheckedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,7 +15,7 @@ public class QRCodeEmailService {
     }
 
 
-    public byte[] generateEmailLinkQRCode(QRCodeEmailModel qrCodeEmailRecordModel) {
+    public byte[] generateEmailLinkQRCode(QRCodeEmailModel qrCodeEmailRecordModel) throws WhaleCheckedException {
         String emailLink =
                 "mailto:" + qrCodeEmailRecordModel.getEmail()
                         + "?subject="

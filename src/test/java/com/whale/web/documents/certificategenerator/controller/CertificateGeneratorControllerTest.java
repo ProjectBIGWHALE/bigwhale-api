@@ -139,6 +139,28 @@ class CertificateGeneratorControllerTest {
         assertEquals("Invalid Patch for model of certificate", jsonMessage.asText());
     }
 
+
+    @Test
+    void returnStatusCode500WhenFormContainsInvalidEventDate() throws Exception {
+        MockMultipartFile csvFileDto = createCSVFile();
+        CertificateRecordDto certificateRecordDto = new CertificateRecordDto(
+                CertificateTypeEnum.COURCE,
+                "ABC dos DEVS",
+                "Ronnyscley",
+                "C.O.",
+                "20",
+                "2023??09??12",
+                "São Paulo",
+                1L,
+                csvFileDto
+        );
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/documents/certificate-generator")
+                        .flashAttr("certificateRecordDto", certificateRecordDto)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(status().isInternalServerError());
+    }
+
     private static MockMultipartFile createCSVFile() {
         return new MockMultipartFile(
                 "csvFileDto",

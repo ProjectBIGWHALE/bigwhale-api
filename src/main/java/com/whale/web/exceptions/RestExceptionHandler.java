@@ -1,5 +1,6 @@
 package com.whale.web.exceptions;
 
+import java.text.ParseException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -184,6 +185,17 @@ public class RestExceptionHandler {
         logger(e.getLocalizedMessage(), message);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
+
+
+    @ExceptionHandler(ParseException.class)
+    public ResponseEntity<StandardError> parseException(ParseException e, HttpServletRequest http){
+        StandardError error = new StandardError(formattedInstant, HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                INTERNAL_SERVER_ERROR, e.getMessage(), http.getRequestURI());
+
+        logger(e.getLocalizedMessage(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
 
 
     private void logger(String classException, String msg){
